@@ -1,16 +1,36 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const config = {
-  port: process.env.PORT || 5000,
-  mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusbid_auction',
-  jwtSecret: process.env.JWT_SECRET || 'campusbid_vesit_super_secret_jwt_key_2026',
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  r2: {
-    accountId: process.env.R2_ACCOUNT_ID || '',
-    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-    bucketName: process.env.R2_BUCKET_NAME || 'campusbid-uploads',
-    publicUrl: process.env.R2_PUBLIC_URL || 'https://r2.campusbid.ves.ac.in'
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('FATAL: JWT_SECRET environment variable is required in production');
   }
+  if (!process.env.MONGO_URI) {
+    throw new Error('FATAL: MONGO_URI environment variable is required in production');
+  }
+}
+
+let jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+  console.warn('WARNING: JWT_SECRET is not set. Using insecure development default secret.');
+  jwtSecret = 'dev-insecure-jwt-secret-campusbid';
+}
+
+export const config = {
+  nodeEnv: process.env.NODE_ENV || 'development',
+  isProduction,
+  port: parseInt(process.env.PORT, 10) || 5000,
+  mongoUri: process.env.NODE_ENV === 'test'
+    ? (process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test')
+    : (process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusbid'),
+  mongoUriTest: process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test',
+  jwtSecret,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  adminEmail: process.env.ADMIN_EMAIL || 'admin@ves.ac.in',
+  adminPassword: process.env.ADMIN_PASSWORD || 'change-me-admin',
+  auctionSweepMs: parseInt(process.env.AUCTION_SWEEP_MS, 10) || 10000,
+  cloudinaryUrl: process.env.CLOUDINARY_URL || ''
 };
