@@ -3,6 +3,13 @@ import { authenticate, requireAdmin } from '../middleware/auth.js';
 import authRoutes from './authRoutes.js';
 import userRoutes from './userRoutes.js';
 import Product from '../models/Product.js';
+import { validate, validateObjectId } from '../validators/validate.js';
+import {
+  createProductSchema,
+  updateProductSchema,
+  placeBidSchema,
+  resolveReportSchema
+} from '../validators/schemas.js';
 
 const router = Router();
 
@@ -147,7 +154,7 @@ router.get('/products', (req, res) => {
   res.json({ success: true, total: items.length, products: items });
 });
 
-router.get('/products/:id', (req, res) => {
+router.get('/products/:id', validateObjectId('id'), (req, res) => {
   const product = mockDb.products.find(p => p.id === req.params.id);
   if (!product) {
     return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
@@ -156,7 +163,7 @@ router.get('/products/:id', (req, res) => {
   res.json({ success: true, product, recentBids: productBids });
 });
 
-router.post('/products', authenticate, (req, res) => {
+router.post('/products', authenticate, validate(createProductSchema), (req, res) => {
   const { title, category, condition, description, startingBid, minIncrement, duration, images } = req.body;
   const durationHours = duration === '24h' ? 24 : duration === '7d' ? 168 : 72;
   const newProduct = {
@@ -179,7 +186,7 @@ router.post('/products', authenticate, (req, res) => {
   res.status(201).json({ success: true, product: newProduct });
 });
 
-router.put('/products/:id', authenticate, async (req, res, next) => {
+router.put('/products/:id', authenticate, validateObjectId('id'), validate(updateProductSchema), async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -209,7 +216,7 @@ router.put('/products/:id', authenticate, async (req, res, next) => {
 // -------------------------------------------------------------
 // MODULE 4: BIDDING
 // -------------------------------------------------------------
-router.post('/products/:id/bids', authenticate, (req, res) => {
+router.post('/products/:id/bids', authenticate, validateObjectId('id'), validate(placeBidSchema), (req, res) => {
   const product = mockDb.products.find(p => p.id === req.params.id);
   if (!product) {
     return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });

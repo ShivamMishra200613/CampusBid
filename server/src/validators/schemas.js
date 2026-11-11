@@ -29,7 +29,8 @@ export const registerSchema = z
     rollNo: z.string().trim().optional().default(''),
     phone: z.string().trim().optional(),
     bio: z.string().trim().optional(),
-    agreeTerms: z.boolean().optional()
+    agreeTerms: z.boolean().optional(),
+    role: z.string().optional()
   })
   .strict();
 

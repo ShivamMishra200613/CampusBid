@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAuction } from '../context/AuctionContext';
+import { validateEmail, validatePassword, validateRequired } from '../utils/validators';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function RegisterPage() {
     confirmPassword: '',
     agreeTerms: true
   });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -25,20 +27,39 @@ export default function RegisterPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const errs = {};
+    const nameErr = validateRequired(formData.fullName, 'Full name');
+    if (nameErr) errs.fullName = nameErr;
+
+    const emailErr = validateEmail(formData.email);
+    if (emailErr) errs.email = emailErr;
+
+    const classErr = validateRequired(formData.classBranch, 'Class / Branch');
+    if (classErr) errs.classBranch = classErr;
+
+    const rollErr = validateRequired(formData.rollNo, 'Roll No');
+    if (rollErr) errs.rollNo = rollErr;
+
+    const passErr = validatePassword(formData.password);
+    if (passErr) errs.password = passErr;
+
+    if (formData.password !== formData.confirmPassword) {
+      errs.confirmPassword = 'Passwords do not match.';
+    }
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.email.endsWith('@ves.ac.in')) {
-      showToast('Only @ves.ac.in emails are eligible for registration.', 'error');
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      showToast('Passwords do not match.', 'error');
-      return;
-    }
-    if (formData.password.length < 8) {
-      showToast('Password must be at least 8 characters long.', 'error');
+    if (!validateForm()) {
       return;
     }
 
@@ -84,13 +105,19 @@ export default function RegisterPage() {
                 <input
                   id="fullName"
                   name="fullName"
+                  data-testid="register-name-input"
                   type="text"
                   required
                   placeholder="e.g. Shivam Mishra"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="editorial-input"
+                  className={`editorial-input ${errors.fullName ? 'border-error' : ''}`}
                 />
+                {errors.fullName && (
+                  <p data-testid="register-name-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.fullName}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -100,16 +127,23 @@ export default function RegisterPage() {
                 <input
                   id="email"
                   name="email"
+                  data-testid="register-email-input"
                   type="email"
                   required
                   placeholder="name.surname@ves.ac.in"
                   value={formData.email}
                   onChange={handleChange}
-                  className="editorial-input"
+                  className={`editorial-input ${errors.email ? 'border-error' : ''}`}
                 />
-                <p className="mt-1 text-xs text-secondary font-body-sm">
-                  Only <strong>@ves.ac.in</strong> email domains are permitted.
-                </p>
+                {errors.email ? (
+                  <p data-testid="register-email-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.email}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-secondary font-body-sm">
+                    Only <strong>@ves.ac.in</strong> email domains are permitted.
+                  </p>
+                )}
               </div>
 
               {/* Class/Branch and Roll No Row */}
@@ -121,13 +155,19 @@ export default function RegisterPage() {
                   <input
                     id="classBranch"
                     name="classBranch"
+                    data-testid="register-class-input"
                     type="text"
                     required
                     placeholder="e.g. D15A / CMPN"
                     value={formData.classBranch}
                     onChange={handleChange}
-                    className="editorial-input"
+                    className={`editorial-input ${errors.classBranch ? 'border-error' : ''}`}
                   />
+                  {errors.classBranch && (
+                    <p data-testid="register-class-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                      {errors.classBranch}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -137,13 +177,19 @@ export default function RegisterPage() {
                   <input
                     id="rollNo"
                     name="rollNo"
+                    data-testid="register-roll-input"
                     type="text"
                     required
                     placeholder="e.g. 28"
                     value={formData.rollNo}
                     onChange={handleChange}
-                    className="editorial-input"
+                    className={`editorial-input ${errors.rollNo ? 'border-error' : ''}`}
                   />
+                  {errors.rollNo && (
+                    <p data-testid="register-roll-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                      {errors.rollNo}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -156,12 +202,13 @@ export default function RegisterPage() {
                   <input
                     id="password"
                     name="password"
+                    data-testid="register-password-input"
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className="editorial-input pr-10"
+                    className={`editorial-input pr-10 ${errors.password ? 'border-error' : ''}`}
                   />
                   <button
                     type="button"
@@ -172,6 +219,11 @@ export default function RegisterPage() {
                       {showPassword ? 'visibility_off' : 'visibility'}
                     </span>
                   </button>
+                  {errors.password && (
+                    <p data-testid="register-password-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                      {errors.password}
+                    </p>
+                  )}
                 </div>
 
                 <div className="relative">
@@ -181,13 +233,19 @@ export default function RegisterPage() {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
+                    data-testid="register-confirm-password-input"
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="editorial-input pr-10"
+                    className={`editorial-input pr-10 ${errors.confirmPassword ? 'border-error' : ''}`}
                   />
+                  {errors.confirmPassword && (
+                    <p data-testid="register-confirm-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -210,6 +268,7 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <button
                 type="submit"
+                data-testid="register-submit-button"
                 className="w-full rounded-full bg-on-surface text-white font-label-caps text-label-caps uppercase tracking-widest py-4 mt-4 hover:bg-gray-800 transition-colors shadow-md flex items-center justify-center gap-2"
               >
                 Create Account →

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAuction } from '../context/AuctionContext';
+import { validateRequired } from '../utils/validators';
 
 export default function ProfilePage() {
   const { user, updateProfile } = useAuth();
@@ -15,6 +16,7 @@ export default function ProfilePage() {
     auctionEndingAlerts: user?.notificationPreferences?.auctionEndingAlerts ?? true,
     newMessageAlerts: user?.notificationPreferences?.newMessageAlerts ?? false
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,10 +24,20 @@ export default function ProfilePage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSave = (e) => {
     e.preventDefault();
+    const nameErr = validateRequired(formData.fullName, 'Full name');
+    if (nameErr) {
+      setErrors({ fullName: nameErr });
+      return;
+    }
+
+    setErrors({});
     updateProfile({
       fullName: formData.fullName,
       phone: formData.phone,
@@ -129,11 +141,17 @@ export default function ProfilePage() {
                     <input
                       id="fullName"
                       name="fullName"
+                      data-testid="profile-name-input"
                       type="text"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="editorial-input"
+                      className={`editorial-input ${errors.fullName ? 'border-error' : ''}`}
                     />
+                    {errors.fullName && (
+                      <p data-testid="profile-name-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                        {errors.fullName}
+                      </p>
+                    )}
                   </div>
 
                   <div>

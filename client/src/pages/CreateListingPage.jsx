@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
+import { validateTitle, validatePrice, validateRequired } from '../utils/validators';
 
 export default function CreateListingPage() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function CreateListingPage() {
   ]);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [showAddUrlInput, setShowAddUrlInput] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     title: '',
@@ -29,6 +31,9 @@ export default function CreateListingPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleRemoveImage = (indexToRemove) => {
@@ -43,18 +48,36 @@ export default function CreateListingPage() {
     }
   };
 
+  const validateForm = () => {
+    const errs = {};
+    const titleErr = validateTitle(formData.title);
+    if (titleErr) errs.title = titleErr;
+
+    const descErr = validateRequired(formData.description, 'Description');
+    if (descErr) {
+      errs.description = descErr;
+    } else if (formData.description.trim().length < 10) {
+      errs.description = 'Description must be at least 10 characters.';
+    }
+
+    const priceErr = validatePrice(formData.startingBid, 'Starting bid');
+    if (priceErr) errs.startingBid = priceErr;
+
+    const incErr = validatePrice(formData.minIncrement, 'Minimum increment');
+    if (incErr) errs.minIncrement = incErr;
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmit = (isDraft = false) => {
     if (!isAuthenticated) {
       showToast('Please log in to list an auction.', 'error');
       navigate('/login');
       return;
     }
-    if (!formData.title.trim()) {
-      showToast('Please enter an item title.', 'error');
-      return;
-    }
-    if (!formData.startingBid || Number(formData.startingBid) <= 0) {
-      showToast('Please enter a valid starting bid price.', 'error');
+    if (!validateForm()) {
+      showToast('Please fix the errors in the form.', 'error');
       return;
     }
     if (images.length === 0) {
@@ -194,13 +217,19 @@ export default function CreateListingPage() {
                 <input
                   id="title"
                   name="title"
+                  data-testid="listing-title-input"
                   type="text"
                   required
                   placeholder="e.g. Vintage Smith-Corona Typewriter / Stewart Calculus 8th Ed"
                   value={formData.title}
                   onChange={handleChange}
-                  className="editorial-input"
+                  className={`editorial-input ${errors.title ? 'border-error' : ''}`}
                 />
+                {errors.title && (
+                  <p data-testid="listing-title-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.title}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -251,13 +280,19 @@ export default function CreateListingPage() {
                 <textarea
                   id="description"
                   name="description"
+                  data-testid="listing-description-input"
                   rows="5"
                   required
                   placeholder="Provide a detailed description of the item, highlighting condition, usage duration, and bundled accessories..."
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full appearance-none rounded-2xl border border-outline-variant bg-transparent p-4 font-body-md text-on-surface focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none resize-none transition-colors"
+                  className={`w-full appearance-none rounded-2xl border ${errors.description ? 'border-red-500' : 'border-outline-variant'} bg-transparent p-4 font-body-md text-on-surface focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none resize-none transition-colors`}
                 ></textarea>
+                {errors.description && (
+                  <p data-testid="listing-description-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.description}
+                  </p>
+                )}
               </div>
             </div>
           </section>
@@ -282,16 +317,21 @@ export default function CreateListingPage() {
                   <input
                     id="startingBid"
                     name="startingBid"
+                    data-testid="listing-starting-bid-input"
                     type="number"
-                    min="50"
-                    step="50"
+                    min="1"
                     required
                     placeholder="e.g. 500"
                     value={formData.startingBid}
                     onChange={handleChange}
-                    className="editorial-input pl-8"
+                    className={`editorial-input pl-8 ${errors.startingBid ? 'border-error' : ''}`}
                   />
                 </div>
+                {errors.startingBid && (
+                  <p data-testid="listing-starting-bid-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.startingBid}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -305,16 +345,21 @@ export default function CreateListingPage() {
                   <input
                     id="minIncrement"
                     name="minIncrement"
+                    data-testid="listing-increment-input"
                     type="number"
-                    min="10"
-                    step="10"
+                    min="1"
                     required
                     placeholder="e.g. 50"
                     value={formData.minIncrement}
                     onChange={handleChange}
-                    className="editorial-input pl-8"
+                    className={`editorial-input pl-8 ${errors.minIncrement ? 'border-error' : ''}`}
                   />
                 </div>
+                {errors.minIncrement && (
+                  <p data-testid="listing-increment-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    {errors.minIncrement}
+                  </p>
+                )}
               </div>
 
               <div>

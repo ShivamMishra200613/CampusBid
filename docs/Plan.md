@@ -107,11 +107,11 @@ Done when: all tests in 2.9 pass and a request with a student token to `/admin/s
 ### Phase 3: Data validation
 
 - [x] 3.1 Install `zod` on the server. Convert `contracts/schemas.js` into Zod schemas in `validators/schemas.js`: register, login, update profile, create product, update product, place bid, moderate listing, resolve report, report listing, forgot and reset password.
-- [ ] 3.2 Create `validators/validate.js`, a middleware factory `validate(schema, source = 'body')` that replaces `req[source]` with the parsed value and returns `400 VALIDATION_ERROR` with `details` as a list of `{ field, message }`.
-- [ ] 3.3 Password rule: at least 8 characters, at least one letter and one number. Email rule: valid email ending in `@ves.ac.in`, lowercased and trimmed. Bid amount: a positive number. Reject unknown fields (`.strict()`) on create and update schemas.
-- [ ] 3.4 Validate route params that are ObjectIds (`400 INVALID_ID`) so a bad id never reaches Mongoose as a cast error. Map Mongoose `ValidationError`, `CastError`, and duplicate key (`11000`) errors in `errorHandler` to clean API errors.
-- [ ] 3.5 Client side: add `client/src/utils/validators.js` with the same rules (email domain, password strength, price greater than zero, title length). Show inline field errors on Login, Register, Create Listing, Profile, and the bid form. Keep HTML `required`, but do not rely on it.
-- [ ] 3.6 Server tests (`server/tests/validation.test.js`): bad email domain, weak password, missing fields, extra unknown field, negative bid, invalid ObjectId.
+- [x] 3.2 Create `validators/validate.js`, a middleware factory `validate(schema, source = 'body')` that replaces `req[source]` with the parsed value and returns `400 VALIDATION_ERROR` with `details` as a list of `{ field, message }`.
+- [x] 3.3 Password rule: at least 8 characters, at least one letter and one number. Email rule: valid email ending in `@ves.ac.in`, lowercased and trimmed. Bid amount: a positive number. Reject unknown fields (`.strict()`) on create and update schemas.
+- [x] 3.4 Validate route params that are ObjectIds (`400 INVALID_ID`) so a bad id never reaches Mongoose as a cast error. Map Mongoose `ValidationError`, `CastError`, and duplicate key (`11000`) errors in `errorHandler` to clean API errors.
+- [x] 3.5 Client side: add `client/src/utils/validators.js` with the same rules (email domain, password strength, price greater than zero, title length). Show inline field errors on Login, Register, Create Listing, Profile, and the bid form. Keep HTML `required`, but do not rely on it.
+- [x] 3.6 Server tests (`server/tests/validation.test.js`): bad email domain, weak password, missing fields, extra unknown field, negative bid, invalid ObjectId.
 
 Done when: every write endpoint rejects bad input with a `400` and a field-level message, and the client shows those messages next to the right field.
 

@@ -2,21 +2,34 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAuction } from '../context/AuctionContext';
+import { validateEmail, validateRequired } from '../utils/validators';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useAuction();
 
-  const [email, setEmail] = useState('alex.mercer@ves.ac.in');
-  const [password, setPassword] = useState('CollegePass#123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [forgotModal, setForgotModal] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const errs = {};
+    const emailErr = validateEmail(email);
+    if (emailErr) errs.email = emailErr;
+
+    const passErr = validateRequired(password, 'Password');
+    if (passErr) errs.password = passErr;
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email.trim()) {
-      showToast('Please enter your college email.', 'error');
+    if (!validateForm()) {
       return;
     }
     const role = email.includes('admin') ? 'admin' : 'student';
@@ -64,13 +77,22 @@ export default function LoginPage() {
                 </label>
                 <input
                   id="email"
+                  data-testid="login-email-input"
                   type="email"
                   required
                   placeholder="name.surname@ves.ac.in"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="editorial-input"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                  }}
+                  className={`editorial-input ${errors.email ? 'border-error' : ''}`}
                 />
+                {errors.email && (
+                  <p data-testid="login-email-error" className="mt-1 text-xs text-error font-body-sm text-red-500">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -89,12 +111,16 @@ export default function LoginPage() {
                 <div className="relative">
                   <input
                     id="password"
+                    data-testid="login-password-input"
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="••••••••"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="editorial-input pr-12"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+                    }}
+                    className={`editorial-input pr-12 ${errors.password ? 'border-error' : ''}`}
                   />
                   <button
                     type="button"
@@ -106,11 +132,17 @@ export default function LoginPage() {
                     </span>
                   </button>
                 </div>
+                {errors.password && (
+                  <p data-testid="login-password-error" className="mt-1 text-xs text-error font-body-sm text-red-500">
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
               {/* Submit */}
               <button
                 type="submit"
+                data-testid="login-submit-button"
                 className="w-full rounded-full bg-on-surface text-white font-label-caps text-label-caps uppercase tracking-widest py-4 mt-6 hover:bg-gray-800 transition-colors shadow-md"
               >
                 Log In →

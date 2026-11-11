@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 3: Data validation   Last finished task: 3.1   Next task: 3.2
+Phase: Phase 4: Complete the REST API   Last finished task: 3.6   Next task: 4.1
 
 ## Log
+- 2026-11-11 3.6: Created validation test suite (server/tests/validation.test.js) and completed Phase 3 data validation with Zod middleware, ObjectId sanitization, and client validators with inline error states | checks: 13/13 tests pass in node --test (auth.test.js & validation.test.js); client lint and build pass with 0 errors
 - 2026-11-11 3.1: Installed zod and implemented validators/schemas.js covering all contracts with strict checking, email refinement, and password rules | checks: verified schema parsing with valid and invalid payloads in node
 - 2026-11-11 2.9: Added comprehensive server auth test suite (server/tests/auth.test.js) with 7 test cases covering registration, login, token guard, role guard, and listing owner protection | checks: 7/7 tests passed in node --test; client lint and build clean
 - 2026-11-11 2.8: Added express-rate-limit to /auth/* routes, integrated helmet security headers, and restricted CORS origin to CLIENT_ORIGIN | checks: verified Helmet headers, CORS origin match, and rate-limiting headers

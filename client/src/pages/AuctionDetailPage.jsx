@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
+import { validatePrice } from '../utils/validators';
 import AuctionCard from '../components/AuctionCard';
 
 export default function AuctionDetailPage() {
@@ -16,6 +17,7 @@ export default function AuctionDetailPage() {
   // Next minimum bid
   const minBid = (product?.currentBid || 0) + (product?.minIncrement || 50);
   const [bidAmount, setBidAmount] = useState(minBid);
+  const [bidError, setBidError] = useState('');
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState('Counterfeit');
 
@@ -46,9 +48,23 @@ export default function AuctionDetailPage() {
       navigate('/login');
       return;
     }
-    const success = placeBid(product.id, Number(bidAmount));
+
+    const priceErr = validatePrice(bidAmount, 'Bid amount');
+    if (priceErr) {
+      setBidError(priceErr);
+      return;
+    }
+
+    const num = Number(bidAmount);
+    if (num < minBid) {
+      setBidError(`Bid must be at least ₹${minBid.toLocaleString('en-IN')}`);
+      return;
+    }
+
+    setBidError('');
+    const success = placeBid(product.id, num);
     if (success) {
-      setBidAmount(Number(bidAmount) + product.minIncrement);
+      setBidAmount(num + product.minIncrement);
     }
   };
 
@@ -209,29 +225,42 @@ export default function AuctionDetailPage() {
 
                 {/* Bid Form */}
                 {isLive ? (
-                  <form onSubmit={handleBidSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
-                    <div className="relative flex-grow">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-body-md text-lg text-secondary">
-                        ₹
-                      </span>
-                      <input
-                        type="number"
-                        min={minBid}
-                        step={product.minIncrement || 50}
-                        value={bidAmount}
-                        onChange={(e) => setBidAmount(e.target.value)}
-                        placeholder={`Min. ${minBid}`}
-                        required
-                        className="w-full h-14 pl-9 pr-4 bg-surface rounded-full border border-outline-variant focus:border-on-surface focus:ring-1 focus:ring-on-surface font-body-md text-base text-on-surface transition-colors"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="h-14 px-8 bg-on-surface text-white rounded-full font-label-caps text-label-caps uppercase tracking-widest hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm"
-                    >
-                      Place Bid
-                    </button>
-                  </form>
+                  <div>
+                    <form onSubmit={handleBidSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <div className="relative flex-grow">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-body-md text-lg text-secondary">
+                          ₹
+                        </span>
+                        <input
+                          id="bidAmount"
+                          data-testid="bid-amount-input"
+                          type="number"
+                          min={minBid}
+                          step={product.minIncrement || 50}
+                          value={bidAmount}
+                          onChange={(e) => {
+                            setBidAmount(e.target.value);
+                            if (bidError) setBidError('');
+                          }}
+                          placeholder={`Min. ${minBid}`}
+                          required
+                          className={`w-full h-14 pl-9 pr-4 bg-surface rounded-full border ${bidError ? 'border-red-500' : 'border-outline-variant'} focus:border-on-surface focus:ring-1 focus:ring-on-surface font-body-md text-base text-on-surface transition-colors`}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        data-testid="place-bid-button"
+                        className="h-14 px-8 bg-on-surface text-white rounded-full font-label-caps text-label-caps uppercase tracking-widest hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm"
+                      >
+                        Place Bid
+                      </button>
+                    </form>
+                    {bidError && (
+                      <p data-testid="bid-amount-error" className="mt-2 ml-4 text-xs text-red-500 font-body-sm">
+                        {bidError}
+                      </p>
+                    )}
+                  </div>
                 ) : (
                   <div className="p-4 bg-surface-container rounded-lg text-center font-body-sm text-secondary">
                     This auction has officially closed. Winning Bidder: <strong className="text-black">{product.winningBidder?.name || 'Alex Mercer'} (₹{product.currentBid?.toLocaleString('en-IN')})</strong>
