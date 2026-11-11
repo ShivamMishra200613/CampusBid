@@ -145,10 +145,10 @@ Done when: a short auction ends by itself, the winner and seller get notificatio
 
 ### Phase 6: Image upload
 
-- [ ] 6.1 Install `multer`. Add `POST /uploads` (authenticated) that accepts up to 5 images, `image/jpeg|png|webp` only, 5 MB each, and returns an array of URLs.
-- [ ] 6.2 Storage driver chosen by env: if `CLOUDINARY_URL` is set, upload to Cloudinary; otherwise save to `server/uploads/` and serve it from `/uploads`. The local path is the default for development and Docker.
-- [ ] 6.3 Client: replace the "paste URL" flow on Create Listing with a file picker, previews, remove buttons, and an upload progress state. Keep the URL option as a secondary choice.
-- [ ] 6.4 Server test: reject a text file, reject an oversized file, accept a small PNG.
+- [x] 6.1 Install `multer`. Add `POST /uploads` (authenticated) that accepts up to 5 images, `image/jpeg|png|webp` only, 5 MB each, and returns an array of URLs.
+- [x] 6.2 Storage driver chosen by env: if `CLOUDINARY_URL` is set, upload to Cloudinary; otherwise save to `server/uploads/` and serve it from `/uploads`. The local path is the default for development and Docker.
+- [x] 6.3 Client: replace the "paste URL" flow on Create Listing with a file picker, previews, remove buttons, and an upload progress state. Keep the URL option as a secondary choice.
+- [x] 6.4 Server test: reject a text file, reject an oversized file, accept a small PNG.
 
 Done when: a student can pick image files on Create Listing and see them on the detail page after publishing.
 

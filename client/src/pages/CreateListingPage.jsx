@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,13 +9,12 @@ export default function CreateListingPage() {
   const { createListing, showToast } = useAuction();
   const { isAuthenticated } = useAuth();
 
-  const [images, setImages] = useState([
-    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800',
-    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800',
-    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800'
-  ]);
+  const fileInputRef = useRef(null);
+  const [images, setImages] = useState([]);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [showAddUrlInput, setShowAddUrlInput] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState('');
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -40,8 +39,65 @@ export default function CreateListingPage() {
     setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    if (images.length + files.length > 5) {
+      showToast('Maximum 5 images allowed in total.', 'error');
+      return;
+    }
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    for (const f of files) {
+      if (!validTypes.includes(f.type.toLowerCase())) {
+        showToast(`Invalid file type: ${f.name}. Only JPEG, PNG, and WebP are allowed.`, 'error');
+        return;
+      }
+      if (f.size > 5 * 1024 * 1024) {
+        showToast(`File too large: ${f.name}. Maximum 5MB per file.`, 'error');
+        return;
+      }
+    }
+
+    try {
+      setIsUploading(true);
+      setUploadProgressText(`Uploading ${files.length} photo${files.length > 1 ? 's' : ''}...`);
+
+      const formDataUpload = new FormData();
+      files.forEach((f) => formDataUpload.append('images', f));
+
+      const token = localStorage.getItem('campusbid_token') || '';
+      const res = await fetch('/api/v1/uploads', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formDataUpload
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+
+      setImages((prev) => [...prev, ...data.urls]);
+      showToast(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded successfully!`, 'success');
+    } catch (err) {
+      showToast(err.message || 'Image upload failed. You can paste a URL instead.', 'error');
+    } finally {
+      setIsUploading(false);
+      setUploadProgressText('');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleAddImage = () => {
     if (newImageUrl.trim()) {
+      if (images.length >= 5) {
+        showToast('Maximum 5 images allowed.', 'error');
+        return;
+      }
       setImages((prev) => [...prev, newImageUrl.trim()]);
       setNewImageUrl('');
       setShowAddUrlInput(false);
@@ -137,16 +193,29 @@ export default function CreateListingPage() {
               </span>
             </div>
 
+            {/* Hidden file input for native file selection */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              className="hidden"
+              data-testid="image-file-input"
+            />
+
             <div className="flex flex-wrap gap-4 items-center">
               {images.map((img, idx) => (
                 <div
                   key={idx}
+                  data-testid="image-preview"
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-outline-variant relative group shrink-0 bg-surface-container"
                 >
                   <img src={img} alt={`Upload ${idx + 1}`} className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
+                    data-testid="remove-image-button"
                     className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-error"
                   >
                     <span className="material-symbols-outlined text-[14px]">close</span>
@@ -161,44 +230,68 @@ export default function CreateListingPage() {
 
               {/* Add slot */}
               {images.length < 5 && (
-                <div
-                  onClick={() => setShowAddUrlInput(true)}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-secondary cursor-pointer hover:bg-surface-container-low hover:border-black transition-colors shrink-0"
+                <button
+                  type="button"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  data-testid="add-photo-button"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-secondary cursor-pointer hover:bg-surface-container-low hover:border-black transition-colors shrink-0 disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-[24px]">add_a_photo</span>
-                  <span className="font-label-caps text-[10px] uppercase mt-1">Add Photo</span>
-                </div>
+                  <span className="font-label-caps text-[10px] uppercase mt-1">Pick Files</span>
+                </button>
               )}
             </div>
 
-            {/* Quick URL input modal/box */}
-            {showAddUrlInput && (
-              <div className="mt-4 p-4 rounded-xl bg-surface-bright border border-outline-variant flex flex-col sm:flex-row gap-3 items-center">
-                <input
-                  type="url"
-                  placeholder="Paste image URL (e.g. https://...)"
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  className="editorial-input flex-1"
-                />
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={handleAddImage}
-                    className="btn-primary flex-1 sm:flex-none px-6 py-2.5"
-                  >
-                    Add
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddUrlInput(false)}
-                    className="btn-secondary flex-1 sm:flex-none px-4 py-2.5"
-                  >
-                    Cancel
-                  </button>
-                </div>
+            {/* Upload progress state */}
+            {isUploading && (
+              <div
+                data-testid="upload-progress-indicator"
+                className="mt-3 flex items-center gap-2 text-sm text-primary animate-pulse font-body-sm"
+              >
+                <span className="material-symbols-outlined text-base animate-spin">progress_activity</span>
+                <span>{uploadProgressText}</span>
               </div>
             )}
+
+            {/* Secondary URL input option */}
+            <div className="mt-4">
+              {!showAddUrlInput ? (
+                <button
+                  type="button"
+                  onClick={() => setShowAddUrlInput(true)}
+                  className="text-xs text-secondary hover:text-on-surface underline font-body-sm"
+                >
+                  + Or paste image URL directly
+                </button>
+              ) : (
+                <div className="p-4 rounded-xl bg-surface-bright border border-outline-variant flex flex-col sm:flex-row gap-3 items-center">
+                  <input
+                    type="url"
+                    placeholder="Paste image URL (e.g. https://...)"
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    className="editorial-input flex-1"
+                  />
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={handleAddImage}
+                      className="btn-primary flex-1 sm:flex-none px-6 py-2.5"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddUrlInput(false)}
+                      className="btn-secondary flex-1 sm:flex-none px-4 py-2.5"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </section>
 
           {/* =========================================================

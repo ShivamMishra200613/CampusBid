@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 6: Image Upload   Last finished task: 5.4   Next task: 6.1
+Phase: Phase 7: Frontend Integration   Last finished task: 6.4   Next task: 7.1
 
 ## Log
+- 2026-11-11 6.4: Installed multer (new server dependency for handling multipart image uploads up to 5MB, jpeg/png/webp, max 5 files); created POST /uploads endpoint with static serving at /uploads, MulterError handling in errorHandler; updated CreateListingPage with file picker, upload progress state, thumbnail previews, remove buttons, and secondary URL fallback | checks: 56/56 server tests pass in node --test (including uploads.test.js with auth, invalid type, oversized file, and PNG upload checks); client lint and build clean
 - 2026-11-11 5.4: Implemented automated auction sweeper (auctionCloser.js) running every AUCTION_SWEEP_MS to close expired live listings idempotently, assign winner, and notify winner and seller via notifier.js; wired outbid alerts with notificationPreferences; sweeper starts in server.js only | checks: 52/52 server tests pass in node --test (including auctionCloser.test.js with automated closing and notification generation); client lint and build pass
 - 2026-11-11 4.12: Completed Phase 4 with modular sub-routers, atomic findOneAndUpdate bidding concurrency prevention, complete admin moderation & dispute handling, updated API contracts (routes.md, openapi.yaml, postman_collection.json with Bearer tokens), and 4 comprehensive test suites (products.test.js, bids.test.js with 10 concurrent bids race test, admin.test.js, notifications.test.js) | checks: 48/48 tests passed in node --test across 6 test suites; client lint 0 errors, build clean
 - 2026-11-11 3.6: Created validation test suite (server/tests/validation.test.js) and completed Phase 3 data validation with Zod middleware, ObjectId sanitization, and client validators with inline error states | checks: 13/13 tests pass in node --test (auth.test.js & validation.test.js); client lint and build pass with 0 errors

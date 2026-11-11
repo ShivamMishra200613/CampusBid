@@ -19,12 +19,14 @@ describe('Authentication & Authorization API Tests', () => {
     process.env.NODE_ENV = 'test';
     await connectDB();
 
-    // Clean test tables
-    await User.deleteMany({ email: /@ves\.ac\.in$/ });
-    await Product.deleteMany({});
+    // Clean only test accounts used in this suite
+    await User.deleteMany({ email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in', 'outsider@gmail.com'] } });
+    await Product.deleteMany({ title: 'Student Test Listing' });
   });
 
   after(async () => {
+    await User.deleteMany({ email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in'] } });
+    await Product.deleteMany({ title: 'Student Test Listing' });
     await disconnectDB();
   });
 

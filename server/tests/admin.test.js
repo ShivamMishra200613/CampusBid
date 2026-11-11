@@ -86,8 +86,8 @@ describe('Admin Management API Tests', () => {
   after(async () => {
     await User.deleteMany({ email: { $in: ['admin.test@ves.ac.in', 'admin2.test@ves.ac.in', 'student.admin.test@ves.ac.in'] } });
     await Product.deleteMany({ seller: student._id });
-    await Report.deleteMany({});
-    await Notification.deleteMany({});
+    await Report.deleteMany({ _id: testReport._id });
+    await Notification.deleteMany({ user: student._id });
     await disconnectDB();
   });
 

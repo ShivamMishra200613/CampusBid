@@ -40,6 +40,35 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Multer errors (file size, file count)
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'FILE_TOO_LARGE',
+          message: 'File size exceeds maximum allowed limit (5MB per image).'
+        }
+      });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'TOO_MANY_FILES',
+          message: 'Maximum 5 images allowed per upload.'
+        }
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: 'UPLOAD_ERROR',
+        message: err.message
+      }
+    });
+  }
+
   // Generic or custom HTTP error
   const status = err.statusCode || 500;
   if (status >= 500) {
