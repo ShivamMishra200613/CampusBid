@@ -72,7 +72,7 @@ Each task has a checkbox. A task is finished only when its "Done when" line is t
 - [x] 0.3 Create `server/.env.example` and `client/.env.example` listing every variable used (see `agents.md`, section "Environment variables"). Never commit a real `.env`.
 - [x] 0.4 Remove the hardcoded JWT secret fallback from `config.js`. In `production`, the server must refuse to start without `JWT_SECRET` and `MONGO_URI`. In development, use a clearly named dev default and log a warning.
 - [x] 0.5 Create `progress.md` at the project root (format in `agents.md`).
-- [ ] 0.6 Add `"test"` scripts: server uses `node --test`, client has none yet. Add an `npm run lint` that passes in `client/` (oxlint already configured). Fix existing lint errors.
+- [x] 0.6 Add `"test"` scripts: server uses `node --test`, client has none yet. Add an `npm run lint` that passes in `client/` (oxlint already configured). Fix existing lint errors.
 
 Done when: both apps install, build, and start from a clean clone, lint passes, and `progress.md` exists.
 
