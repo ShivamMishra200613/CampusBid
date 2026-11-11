@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 2: Authentication and Authorization   Last finished task: 2.4   Next task: 2.5
+Phase: Phase 2: Authentication and Authorization   Last finished task: 2.5   Next task: 2.6
 
 ## Log
+- 2026-11-11 2.5: Applied authenticate and requireAdmin middleware across routes per routes.md contract specification | checks: verified 401 on unauthenticated access to /users/me, 403 on student accessing /admin/stats, 200 on public /products
 - 2026-11-11 2.4: Implemented optionalAuth middleware to populate req.user when valid Bearer token exists without rejecting anonymous requests | checks: verified null on missing/bad tokens and valid user object on authenticated tokens
 - 2026-11-11 2.3: Updated authenticate middleware to verify sub/role payload and load user directly from MongoDB, enforcing immediate invalidation on suspension or deletion | checks: verified student authentication, admin authorization, and 403 blocking on requireAdmin
 - 2026-11-11 2.2: Implemented POST /auth/login with constant-time password comparison, 401 INVALID_CREDENTIALS for wrong password or email, and 403 ACCOUNT_SUSPENDED for suspended accounts | checks: verified 200 on valid credentials, 401 on wrong email/pass, and 403 on suspended account

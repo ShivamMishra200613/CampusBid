@@ -129,11 +129,11 @@ export const mockDb = {
 // MODULE 1: AUTH & USERS
 // -------------------------------------------------------------
 
-router.get('/users/me', (req, res) => {
-  res.json({ success: true, user: mockDb.users[0] });
+router.get('/users/me', authenticate, (req, res) => {
+  res.json({ success: true, user: req.user ? req.user.toJSON() : mockDb.users[0] });
 });
 
-router.put('/users/me', (req, res) => {
+router.put('/users/me', authenticate, (req, res) => {
   Object.assign(mockDb.users[0], req.body);
   res.json({ success: true, user: mockDb.users[0] });
 });
@@ -166,7 +166,7 @@ router.get('/products/:id', (req, res) => {
   res.json({ success: true, product, recentBids: productBids });
 });
 
-router.post('/products', (req, res) => {
+router.post('/products', authenticate, (req, res) => {
   const { title, category, condition, description, startingBid, minIncrement, duration, images } = req.body;
   const durationHours = duration === '24h' ? 24 : duration === '7d' ? 168 : 72;
   const newProduct = {
@@ -175,7 +175,7 @@ router.post('/products', (req, res) => {
     category: category || 'others',
     condition: condition || 'Good',
     description,
-    seller: { id: mockDb.users[0].id, name: mockDb.users[0].fullName, isVerified: true, avatar: mockDb.users[0].avatarUrl },
+    seller: { id: req.user.id, name: req.user.fullName, isVerified: true, avatar: req.user.avatarUrl },
     startingBid: Number(startingBid) || 500,
     currentBid: Number(startingBid) || 500,
     minIncrement: Number(minIncrement) || 50,
@@ -192,7 +192,7 @@ router.post('/products', (req, res) => {
 // -------------------------------------------------------------
 // MODULE 4: BIDDING
 // -------------------------------------------------------------
-router.post('/products/:id/bids', (req, res) => {
+router.post('/products/:id/bids', authenticate, (req, res) => {
   const product = mockDb.products.find(p => p.id === req.params.id);
   if (!product) {
     return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
@@ -211,8 +211,8 @@ router.post('/products/:id/bids', (req, res) => {
   const newBid = {
     id: `bid_${Date.now()}`,
     productId: product.id,
-    bidderId: mockDb.users[0].id,
-    bidderName: mockDb.users[0].fullName,
+    bidderId: req.user.id,
+    bidderName: req.user.fullName,
     amount,
     createdAt: new Date().toISOString(),
     timeAgo: 'Just now'
@@ -227,7 +227,7 @@ router.post('/products/:id/bids', (req, res) => {
   });
 });
 
-router.get('/bids/my-bids', (req, res) => {
+router.get('/bids/my-bids', authenticate, (req, res) => {
   res.json({
     success: true,
     bids: [
@@ -264,7 +264,7 @@ router.get('/bids/my-bids', (req, res) => {
 // -------------------------------------------------------------
 // MODULE 6: NOTIFICATIONS
 // -------------------------------------------------------------
-router.get('/notifications', (req, res) => {
+router.get('/notifications', authenticate, (req, res) => {
   res.json({
     success: true,
     unreadCount: mockDb.notifications.filter(n => !n.read).length,
@@ -275,7 +275,7 @@ router.get('/notifications', (req, res) => {
 // -------------------------------------------------------------
 // MODULE 7: ADMIN MODULE
 // -------------------------------------------------------------
-router.get('/admin/stats', (req, res) => {
+router.get('/admin/stats', authenticate, requireAdmin, (req, res) => {
   res.json({
     success: true,
     stats: {
@@ -289,11 +289,11 @@ router.get('/admin/stats', (req, res) => {
   });
 });
 
-router.get('/admin/reports', (req, res) => {
+router.get('/admin/reports', authenticate, requireAdmin, (req, res) => {
   res.json({ success: true, reports: mockDb.reports });
 });
 
-router.post('/admin/reports/:id/resolve', (req, res) => {
+router.post('/admin/reports/:id/resolve', authenticate, requireAdmin, (req, res) => {
   mockDb.reports = mockDb.reports.filter(r => r.id !== req.params.id);
   res.json({ success: true, message: 'Report resolved.' });
 });
