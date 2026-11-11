@@ -1,0 +1,602 @@
+--- PAGE 1 ---
+Experiment  –  0  
+Web  Application  Design  and  Planning   
+Name  :  Shivam  Ramendra  Prakash  Mishra  
+Class  :  D15A  
+Roll  No.  :  28  
+Date  :  Aug  4th  2026   
+Aim  
+To  analyze  a  real-world  problem,  select  a  suitable  web  application  topic,  identify  its  functional  
+requirements,
+ 
+and
+ 
+design
+ 
+the
+ 
+layout
+ 
+and
+ 
+views
+ 
+of
+ 
+the
+ 
+application
+ 
+before
+ 
+implementation.
+ 
+ 
+Problem  Statement  
+Select  any  one  web  application  topic  of  your  choice.  Analyze  the  system,  identify  the  features  and  
+users
+  
+to
+ 
+be
+ 
+implemented,
+ 
+and
+ 
+prepare
+ 
+the
+ 
+UI
+ 
+layout/
+ 
+description
+ 
+of
+ 
+all
+ 
+the
+ 
+views/pages
+ 
+that
+ 
+will
+ 
+be
+ 
+developed.
+ 
+ 
+Instructions  
+1.  Select  one  web  application  topic.  2.  Identify  the  target  users.  3.  Identify  the  modules/features  of  the  application.  4.  Design  the  layout  of  each  page/view.  5.  Include  in  short  the  purpose  of  every  view.  6.  Draw  wireframes  (hand-drawn  or  using  any  design  tool)  for  all  major  views./  Describe  the  
+views
+ 
+ 
+
+--- PAGE 2 ---
+Documentation  Format  
+1.  Project  Title  
+Online  Auction  System  
+ 
+2.  Problem  Description  
+Students  at  VESIT  frequently  use  WhatsApp  groups  to  sell  their  second-hand  furniture,  books,  
+electronics,
+ 
+and
+ 
+other
+ 
+unwanted
+ 
+items.
+ 
+However,
+ 
+these
+ 
+listings
+ 
+often
+ 
+get
+ 
+buried
+ 
+among
+ 
+regular
+ 
+messages,
+ 
+making
+ 
+it
+ 
+difficult
+ 
+for
+ 
+potential
+ 
+buyers
+ 
+to
+ 
+discover
+ 
+relevant
+ 
+products.
+ 
+This
+ 
+results
+ 
+in
+ 
+reduced
+ 
+visibility
+ 
+for
+ 
+sellers
+ 
+and
+ 
+an
+ 
+inefficient
+ 
+buying
+ 
+experience
+ 
+for
+ 
+interested
+ 
+students.
+ 
+To  address  this  issue,  we  propose  developing  a  web-based  auction  platform  exclusively  for  VESIT  
+students.
+ 
+The
+ 
+platform
+ 
+will
+ 
+allow
+ 
+users
+ 
+to
+ 
+upload
+ 
+product
+ 
+images,
+ 
+provide
+ 
+detailed
+ 
+descriptions,
+ 
+set
+ 
+a
+ 
+starting
+ 
+bid
+ 
+price,
+ 
+and
+ 
+list
+ 
+items
+ 
+for
+ 
+auction.
+ 
+Other
+ 
+students
+ 
+can
+ 
+browse
+ 
+available
+ 
+products,
+ 
+place
+ 
+bids,
+ 
+and
+ 
+compete
+ 
+to
+ 
+purchase
+ 
+items
+ 
+in
+ 
+a
+ 
+transparent
+ 
+and
+ 
+organized
+ 
+manner.
+ 
+This
+ 
+system
+ 
+will
+ 
+streamline
+ 
+the
+ 
+buying
+ 
+and
+ 
+selling
+ 
+process
+ 
+while
+ 
+creating
+ 
+a
+ 
+dedicated
+ 
+marketplace
+ 
+for
+ 
+the
+ 
+college
+ 
+community.
+ 
+ 
+3.  Target  Users  
+Roles  to  be  Implemented:  
+1.  Student  (Buyer/Seller)  ○  Register/Login  using  college  credentials.  ○  List  products  for  auction.  ○  Browse  and  search  available  products.  ○  Place  bids  on  products.  ○  View  auction  status  and  bid  history.  ○  Manage  their  own  listings.  2.  Administrator  ○  Verify  and  manage  user  accounts.  ○  Approve  or  remove  inappropriate  product  listings.  ○  Monitor  ongoing  auctions.  ○  Resolve  disputes  and  manage  reported  listings.  ○  View  platform  statistics  and  activity.  
+ 
+ 
+
+--- PAGE 3 ---
+4.  Functional  Requirements  Objective:   To  define  the  core  system  behaviors,  features,  and  user  interactions  necessary  to  operate  a  
+web-based
+ 
+Online
+ 
+Auction
+ 
+System
+ 
+exclusively
+ 
+for
+ 
+VESIT
+ 
+students.
+ 
+This
+ 
+section
+ 
+outlines
+ 
+the
+ 
+technical
+ 
+capabilities
+ 
+required
+ 
+to
+ 
+transition
+ 
+the
+ 
+student
+ 
+community's
+ 
+second-hand
+ 
+marketplace
+ 
+from
+ 
+unstructured
+ 
+WhatsApp
+ 
+groups
+ 
+to
+ 
+an
+ 
+organized,
+ 
+transparent
+ 
+platform.
+ 
+It
+ 
+details
+ 
+the
+ 
+essential
+ 
+processes
+ 
+for
+ 
+both
+ 
+student
+ 
+and
+ 
+administrator
+ 
+roles,
+ 
+including
+ 
+user
+ 
+management,
+ 
+product
+ 
+listing,
+ 
+active
+ 
+auction
+ 
+management,
+ 
+bidding
+ 
+mechanisms,
+ 
+and
+ 
+automated
+ 
+notifications
+ 
+to
+ 
+streamline
+ 
+the
+ 
+buying
+ 
+and
+ 
+selling
+ 
+process.
+ 
+ 
+Module  1:  User  Management  
+●  User  Registration  ●  User  Login/Logout  ●  Profile  Management  ●  Password  Reset  
+Module  2:  Product  Management  
+●  Add  Product  ●  Upload  Product  Images  ●  Edit/Delete  Product  Listing  ●  View  Product  Details  
+Module  3:  Auction  Management  
+●  Create  Auction  ●  Set  Starting  Price  ●  Set  Auction  Duration  ●  Automatically  Close  Auction  ●  Declare  Highest  Bidd  
+Module  4:  Bidding  System  
+●  Place  Bid  ●  Validate  Bid  Amount  ●  Display  Current  Highest  Bid  ●  View  Bid  History  
+Module  5:  Search  &  Browse  
+●  Browse  Available  Auctions  ●  Search  Products  ●  Filter  by  Category  or  Price  
+ 
+
+--- PAGE 4 ---
+Module  6:  Notifications  
+●  Notify  User  When  Outbid  ●  Notify  Auction  Winner  
+●
+ 
+Notify
+ 
+Seller
+ 
+When
+ 
+Auction
+ 
+Ends
+ 
+Module  7:  Admin  Module  
+●  Manage  Users  ●  Manage  Listings  ●  Remove  Inappropriate  Content  ●  View  Reports  and  Statistics  
+5.  Views  /  Pages  
+  View  Name  Purpose  Components  Navigation  Expected  Output  
+Login  Page  User  authentication  
+Login  form  Login  →  Dashboard  
+User  successfully  logs  in  
+Register  Page  Create  new  account  
+Registration  form  Register  →  Login  New  account  created  
+Home/Dashboard  Display  ongoing  auctions  
+Product  cards,  search  bar,  filters  
+Navigate  to  Product  Details,  Profile  
+List  of  active  auctions  
+Product  Details  View  product  information  
+Images,  description,  current  bid,  bid  form  
+Bid,  Back  to  Dashboard  
+Detailed  product  information  
+Add  Product  Create  a  new  auction  listing  
+Product  form,  image  upload  
+Submit  →  Dashboard  
+Product  listed  successfully  
+My  Listings  View/manage  own  products  
+Product  list,  Edit/Delete  buttons  
+Edit/Delete  Product  
+Updated  product  list  
+My  Bids  View  auctions  user  has  bid  on  
+Bid  history  Product  Details  List  of  bids  placed  
+Profile  Page  Manage  account  User  details,  edit  profile  
+Dashboard  Updated  profile  
+
+--- PAGE 5 ---
+Admin  Dashboard  
+Manage  platform  User  list,  product  list,  reports  
+Manage  Users/Listings  
+Updated  platform  records    
+6.  Navigation  Flow  
+ 
+The  application  begins  with  the  Login/Register  page,  where  students  can  either  create  a  new  
+account
+ 
+or
+ 
+log
+ 
+in
+ 
+using
+ 
+their
+ 
+credentials.
+ 
+After
+ 
+successful
+ 
+authentication,
+ 
+users
+ 
+are
+ 
+redirected
+ 
+to
+ 
+the
+ 
+Home
+ 
+Dashboard
+,
+ 
+which
+ 
+displays
+ 
+all
+ 
+active
+ 
+auction
+ 
+listings.
+ 
+From  the  Home  Dashboard ,  users  can:  
+●  Open  the  Product  Details  page  to  view  complete  information  about  a  product  and  place  a  
+bid.
+ ●  Navigate  to  the  Add  Product  page  to  create  a  new  auction  listing  by  uploading  product  
+details
+ 
+and
+ 
+images.
+ ●  Access  the  My  Listings  page  to  view,  edit,  or  delete  their  own  auction  listings.  ●  Open  the  My  Bids  page  to  track  auctions  they  have  participated  in  and  monitor  their  bid  
+status.
+ ●  Visit  the  Profile  page  to  view  and  update  their  personal  information.  ●  Log  out  of  the  application.  
+Administrators  log  in  through  the  same  authentication  page  but  are  redirected  to  the  Admin  
+Dashboard
+ 
+after
+ 
+successful
+ 
+login.
+ 
+From
+ 
+there,
+ 
+they
+ 
+can:
+ 
+●  Manage  user  accounts.  ●  Approve,  edit,  or  remove  product  listings.  ●  Monitor  ongoing  auctions.  
+
+
+--- PAGE 6 ---
+●  View  reports  and  platform  statistics.  ●  Log  out  when  finished.  
+Overall,  the  Home  Dashboard  acts  as  the  central  hub  of  the  application,  allowing  users  to  easily  
+navigate
+ 
+between
+ 
+auction-related
+ 
+features
+ 
+and
+ 
+return
+ 
+to
+ 
+the
+ 
+main
+ 
+page
+ 
+after
+ 
+completing
+ 
+any
+ 
+action.
+ 
+7.  Technology  Stack  
+Layer  Technology  
+Frontend  HTML,  CSS,  JavaScript,  TailWind,  React  
+Backend  Node.js  with  Express.js   
+Database  MongoDB,  Cloudflare  R2  
+IDE  Visual  Studio  Code  
+Version  Control  Git  &  GitHub   
+

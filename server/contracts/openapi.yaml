@@ -1,0 +1,1099 @@
+openapi: 3.1.0
+info:
+  title: CampusBid - VESIT Online Auction System API
+  description: |
+    Comprehensive REST API contracts for the VESIT collegiate peer-to-peer auction marketplace.
+    Covers all 7 functional modules defined in FSD-Lab0:
+    1. User Management (Auth & Profiles)
+    2. Product Management (Listings & Media)
+    3. Auction Management (Scheduling & Lifecycle)
+    4. Bidding System (Real-time Bids & Validation)
+    5. Search & Browse (Filtering & Catalog)
+    6. Notifications (Outbid, Winning, Seller Alerts)
+    7. Admin Module (User & Listing Moderation, Analytics)
+  version: 1.0.0
+  contact:
+    name: VESIT FSD Engineering Team
+    email: fsd-support@ves.ac.in
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local Development Server
+  - url: https://api.campusbid.ves.ac.in/v1
+    description: Production Server
+
+tags:
+  - name: Auth
+    description: User authentication, registration with @ves.ac.in, and password lifecycle
+  - name: Users
+    description: Student profile details, stats, and notification preferences
+  - name: Products & Auctions
+    description: Product listings, image uploads, auction parameters, and lifecycle
+  - name: Bids
+    description: Real-time bid placement, validation, and bid history
+  - name: Notifications
+    description: User alerts for outbids, winning auctions, and seller updates
+  - name: Admin
+    description: Listing moderation, dispute resolution, user management, and platform analytics
+
+paths:
+  # =========================================================================
+  # MODULE 1: USER MANAGEMENT & AUTHENTICATION
+  # =========================================================================
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new student account
+      description: |
+        Creates a new student account. Registration strictly enforces the VESIT college domain
+        (`@ves.ac.in`) and requires academic identifiers (Class/Branch and Roll Number).
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error (e.g. non-VESIT email, weak password, missing fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: User with email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Student / Admin login
+      description: Authenticates user credentials and returns a signed JWT access token.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: User logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out and token invalidated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request password reset link / OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: shivam.mishra@ves.ac.in
+      responses:
+        '200':
+          description: Password reset email dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset password with token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current authenticated user profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+    put:
+      tags: [Users]
+      summary: Update current user profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get public profile and seller stats by User ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUserResponse'
+
+  # =========================================================================
+  # MODULE 2, 3 & 5: PRODUCTS, AUCTIONS, SEARCH & BROWSE
+  # =========================================================================
+  /products:
+    get:
+      tags: [Products & Auctions]
+      summary: Browse and search active auctions
+      description: Retrieve catalog with search keywords, category filtering, condition filter, min/max price range, and sorting.
+      parameters:
+        - name: search
+          in: query
+          description: Search term matching title or description
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Filter by product category
+          schema:
+            type: string
+            enum: [all, electronics, books, furniture, fashion, sports, others]
+        - name: condition
+          in: query
+          schema:
+            type: string
+            enum: [new, like-new, good, fair, vintage]
+        - name: status
+          in: query
+          description: Filter by auction status
+          schema:
+            type: string
+            enum: [live, ended, upcoming, all]
+            default: live
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ending_soonest, newly_listed, price_asc, price_desc, most_bids]
+            default: ending_soonest
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 12
+      responses:
+        '200':
+          description: List of products and pagination metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+
+    post:
+      tags: [Products & Auctions]
+      summary: Create / List a new item for auction
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product listed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductItem'
+        '400':
+          description: Validation failed (e.g. starting bid < 0, missing images)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /products/my-listings:
+    get:
+      tags: [Products & Auctions]
+      summary: Get all listings created by the authenticated student
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [all, live, ended, drafts]
+      responses:
+        '200':
+          description: List of user's own items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  listings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductItem'
+
+  /products/{id}:
+    get:
+      tags: [Products & Auctions]
+      summary: Get product details and current auction status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detailed product and auction information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailResponse'
+        '404':
+          description: Product not found
+
+    put:
+      tags: [Products & Auctions]
+      summary: Edit own product listing
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductItem'
+        '403':
+          description: Unauthorized to edit this listing
+
+    delete:
+      tags: [Products & Auctions]
+      summary: Delete or unlist a product
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product deleted or archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /products/{id}/report:
+    post:
+      tags: [Products & Auctions]
+      summary: Report a product listing for moderation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  enum: [Counterfeit, Inappropriate Content, Misleading Information, Prohibited Item, Other]
+                comments:
+                  type: string
+      responses:
+        '201':
+          description: Report submitted to admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /upload/image:
+    post:
+      tags: [Products & Auctions]
+      summary: Upload product image to Cloudflare R2
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string, format: uri, example: 'https://r2.campusbid.ves.ac.in/uploads/item_982.webp' }
+
+  # =========================================================================
+  # MODULE 4: BIDDING SYSTEM
+  # =========================================================================
+  /products/{id}/bids:
+    get:
+      tags: [Bids]
+      summary: Get complete bid history for an auction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bid history list ordered newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  currentHighestBid: { type: number, example: 2500 }
+                  totalBids: { type: integer, example: 14 }
+                  bids:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BidEntry'
+
+    post:
+      tags: [Bids]
+      summary: Place a bid on a live auction
+      description: |
+        Places a new bid on the specified product.
+        Validation Rules:
+        1. Auction status must be 'live'.
+        2. Bidder cannot be the seller of the product.
+        3. Amount must be >= (currentHighestBid + minBidIncrement).
+        4. User must have a verified account.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount:
+                  type: number
+                  description: Bid amount in INR (₹)
+                  example: 2600
+      responses:
+        '201':
+          description: Bid placed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  message: { type: string, example: 'Bid placed successfully!' }
+                  bid:
+                    $ref: '#/components/schemas/BidEntry'
+                  updatedCurrentBid: { type: number, example: 2600 }
+        '400':
+          description: Invalid bid (e.g. amount below minimum increment)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Seller cannot bid on their own item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bids/my-bids:
+    get:
+      tags: [Bids]
+      summary: Get all auctions where the current user has placed bids
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: filter
+          in: query
+          schema:
+            type: string
+            enum: [all, winning, outbid, ended]
+            default: all
+      responses:
+        '200':
+          description: List of user's active and past bids
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  bids:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserBidRecord'
+
+  # =========================================================================
+  # MODULE 6: NOTIFICATIONS
+  # =========================================================================
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Get user notifications
+      description: Returns alerts for outbid events, won auctions, and ending listings.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Notification items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  unreadCount: { type: integer, example: 2 }
+                  notifications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificationItem'
+
+  /notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      summary: Mark a notification as read
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /notifications/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Mark all notifications as read
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: All marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  # =========================================================================
+  # MODULE 7: ADMIN MODULE
+  # =========================================================================
+  /admin/stats:
+    get:
+      tags: [Admin]
+      summary: Get platform analytics and statistics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Platform KPIs and activity stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStatsResponse'
+
+  /admin/listings/pending:
+    get:
+      tags: [Admin]
+      summary: Get listings awaiting admin moderation
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of pending items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  pendingCount: { type: integer, example: 3 }
+                  listings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductItem'
+
+  /admin/listings/{id}/moderate:
+    post:
+      tags: [Admin]
+      summary: Approve or Reject a listing
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [approve, reject]
+                reason:
+                  type: string
+                  example: 'Violation of prohibited items policy'
+      responses:
+        '200':
+          description: Listing moderation state updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /admin/reports:
+    get:
+      tags: [Admin]
+      summary: Get reported listings and disputes
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Active reports queue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportItem'
+
+  /admin/reports/{id}/resolve:
+    post:
+      tags: [Admin]
+      summary: Resolve a reported listing
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolutionAction]
+              properties:
+                resolutionAction:
+                  type: string
+                  enum: [dismiss, remove_listing, suspend_user, warn_seller]
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Report resolved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageResponse'
+
+  /admin/users:
+    get:
+      tags: [Admin]
+      summary: List registered users with account status
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [all, student, admin]
+      responses:
+        '200':
+          description: User directory
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserProfileResponse'
+
+# =========================================================================
+# COMPONENTS & SCHEMAS
+# =========================================================================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [fullName, email, classBranch, rollNo, password, confirmPassword, agreeTerms]
+      properties:
+        fullName:
+          type: string
+          example: 'Jane Doe'
+        email:
+          type: string
+          format: email
+          pattern: '^[a-zA-Z0-9._%+-]+@ves\\.ac\\.in$'
+          description: Must belong to @ves.ac.in domain
+          example: 'jane.doe@ves.ac.in'
+        classBranch:
+          type: string
+          example: 'D12C / CMPN'
+        rollNo:
+          type: string
+          example: '42'
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: 'StrongPass#2026'
+        confirmPassword:
+          type: string
+          format: password
+          example: 'StrongPass#2026'
+        agreeTerms:
+          type: boolean
+          example: true
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'alex.mercer@ves.ac.in'
+        password:
+          type: string
+          format: password
+          example: 'CollegePass#123'
+
+    ResetPasswordRequest:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+
+    AuthResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        user:
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      properties:
+        id: { type: string, example: 'usr_68201' }
+        fullName: { type: string, example: 'Alex Mercer' }
+        email: { type: string, example: 'alex.mercer@ves.ac.in' }
+        classBranch: { type: string, example: 'D12C / EXTC' }
+        rollNo: { type: string, example: '2021EXTC042' }
+        role: { type: string, enum: [student, admin], example: 'student' }
+        isVerifiedStudent: { type: boolean, example: true }
+        phone: { type: string, example: '+91 98765 43210' }
+        bio: { type: string, example: 'Engineering student interested in vintage tech and textbooks.' }
+        avatarUrl: { type: string, format: uri, example: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb' }
+        memberSince: { type: string, example: 'June 2023' }
+        stats:
+          type: object
+          properties:
+            itemsSold: { type: integer, example: 12 }
+            itemsBought: { type: integer, example: 8 }
+            rating: { type: number, example: 4.9 }
+
+    UserProfileResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        user:
+          $ref: '#/components/schemas/UserProfile'
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        fullName: { type: string }
+        phone: { type: string }
+        classBranch: { type: string }
+        bio: { type: string }
+        notificationPreferences:
+          type: object
+          properties:
+            outbidAlerts: { type: boolean, example: true }
+            auctionEndingAlerts: { type: boolean, example: true }
+            newMessageAlerts: { type: boolean, example: true }
+
+    PublicUserResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        user:
+          type: object
+          properties:
+            id: { type: string }
+            fullName: { type: string }
+            classBranch: { type: string }
+            isVerifiedStudent: { type: boolean }
+            rating: { type: number }
+            memberSince: { type: string }
+            avatarUrl: { type: string }
+
+    CreateProductRequest:
+      type: object
+      required: [title, category, condition, description, startingBid, minIncrement, duration, images]
+      properties:
+        title:
+          type: string
+          example: 'Stewart Calculus Early Transcendentals 8th Ed'
+        category:
+          type: string
+          enum: [electronics, books, furniture, fashion, sports, others]
+          example: 'books'
+        condition:
+          type: string
+          enum: [new, like-new, good, fair, vintage]
+          example: 'like-new'
+        description:
+          type: string
+          example: 'Meticulously maintained hardbound edition. No markings or tears.'
+        startingBid:
+          type: number
+          description: Starting price in INR (₹)
+          example: 800
+        minIncrement:
+          type: number
+          description: Minimum increment step in INR (₹)
+          example: 50
+        duration:
+          type: string
+          enum: [24h, 3d, 7d]
+          example: '3d'
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          example: ['https://r2.campusbid.ves.ac.in/uploads/book1.webp']
+        isDraft:
+          type: boolean
+          default: false
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        condition: { type: string }
+        images:
+          type: array
+          items: { type: string }
+
+    ProductItem:
+      type: object
+      properties:
+        id: { type: string, example: 'prod_101' }
+        title: { type: string, example: 'Vintage Smith-Corona Typewriter' }
+        category: { type: string, example: 'electronics' }
+        condition: { type: string, example: 'Like New' }
+        description: { type: string }
+        images:
+          type: array
+          items: { type: string }
+        seller:
+          type: object
+          properties:
+            id: { type: string, example: 'usr_68201' }
+            name: { type: string, example: 'Alex V.' }
+            isVerified: { type: boolean, example: true }
+            avatar: { type: string }
+        startingBid: { type: number, example: 2000 }
+        currentBid: { type: number, example: 2500 }
+        minIncrement: { type: number, example: 100 }
+        bidCount: { type: integer, example: 8 }
+        status: { type: string, enum: [live, ended, draft, pending_approval], example: 'live' }
+        endTime: { type: string, format: date-time, example: '2026-08-27T18:00:00Z' }
+        createdAt: { type: string, format: date-time }
+        winningBidder:
+          type: object
+          nullable: true
+          properties:
+            id: { type: string }
+            name: { type: string }
+            amount: { type: number }
+
+    ProductListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        total: { type: integer, example: 48 }
+        page: { type: integer, example: 1 }
+        totalPages: { type: integer, example: 4 }
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductItem'
+
+    ProductDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        product:
+          $ref: '#/components/schemas/ProductItem'
+        recentBids:
+          type: array
+          items:
+            $ref: '#/components/schemas/BidEntry'
+
+    BidEntry:
+      type: object
+      properties:
+        id: { type: string, example: 'bid_9012' }
+        productId: { type: string, example: 'prod_101' }
+        bidderName: { type: string, example: 'Marcus H.' }
+        bidderId: { type: string, example: 'usr_4401' }
+        amount: { type: number, example: 2500 }
+        createdAt: { type: string, format: date-time, example: '2026-08-25T08:30:00Z' }
+        timeAgo: { type: string, example: '10 mins ago' }
+
+    UserBidRecord:
+      type: object
+      properties:
+        id: { type: string, example: 'bid_9012' }
+        productId: { type: string, example: 'prod_101' }
+        productTitle: { type: string, example: 'Vintage Film Camera' }
+        productImage: { type: string }
+        sellerName: { type: string, example: 'Alex Rivera' }
+        sellerVerified: { type: boolean, example: true }
+        yourBid: { type: number, example: 2500 }
+        highestBid: { type: number, example: 2500 }
+        status: { type: string, enum: [Winning, Outbid, Ended, Won], example: 'Winning' }
+        timeLeft: { type: string, example: '04h 12m 30s' }
+        endTime: { type: string, format: date-time }
+
+    NotificationItem:
+      type: object
+      properties:
+        id: { type: string, example: 'notif_301' }
+        type: { type: string, enum: [outbid, auction_won, auction_ended, new_bid], example: 'outbid' }
+        title: { type: string, example: 'You have been outbid!' }
+        message: { type: string, example: 'A higher bid of ₹2,700 was placed on Vintage Film Camera.' }
+        productId: { type: string, example: 'prod_101' }
+        read: { type: boolean, example: false }
+        createdAt: { type: string, format: date-time }
+
+    AdminStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        stats:
+          type: object
+          properties:
+            activeUsers: { type: integer, example: 1240 }
+            totalVolumeInr: { type: number, example: 485000 }
+            pendingApprovals: { type: integer, example: 14 }
+            flaggedListings: { type: integer, example: 3 }
+            liveAuctions: { type: integer, example: 86 }
+            completedAuctions: { type: integer, example: 412 }
+
+    ReportItem:
+      type: object
+      properties:
+        id: { type: string, example: 'rep_102' }
+        productId: { type: string, example: 'prod_502' }
+        productTitle: { type: string, example: 'MacBook Pro M1' }
+        reason: { type: string, example: 'Counterfeit' }
+        status: { type: string, enum: [Reviewing, Action Required, Resolved], example: 'Reviewing' }
+        reportedBy: { type: string, example: 'User_892' }
+        reportedAt: { type: string, example: 'Today, 10:15 AM' }
+
+    SuccessMessageResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: 'Operation completed successfully.' }
+
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        error:
+          type: object
+          properties:
+            code: { type: string, example: 'INVALID_BID_AMOUNT' }
+            message: { type: string, example: 'Bid amount must be at least ₹2,600.' }
+            details: { type: object, nullable: true }

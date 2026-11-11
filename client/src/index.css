@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body bg-primary-container text-on-surface antialiased;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+@layer components {
+  .main-stage {
+    @apply w-full max-w-[1280px] mx-auto mt-6 mb-8 p-6 sm:p-10 md:p-12 max-md:mt-0 max-md:mb-0 max-md:px-4 max-md:rounded-none rounded-2xl bg-white shadow-sm border border-outline-variant;
+  }
+
+  .editorial-label {
+    @apply block mb-2 font-label-caps text-label-caps text-on-surface uppercase tracking-wider font-semibold;
+  }
+
+  .editorial-input {
+    @apply w-full appearance-none rounded-full border border-outline-variant bg-transparent px-4 py-3 text-body-md font-body text-on-surface placeholder:text-secondary-fixed-dim focus:border-on-surface focus:outline-none focus:ring-1 focus:ring-on-surface transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-black text-white font-label-caps text-label-caps uppercase tracking-widest px-6 py-3 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-black text-black font-label-caps text-label-caps uppercase tracking-widest px-6 py-3 rounded-full hover:bg-surface-container-low transition-colors duration-200 cursor-pointer;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Hide scrollbar for category bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

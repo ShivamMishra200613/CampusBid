@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "CampusBid - VESIT Auction API",
+    "_postman_id": "c1f7b0a8-campusbid-vesit-api",
+    "description": "Postman Collection for VESIT Online Auction System (FSD-Lab0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Shivam Mishra\",\n  \"email\": \"shivam.mishra@ves.ac.in\",\n  \"classBranch\": \"D15A / CMPN\",\n  \"rollNo\": \"28\",\n  \"password\": \"SecurePass123!\",\n  \"confirmPassword\": \"SecurePass123!\",\n  \"agreeTerms\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alex.mercer@ves.ac.in\",\n  \"password\": \"CollegePass#123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products & Auctions",
+      "item": [
+        {
+          "name": "Browse Active Auctions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/products?category=all&status=live&sort=ending_soonest",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "category", "value": "all" },
+                { "key": "status", "value": "live" },
+                { "key": "sort", "value": "ending_soonest" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/products/1", "host": ["{{baseUrl}}"], "path": ["products", "1"] }
+          }
+        },
+        {
+          "name": "Create Auction Listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Calculus 8th Edition by Stewart\",\n  \"category\": \"books\",\n  \"condition\": \"like-new\",\n  \"description\": \"Hardcover reference book, pristine condition.\",\n  \"startingBid\": 850,\n  \"minIncrement\": 50,\n  \"duration\": \"3d\",\n  \"images\": [\"https://example.com/stewart.jpg\"]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bidding",
+      "item": [
+        {
+          "name": "Place Bid",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2700\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products/1/bids", "host": ["{{baseUrl}}"], "path": ["products", "1", "bids"] }
+          }
+        },
+        {
+          "name": "My Bids",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/bids/my-bids", "host": ["{{baseUrl}}"], "path": ["bids", "my-bids"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Platform Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        },
+        {
+          "name": "Get Pending Listings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/listings/pending", "host": ["{{baseUrl}}"], "path": ["admin", "listings", "pending"] }
+          }
+        },
+        {
+          "name": "Moderate Listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"approve\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/admin/listings/prod_101/moderate", "host": ["{{baseUrl}}"], "path": ["admin", "listings", "prod_101", "moderate"] }
+          }
+        }
+      ]
+    }
+  ]
+}
