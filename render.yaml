@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: campusbid-server
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: AUCTION_SWEEP_MS
+        value: 10000
+      - key: ADMIN_EMAIL
+        value: admin@ves.ac.in
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false

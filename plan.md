@@ -197,13 +197,13 @@ Done when: one command starts the whole stack and the Playwright suite passes ag
 
 ### Phase 10: DevOps and deployment
 
-- [ ] 10.1 GitHub Actions workflow `.github/workflows/ci.yml`: on push and pull request, run client lint and build, start a MongoDB service container, run server tests, install Playwright browsers, run the e2e suite against the dev servers, and upload the Playwright report as an artifact on failure.
-- [ ] 10.2 A second workflow `.github/workflows/docker.yml` that builds both images on pushes to `main` to prove the Dockerfiles work (no registry push required).
-- [ ] 10.3 Deployment configuration, prepared but not executed by the agent: `render.yaml` for the server (build and start commands, health check path, env var names without values), and `client/vercel.json` with a rewrite to `index.html` for the single-page app. Frontend env var `VITE_API_URL` points at the deployed server.
-- [ ] 10.4 `server` must read `CLIENT_ORIGIN` for CORS and Socket.IO CORS, so the deployed frontend origin is the only one allowed in production.
-- [ ] 10.5 Write `DEPLOY.md` with exact manual steps for the human: create a MongoDB Atlas free cluster and a database user, allow network access, copy the connection string; deploy the server on Render with the env vars; deploy the client on Vercel; run the seed script once against Atlas; smoke-test with the checklist at the end of the file. Include a section on free-tier cold starts and WebSockets.
-- [ ] 10.6 Add a `GET /health` that also reports database connection state (`connected` or `disconnected`) and returns `503` when disconnected. Add structured request logging (`morgan` in dev format, combined format in production).
-- [ ] 10.7 Add a root `README.md` that covers: what the project is, the stack, how to run it three ways (dev, Docker, deployed), the env vars, the test commands, the demo accounts, and the evaluation checklist mapping from section 5 of this file.
+- [x] 10.1 GitHub Actions workflow `.github/workflows/ci.yml`: on push and pull request, run client lint and build, start a MongoDB service container, run server tests, install Playwright browsers, run the e2e suite against the dev servers, and upload the Playwright report as an artifact on failure.
+- [x] 10.2 A second workflow `.github/workflows/docker.yml` that builds both images on pushes to `main` to prove the Dockerfiles work (no registry push required).
+- [x] 10.3 Deployment configuration, prepared but not executed by the agent: `render.yaml` for the server (build and start commands, health check path, env var names without values), and `client/vercel.json` with a rewrite to `index.html` for the single-page app. Frontend env var `VITE_API_URL` points at the deployed server.
+- [x] 10.4 `server` must read `CLIENT_ORIGIN` for CORS and Socket.IO CORS, so the deployed frontend origin is the only one allowed in production.
+- [x] 10.5 Write `DEPLOY.md` with exact manual steps for the human: create a MongoDB Atlas free cluster and a database user, allow network access, copy the connection string; deploy the server on Render with the env vars; deploy the client on Vercel; run the seed script once against Atlas; smoke-test with the checklist at the end of the file. Include a section on free-tier cold starts and WebSockets.
+- [x] 10.6 Add a `GET /health` that also reports database connection state (`connected` or `disconnected`) and returns `503` when disconnected. Add structured request logging (`morgan` in dev format, combined format in production).
+- [x] 10.7 Add a root `README.md` that covers: what the project is, the stack, how to run it three ways (dev, Docker, deployed), the env vars, the test commands, the demo accounts, and the evaluation checklist mapping from section 5 of this file.
 
 Done when: CI is green on a push, `DEPLOY.md` is complete, and the human has the exact steps to put it live.
 
