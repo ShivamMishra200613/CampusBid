@@ -228,10 +228,10 @@ Done when: `npm run e2e` passes three times in a row from a clean database.
 
 ### Phase 12: Evaluation readiness
 
-- [ ] 12.1 Write `docs/evaluation.md`: for each of the nine checklist items, one paragraph on how it is implemented, the exact files to open in the demo, and three likely viva questions with short answers (for example: why JWT and not sessions, how the bid race condition is prevented, why Socket.IO rooms, what the multi-stage Docker build saves, how Mongoose references differ from embedding).
-- [ ] 12.2 Write `docs/demo-script.md`: a 10 minute demo order with the demo accounts, which two windows to open for the real-time part, and what to say at each step.
-- [ ] 12.3 Make sure the seeded demo data tells a good story: one auction ending in about 2 minutes after seed (for the live ending demo), one with active bidding, one already won by the demo student, and one pending approval for the admin.
-- [ ] 12.4 Final sweep: run every verification command from `agents.md`, fix everything, update the checklist table in section 1 of this file to show final status, and update `progress.md`.
+- [x] 12.1 Write `docs/evaluation.md`: for each of the nine checklist items, one paragraph on how it is implemented, the exact files to open in the demo, and three likely viva questions with short answers (for example: why JWT and not sessions, how the bid race condition is prevented, why Socket.IO rooms, what the multi-stage Docker build saves, how Mongoose references differ from embedding).
+- [x] 12.2 Write `docs/demo-script.md`: a 10 minute demo order with the demo accounts, which two windows to open for the real-time part, and what to say at each step.
+- [x] 12.3 Make sure the seeded demo data tells a good story: one auction ending in about 2 minutes after seed (for the live ending demo), one with active bidding, one already won by the demo student, and one pending approval for the admin.
+- [x] 12.4 Final sweep: run every verification command from `agents.md`, fix everything, update the checklist table in section 1 of this file to show final status, and update `progress.md`.
 
 Done when: a person who has never seen the project can follow `README.md` and `docs/demo-script.md` and run the full demo.
 
@@ -251,12 +251,12 @@ Fill the last column in during Phase 12.
 
 | Checklist item | Where it lives | Proof in the demo | Status |
 | --- | --- | --- | --- |
-| Frontend with Tailwind | `client/src`, `tailwind.config.js` | Responsive pages at desktop and 375 px | |
-| React and State Management | `client/src/context`, `api/`, hooks | Login persists, filters, live updates | |
-| Backend REST API | `server/src/routes`, `controllers` | Postman collection run | |
-| MongoDB and Mongoose | `server/src/models`, `docs/database.md` | Compass view of the collections | |
-| Data Validation | `validators/`, `client/src/utils/validators.js` | Bad input rejected on both sides | |
-| Authentication and Authorization | `middleware/auth.js`, route guards | Student blocked from admin routes | |
-| Real-Time Features (Socket.IO) | `sockets/`, `SocketContext` | Two windows, instant bid and notification | |
-| Docker | Dockerfiles, `docker-compose.yml` | `docker compose up --build` | |
-| DevOps and Deployment | `.github/workflows`, `DEPLOY.md`, live URLs | Green CI run and the live site | |
+| Frontend with Tailwind | `client/src`, `tailwind.config.js` | Responsive pages at desktop and 375 px | Complete |
+| React and State Management | `client/src/context`, `api/`, hooks | Login persists, filters, live updates | Complete |
+| Backend REST API | `server/src/routes`, `controllers` | Postman collection run | Complete |
+| MongoDB and Mongoose | `server/src/models`, `docs/database.md` | Compass view of the collections | Complete |
+| Data Validation | `validators/`, `client/src/utils/validators.js` | Bad input rejected on both sides | Complete |
+| Authentication and Authorization | `middleware/auth.js`, route guards | Student blocked from admin routes | Complete |
+| Real-Time Features (Socket.IO) | `sockets/`, `SocketContext` | Two windows, instant bid and notification | Complete |
+| Docker | Dockerfiles, `docker-compose.yml` | `docker compose up --build` | Complete |
+| DevOps and Deployment | `.github/workflows`, `DEPLOY.md`, live URLs | Green CI run and the live site | Complete |
