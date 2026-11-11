@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 0: Baseline and repo hygiene   Last finished task: 0.4   Next task: 0.5
+Phase: Phase 0: Baseline and repo hygiene   Last finished task: 0.5   Next task: 0.6
 
 ## Log
+- 2026-11-11 0.5: Verified root progress.md exists and adheres to agents.md section 11 format | checks: format check against agents.md
 - 2026-11-11 0.4: Removed hardcoded JWT secret fallback and R2 config from config.js; enforced production failure on missing JWT_SECRET or MONGO_URI | checks: verified node execution in production and dev modes
 - 2026-11-11 0.3: Created server/.env.example and client/.env.example with documented env vars; ensured real .env is ignored | checks: git status, .gitignore verification
 - 2026-11-11 0.2: Initialized git repository with origin https://github.com/ShivamMishra200613/CampusBid.git and added root .gitignore | checks: git status, git remote -v
