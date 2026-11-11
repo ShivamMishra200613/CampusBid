@@ -86,7 +86,7 @@ Done when: both apps install, build, and start from a clean clone, lint passes, 
 - [x] 1.6 Create the `Notification` model: `user` (ref), `type` (`outbid` | `auction_won` | `auction_ended` | `listing_approved` | `listing_rejected`), `title`, `message`, `product` (ref), `read`, timestamps.
 - [x] 1.7 Create the `Report` model: `product` (ref), `reportedBy` (ref), `reason`, `status` (`open` | `resolved`), `resolutionAction`, `notes`, timestamps.
 - [x] 1.8 Write `scripts/seed.js` (`npm run seed`) that wipes and recreates: one admin (credentials from env), four students, 8 products across all categories (mix of live and ended, with bids), a few notifications and reports. All seeded passwords must be documented in `README.md` as demo-only.
-- [ ] 1.9 Write a short `docs/database.md` with the collections, fields, relationships, and indexes, plus a Mermaid ER diagram. This is what you explain in the evaluation.
+- [x] 1.9 Write a short `docs/database.md` with the collections, fields, relationships, and indexes, plus a Mermaid ER diagram. This is what you explain in the evaluation.
 
 Done when: `npm run seed` fills the database, and a Mongo shell or Compass shows the five collections with relationships.
 
