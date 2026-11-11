@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 3: Data validation   Last finished task: 2.9   Next task: 3.1
+Phase: Phase 3: Data validation   Last finished task: 3.1   Next task: 3.2
 
 ## Log
+- 2026-11-11 3.1: Installed zod and implemented validators/schemas.js covering all contracts with strict checking, email refinement, and password rules | checks: verified schema parsing with valid and invalid payloads in node
 - 2026-11-11 2.9: Added comprehensive server auth test suite (server/tests/auth.test.js) with 7 test cases covering registration, login, token guard, role guard, and listing owner protection | checks: 7/7 tests passed in node --test; client lint and build clean
 - 2026-11-11 2.8: Added express-rate-limit to /auth/* routes, integrated helmet security headers, and restricted CORS origin to CLIENT_ORIGIN | checks: verified Helmet headers, CORS origin match, and rate-limiting headers
 - 2026-11-11 2.7: Implemented POST /auth/forgot-password and POST /auth/reset-password with signed reset tokens, dev console logging, and user enumeration protection | checks: verified 200 on forgot-password, console link output, 400 on invalid token, and successful reset + login

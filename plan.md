@@ -106,7 +106,7 @@ Done when: all tests in 2.9 pass and a request with a student token to `/admin/s
 
 ### Phase 3: Data validation
 
-- [ ] 3.1 Install `zod` on the server. Convert `contracts/schemas.js` into Zod schemas in `validators/schemas.js`: register, login, update profile, create product, update product, place bid, moderate listing, resolve report, report listing, forgot and reset password.
+- [x] 3.1 Install `zod` on the server. Convert `contracts/schemas.js` into Zod schemas in `validators/schemas.js`: register, login, update profile, create product, update product, place bid, moderate listing, resolve report, report listing, forgot and reset password.
 - [ ] 3.2 Create `validators/validate.js`, a middleware factory `validate(schema, source = 'body')` that replaces `req[source]` with the parsed value and returns `400 VALIDATION_ERROR` with `details` as a list of `{ field, message }`.
 - [ ] 3.3 Password rule: at least 8 characters, at least one letter and one number. Email rule: valid email ending in `@ves.ac.in`, lowercased and trimmed. Bid amount: a positive number. Reject unknown fields (`.strict()`) on create and update schemas.
 - [ ] 3.4 Validate route params that are ObjectIds (`400 INVALID_ID`) so a bad id never reaches Mongoose as a cast error. Map Mongoose `ValidationError`, `CastError`, and duplicate key (`11000`) errors in `errorHandler` to clean API errors.
