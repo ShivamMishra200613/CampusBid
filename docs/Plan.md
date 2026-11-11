@@ -186,12 +186,12 @@ Done when: two browser windows on the same auction see each other's bids instant
 
 ### Phase 9: Docker
 
-- [ ] 9.1 `server/Dockerfile`: multi-stage build on `node:22-alpine`, production dependencies only, runs as the non-root `node` user, has a `HEALTHCHECK` that calls `/health`, exposes 5000.
-- [ ] 9.2 `client/Dockerfile`: multi-stage build that runs `npm run build` and serves `dist/` with nginx. `client/nginx.conf` serves the single-page app (fallback to `index.html`) and proxies `/api`, `/socket.io` (with the WebSocket upgrade headers), and `/uploads` to the `server` service.
-- [ ] 9.3 Add `.dockerignore` files in both folders (`node_modules`, `dist`, `.env`, `uploads`).
-- [ ] 9.4 Root `docker-compose.yml` with three services: `mongo` (official image, named volume, healthcheck), `server` (depends on healthy `mongo`, env from `server/.env`, volume for `uploads`), and `client` (nginx, published on port 8080). A `seed` step available through `docker compose run --rm server npm run seed`.
-- [ ] 9.5 Root `docker-compose.dev.yml` override (or a `docker-compose.test.yml`) that starts only `mongo` on port 27017 for local development and for the test suites.
-- [ ] 9.6 Verify: `docker compose up --build` from a clean state serves the app at `http://localhost:8080`, registration and login work, a bid placed in one window appears in another, and `docker compose down` followed by `up` keeps the data.
+- [x] 9.1 `server/Dockerfile`: multi-stage build on `node:22-alpine`, production dependencies only, runs as the non-root `node` user, has a `HEALTHCHECK` that calls `/health`, exposes 5000.
+- [x] 9.2 `client/Dockerfile`: multi-stage build that runs `npm run build` and serves `dist/` with nginx. `client/nginx.conf` serves the single-page app (fallback to `index.html`) and proxies `/api`, `/socket.io` (with the WebSocket upgrade headers), and `/uploads` to the `server` service.
+- [x] 9.3 Add `.dockerignore` files in both folders (`node_modules`, `dist`, `.env`, `uploads`).
+- [x] 9.4 Root `docker-compose.yml` with three services: `mongo` (official image, named volume, healthcheck), `server` (depends on healthy `mongo`, env from `server/.env`, volume for `uploads`), and `client` (nginx, published on port 8080). A `seed` step available through `docker compose run --rm server npm run seed`.
+- [x] 9.5 Root `docker-compose.dev.yml` override (or a `docker-compose.test.yml`) that starts only `mongo` on port 27017 for local development and for the test suites.
+- [x] 9.6 Verify: `docker compose up --build` from a clean state serves the app at `http://localhost:8080`, registration and login work, a bid placed in one window appears in another, and `docker compose down` followed by `up` keeps the data.
 
 Done when: one command starts the whole stack and the Playwright suite passes against `http://localhost:8080`.
 
