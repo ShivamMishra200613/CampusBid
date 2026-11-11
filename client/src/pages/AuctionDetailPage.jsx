@@ -434,7 +434,7 @@ export default function AuctionDetailPage() {
                   </div>
                 ) : isLive ? (
                   <div>
-                    <form onSubmit={handleBidSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <form onSubmit={handleBidSubmit} noValidate className="flex flex-col sm:flex-row gap-3 pt-2">
                       <div className="relative flex-grow">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 font-body-md text-lg text-secondary">
                           ₹

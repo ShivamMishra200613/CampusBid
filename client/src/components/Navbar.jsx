@@ -164,6 +164,7 @@ export default function Navbar() {
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              data-testid="mobile-menu-trigger"
               className="lg:hidden p-2 rounded-full hover:bg-surface-container text-on-surface"
               aria-label="Open menu"
             >
@@ -176,7 +177,7 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-surface border-b border-outline-variant px-6 py-6 space-y-4 animate-fade-in shadow-lg">
+          <div data-testid="mobile-menu" className="lg:hidden bg-surface border-b border-outline-variant px-6 py-6 space-y-4 animate-fade-in shadow-lg">
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}

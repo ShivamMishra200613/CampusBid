@@ -155,7 +155,7 @@ export default function CreateListingPage() {
       showToast('Please fix the errors in the form.', 'error');
       return;
     }
-    if (images.length === 0) {
+    if (!isDraft && images.length === 0) {
       showToast('Please add at least one product photo.', 'error');
       return;
     }
@@ -291,6 +291,7 @@ export default function CreateListingPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddUrlInput(true)}
+                  data-testid="toggle-url-input-button"
                   className="text-xs text-secondary hover:text-on-surface underline font-body-sm"
                 >
                   + Or paste image URL directly
@@ -299,6 +300,7 @@ export default function CreateListingPage() {
                 <div className="p-4 rounded-xl bg-surface-bright border border-outline-variant flex flex-col sm:flex-row gap-3 items-center">
                   <input
                     type="url"
+                    data-testid="image-url-input"
                     placeholder="Paste image URL (e.g. https://...)"
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
@@ -308,6 +310,7 @@ export default function CreateListingPage() {
                     <button
                       type="button"
                       onClick={handleAddImage}
+                      data-testid="add-image-url-button"
                       className="btn-primary flex-1 sm:flex-none px-6 py-2.5"
                     >
                       Add
@@ -510,6 +513,7 @@ export default function CreateListingPage() {
             {!editId && (
               <button
                 type="button"
+                data-testid="save-draft-button"
                 onClick={() => handleSubmit(true)}
                 className="btn-secondary w-full sm:w-auto"
               >
@@ -518,6 +522,7 @@ export default function CreateListingPage() {
             )}
             <button
               type="button"
+              data-testid="publish-listing-button"
               onClick={() => handleSubmit(false)}
               className="btn-primary w-full sm:w-auto"
             >

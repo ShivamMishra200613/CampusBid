@@ -229,6 +229,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('moderation')}
+              data-testid="tab-moderation"
               className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors ${
                 activeTab === 'moderation'
                   ? 'bg-black text-white font-bold'
@@ -239,6 +240,7 @@ export default function AdminDashboardPage() {
             </button>
             <button
               onClick={() => setActiveTab('users')}
+              data-testid="tab-users"
               className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors ${
                 activeTab === 'users'
                   ? 'bg-black text-white font-bold'

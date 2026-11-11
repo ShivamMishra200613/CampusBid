@@ -213,16 +213,16 @@ HUMAN CHECKPOINT: the agent cannot create Atlas, Render, or Vercel accounts. Whe
 
 Frontend testing uses Playwright. Write the suite as you build, not only at the end: every frontend task in Phases 6 to 8 should end with a Playwright check (screenshot or spec) before it is ticked off.
 
-- [ ] 11.1 Create `e2e/` with `@playwright/test`, `playwright.config.js` (Chromium only, `baseURL` from `E2E_BASE_URL` with a default of `http://localhost:5173`, `webServer` entries that start the server on port 5001 with `NODE_ENV=test` and the test database, and the client dev server), and `npx playwright install chromium`.
-- [ ] 11.2 Test helpers: `resetDb` (calls `npm run seed` or a test-only reset script against the test database), `loginAs(page, role)` that logs in through the API and stores the token, and a `bidViaApi` helper for real-time tests.
-- [ ] 11.3 `auth.spec.js`: register with a non-`@ves.ac.in` email shows an error, register success lands on Home, login with a wrong password shows an error, logout works, visiting `/create` logged out redirects to `/login`, a student visiting `/admin` is redirected.
-- [ ] 11.4 `browse.spec.js`: Home lists seeded auctions, search narrows results, category filter works, price filter and sort work, pagination moves, clicking a card opens the detail page, an unknown id shows "not found".
-- [ ] 11.5 `listing.spec.js`: a student creates a listing with an uploaded image, it shows as pending (or live, per the moderation rule), appears in My Listings, can be edited before bids, and can be deleted.
-- [ ] 11.6 `bidding.spec.js`: a bid below the minimum shows an error, a valid bid updates the price and bid history, the seller cannot bid on their own item, My Bids shows `Winning` and then `Outbid` after another user bids.
-- [ ] 11.7 `realtime.spec.js`: use two browser contexts. User A and user B open the same auction. B bids. A sees the new price and history without reloading. A receives the outbid notification toast and badge. The countdown reaches zero on a short auction and both pages flip to the ended state.
-- [ ] 11.8 `admin.spec.js`: admin sees stats, approves a pending listing (it then appears on Home), rejects one with a reason, resolves a report with `remove_listing` (the listing disappears), suspends a user (that user can no longer log in).
-- [ ] 11.9 `responsive.spec.js`: run the Home and detail pages at a 375 px wide viewport and check that the mobile menu opens and nothing overflows horizontally.
-- [ ] 11.10 Add `npm run e2e` at the repo root and make sure the suite is stable: run it three times in a row with no flaky failures.
+- [x] 11.1 Create `e2e/` with `@playwright/test`, `playwright.config.js` (Chromium only, `baseURL` from `E2E_BASE_URL` with a default of `http://localhost:5173`, `webServer` entries that start the server on port 5001 with `NODE_ENV=test` and the test database, and the client dev server), and `npx playwright install chromium`.
+- [x] 11.2 Test helpers: `resetDb` (calls `npm run seed` or a test-only reset script against the test database), `loginAs(page, role)` that logs in through the API and stores the token, and a `bidViaApi` helper for real-time tests.
+- [x] 11.3 `auth.spec.js`: register with a non-`@ves.ac.in` email shows an error, register success lands on Home, login with a wrong password shows an error, logout works, visiting `/create` logged out redirects to `/login`, a student visiting `/admin` is redirected.
+- [x] 11.4 `browse.spec.js`: Home lists seeded auctions, search narrows results, category filter works, price filter and sort work, pagination moves, clicking a card opens the detail page, an unknown id shows "not found".
+- [x] 11.5 `listing.spec.js`: a student creates a listing with an uploaded image, it shows as pending (or live, per the moderation rule), appears in My Listings, can be edited before bids, and can be deleted.
+- [x] 11.6 `bidding.spec.js`: a bid below the minimum shows an error, a valid bid updates the price and bid history, the seller cannot bid on their own item, My Bids shows `Winning` and then `Outbid` after another user bids.
+- [x] 11.7 `realtime.spec.js`: use two browser contexts. User A and user B open the same auction. B bids. A sees the new price and history without reloading. A receives the outbid notification toast and badge. The countdown reaches zero on a short auction and both pages flip to the ended state.
+- [x] 11.8 `admin.spec.js`: admin sees stats, approves a pending listing (it then appears on Home), rejects one with a reason, resolves a report with `remove_listing` (the listing disappears), suspends a user (that user can no longer log in).
+- [x] 11.9 `responsive.spec.js`: run the Home and detail pages at a 375 px wide viewport and check that the mobile menu opens and nothing overflows horizontally.
+- [x] 11.10 Add `npm run e2e` at the repo root and make sure the suite is stable: run it three times in a row with no flaky failures.
 
 Done when: `npm run e2e` passes three times in a row from a clean database.
 

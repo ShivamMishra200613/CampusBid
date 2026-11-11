@@ -253,9 +253,10 @@ export default function HomePage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mb-16">
+              <div data-testid="pagination-controls" className="flex justify-center items-center gap-2 mb-16">
                 <button
                   type="button"
+                  data-testid="pagination-prev"
                   disabled={filters.page <= 1}
                   onClick={() => handlePageChange(filters.page - 1)}
                   className="px-3 py-1.5 rounded-lg border border-outline-variant font-label-caps text-xs uppercase disabled:opacity-30 hover:bg-surface-bright"
@@ -266,6 +267,7 @@ export default function HomePage() {
                   <button
                     key={pg}
                     type="button"
+                    data-testid={`pagination-page-${pg}`}
                     onClick={() => handlePageChange(pg)}
                     className={`w-8 h-8 rounded-lg font-label-caps text-xs flex items-center justify-center transition-colors ${
                       filters.page === pg
@@ -278,6 +280,7 @@ export default function HomePage() {
                 ))}
                 <button
                   type="button"
+                  data-testid="pagination-next"
                   disabled={filters.page >= totalPages}
                   onClick={() => handlePageChange(filters.page + 1)}
                   className="px-3 py-1.5 rounded-lg border border-outline-variant font-label-caps text-xs uppercase disabled:opacity-30 hover:bg-surface-bright"

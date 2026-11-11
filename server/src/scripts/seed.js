@@ -97,7 +97,20 @@ export const seedDatabase = async () => {
     bio: 'Instrumentation student and campus sports council representative.'
   });
 
-  console.log('Created 1 Admin and 4 Student accounts.');
+  const sneha = await User.create({
+    fullName: 'Sneha Kulkarni',
+    email: 'sneha.k@ves.ac.in',
+    passwordHash: studentPasswordHash,
+    role: 'student',
+    classBranch: 'D10 / EXTC',
+    rollNo: '37',
+    isVerifiedStudent: true,
+    isSuspended: true,
+    phone: '+91 98765 43214',
+    bio: 'Suspended student account for moderation verification.'
+  });
+
+  console.log('Created 1 Admin and 5 Student accounts.');
 
   const now = Date.now();
 
