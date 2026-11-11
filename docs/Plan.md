@@ -136,10 +136,10 @@ Done when: every endpoint in `routes.md` exists, behaves as documented, and the 
 
 ### Phase 5: Auction lifecycle
 
-- [ ] 5.1 `services/auctionCloser.js`: a sweeper that runs every 10 seconds (interval from `AUCTION_SWEEP_MS`) and closes every `live` product whose `endTime` has passed. Closing sets `status: ended` and `winner` from `highestBidder`. It must be safe to run twice (use a filter on `status: live` in the update).
-- [ ] 5.2 On close, call `services/notifier.js` to create notifications: winner gets `auction_won`, seller gets `auction_ended` (with the winning amount or "no bids"). Outbid notifications are created inside the bid controller for the previous highest bidder, respecting `notificationPreferences.outbidAlerts`.
-- [ ] 5.3 Start the sweeper from `server.js` only, never from `app.js`, so tests do not start timers.
-- [ ] 5.4 Add a server test that creates a product with an `endTime` a second in the future, waits, runs the sweeper function directly, and asserts the winner and the two notifications.
+- [x] 5.1 `services/auctionCloser.js`: a sweeper that runs every 10 seconds (interval from `AUCTION_SWEEP_MS`) and closes every `live` product whose `endTime` has passed. Closing sets `status: ended` and `winner` from `highestBidder`. It must be safe to run twice (use a filter on `status: live` in the update).
+- [x] 5.2 On close, call `services/notifier.js` to create notifications: winner gets `auction_won`, seller gets `auction_ended` (with the winning amount or "no bids"). Outbid notifications are created inside the bid controller for the previous highest bidder, respecting `notificationPreferences.outbidAlerts`.
+- [x] 5.3 Start the sweeper from `server.js` only, never from `app.js`, so tests do not start timers.
+- [x] 5.4 Add a server test that creates a product with an `endTime` a second in the future, waits, runs the sweeper function directly, and asserts the winner and the two notifications.
 
 Done when: a short auction ends by itself, the winner and seller get notifications, and no manual action is needed.
 

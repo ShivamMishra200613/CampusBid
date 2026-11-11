@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import Bid from '../models/Bid.js';
 import Notification from '../models/Notification.js';
+import { notifyOutbid } from '../services/notifier.js';
 
 export const placeBid = async (req, res, next) => {
   try {
@@ -102,17 +103,16 @@ export const placeBid = async (req, res, next) => {
       amount
     });
 
-    // Notify previous highest bidder of being outbid
+    // Notify previous highest bidder of being outbid (respects notificationPreferences.outbidAlerts)
     if (
       previousProduct.highestBidder &&
       previousProduct.highestBidder.toString() !== req.user.id
     ) {
-      await Notification.create({
-        user: previousProduct.highestBidder,
-        type: 'outbid',
-        title: 'You were outbid!',
-        message: `${req.user.fullName} placed a higher bid of ₹${amount.toLocaleString('en-IN')} on "${previousProduct.title}".`,
-        product: previousProduct._id
+      await notifyOutbid({
+        previousBidderId: previousProduct.highestBidder,
+        currentBidderName: req.user.fullName,
+        amount,
+        product: previousProduct
       });
     }
 
