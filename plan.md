@@ -69,7 +69,7 @@ Each task has a checkbox. A task is finished only when its "Done when" line is t
 
 - [x] 0.1 Confirm the project runs as-is. Run `npm install` in `client/` and `server/`, then `npm run build` in `client/` and `npm start` in `server/`. Record any failure in `progress.md`.
 - [x] 0.2 Check whether the folder is inside a git repository (`git rev-parse --is-inside-work-tree`). If it is, use it. If not, run `git init` in the project root. Add a root `.gitignore` (`node_modules`, `dist`, `.env`, `uploads`, `playwright-report`, `test-results`).
-- [ ] 0.3 Create `server/.env.example` and `client/.env.example` listing every variable used (see `agents.md`, section "Environment variables"). Never commit a real `.env`.
+- [x] 0.3 Create `server/.env.example` and `client/.env.example` listing every variable used (see `agents.md`, section "Environment variables"). Never commit a real `.env`.
 - [ ] 0.4 Remove the hardcoded JWT secret fallback from `config.js`. In `production`, the server must refuse to start without `JWT_SECRET` and `MONGO_URI`. In development, use a clearly named dev default and log a warning.
 - [ ] 0.5 Create `progress.md` at the project root (format in `agents.md`).
 - [ ] 0.6 Add `"test"` scripts: server uses `node --test`, client has none yet. Add an `npm run lint` that passes in `client/` (oxlint already configured). Fix existing lint errors.
