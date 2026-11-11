@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 import authRoutes from './authRoutes.js';
+import userRoutes from './userRoutes.js';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
 
 // In-memory mock store for initial contract demonstration & integration testing
 export const mockDb = {
@@ -124,19 +126,6 @@ export const mockDb = {
     }
   ]
 };
-
-// -------------------------------------------------------------
-// MODULE 1: AUTH & USERS
-// -------------------------------------------------------------
-
-router.get('/users/me', authenticate, (req, res) => {
-  res.json({ success: true, user: req.user ? req.user.toJSON() : mockDb.users[0] });
-});
-
-router.put('/users/me', authenticate, (req, res) => {
-  Object.assign(mockDb.users[0], req.body);
-  res.json({ success: true, user: mockDb.users[0] });
-});
 
 // -------------------------------------------------------------
 // MODULE 2, 3 & 5: PRODUCTS & AUCTIONS
