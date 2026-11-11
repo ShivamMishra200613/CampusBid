@@ -99,7 +99,7 @@ Done when: `npm run seed` fills the database, and a Mongo shell or Compass shows
 - [x] 2.5 Apply middleware to every route according to the table in `server/contracts/routes.md`. Public: register, login, `GET /products`, `GET /products/:id`. Student: create product, bid, my-bids, notifications, profile. Owner-only: edit or delete own listing. Admin-only: everything under `/admin`.
 - [x] 2.6 `GET /users/me` and `PUT /users/me` use `req.user`, never user 0. `PUT /users/me` may only change `fullName`, `phone`, `classBranch`, `bio`, `avatarUrl`, and `notificationPreferences`. It must not allow `role`, `email`, or `isSuspended`.
 - [x] 2.7 Password reset: `POST /auth/forgot-password` (always returns 200, generates a short-lived reset token, logs the reset link to the server console when `NODE_ENV` is not production) and `POST /auth/reset-password`. No email provider is needed.
-- [ ] 2.8 Add rate limiting on `/auth/*` using `express-rate-limit` (for example 20 requests per 15 minutes per IP). Add `helmet`. Restrict CORS to `CLIENT_ORIGIN`.
+- [x] 2.8 Add rate limiting on `/auth/*` using `express-rate-limit` (for example 20 requests per 15 minutes per IP). Add `helmet`. Restrict CORS to `CLIENT_ORIGIN`.
 - [ ] 2.9 Server tests (`server/tests/auth.test.js`): register, duplicate register, login success, login wrong password, access without a token returns 401, student on an admin route returns 403, student editing another user's listing returns 403.
 
 Done when: all tests in 2.9 pass and a request with a student token to `/admin/stats` returns 403.
