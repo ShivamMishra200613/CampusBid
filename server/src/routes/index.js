@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 import authRoutes from './authRoutes.js';
 import userRoutes from './userRoutes.js';
+import Product from '../models/Product.js';
 
 const router = Router();
 
@@ -176,6 +177,33 @@ router.post('/products', authenticate, (req, res) => {
   };
   mockDb.products.unshift(newProduct);
   res.status(201).json({ success: true, product: newProduct });
+});
+
+router.put('/products/:id', authenticate, async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found.' } });
+    }
+    const sellerId = product.seller.toString ? product.seller.toString() : String(product.seller);
+    if (sellerId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN_OWNER_ONLY', message: 'You do not have permission to edit this listing.' }
+      });
+    }
+    if (product.bidCount > 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'LISTING_HAS_BIDS', message: 'Cannot edit a listing once bids have been placed.' }
+      });
+    }
+    Object.assign(product, req.body);
+    await product.save();
+    res.json({ success: true, product: product.toJSON() });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // -------------------------------------------------------------
