@@ -84,7 +84,7 @@ Done when: both apps install, build, and start from a clean clone, lint passes, 
 - [x] 1.4 Create the `Product` model: `title`, `category` (enum), `condition`, `description`, `seller` (ref User), `startingBid`, `currentBid`, `minIncrement`, `bidCount`, `highestBidder` (ref User), `status` (`draft` | `pending_approval` | `live` | `ended` | `removed`), `endTime`, `images` (array), `winner` (ref User), timestamps. Indexes: `status + endTime`, `category`, text index on `title` and `description`.
 - [x] 1.5 Create the `Bid` model: `product` (ref), `bidder` (ref), `amount`, timestamps. Index on `product + amount`.
 - [x] 1.6 Create the `Notification` model: `user` (ref), `type` (`outbid` | `auction_won` | `auction_ended` | `listing_approved` | `listing_rejected`), `title`, `message`, `product` (ref), `read`, timestamps.
-- [ ] 1.7 Create the `Report` model: `product` (ref), `reportedBy` (ref), `reason`, `status` (`open` | `resolved`), `resolutionAction`, `notes`, timestamps.
+- [x] 1.7 Create the `Report` model: `product` (ref), `reportedBy` (ref), `reason`, `status` (`open` | `resolved`), `resolutionAction`, `notes`, timestamps.
 - [ ] 1.8 Write `scripts/seed.js` (`npm run seed`) that wipes and recreates: one admin (credentials from env), four students, 8 products across all categories (mix of live and ended, with bids), a few notifications and reports. All seeded passwords must be documented in `README.md` as demo-only.
 - [ ] 1.9 Write a short `docs/database.md` with the collections, fields, relationships, and indexes, plus a Mermaid ER diagram. This is what you explain in the evaluation.
 

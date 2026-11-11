@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.6   Next task: 1.7
+Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.7   Next task: 1.8
 
 ## Log
+- 2026-11-11 1.7: Created Report model with status/resolutionAction enums and toJSON transform | checks: verified model validation and status enforcement
 - 2026-11-11 1.6: Created Notification model with enum types, compound index, and toJSON transform | checks: verified model validation and type constraint enforcement
 - 2026-11-11 1.5: Created Bid model with compound product + amount index and toJSON transform | checks: verified model validation and indexing
 - 2026-11-11 1.4: Created Product model with status/endTime, category, and text indexes, enums, and toJSON mapping | checks: verified model validation, default bid logic, and schema indexing
