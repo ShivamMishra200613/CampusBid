@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
+import authRoutes from './authRoutes.js';
 
 const router = Router();
+
+router.use('/auth', authRoutes);
 
 // In-memory mock store for initial contract demonstration & integration testing
 export const mockDb = {
@@ -125,33 +128,6 @@ export const mockDb = {
 // -------------------------------------------------------------
 // MODULE 1: AUTH & USERS
 // -------------------------------------------------------------
-router.post('/auth/register', (req, res) => {
-  const { fullName, email, classBranch, rollNo, password, agreeTerms } = req.body;
-  if (!email || !email.endsWith('@ves.ac.in')) {
-    return res.status(400).json({
-      success: false,
-      error: { code: 'INVALID_EMAIL_DOMAIN', message: 'Only @ves.ac.in email addresses are permitted for registration.' }
-    });
-  }
-  const newUser = {
-    id: `usr_${Date.now()}`,
-    fullName,
-    email,
-    classBranch,
-    rollNo,
-    role: 'student',
-    isVerifiedStudent: true,
-    memberSince: new Date().toLocaleString('default', { month: 'long', year: 'numeric' }),
-    stats: { itemsSold: 0, itemsBought: 0, rating: 5.0 },
-    notificationPreferences: { outbidAlerts: true, auctionEndingAlerts: true, newMessageAlerts: true }
-  };
-  mockDb.users.push(newUser);
-  res.status(201).json({
-    success: true,
-    token: `token_mock_${newUser.id}`,
-    user: newUser
-  });
-});
 
 router.post('/auth/login', (req, res) => {
   const { email } = req.body;

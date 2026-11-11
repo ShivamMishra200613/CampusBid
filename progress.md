@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 2: Authentication and Authorization   Last finished task: 1.9   Next task: 2.1
+Phase: Phase 2: Authentication and Authorization   Last finished task: 2.1   Next task: 2.2
 
 ## Log
+- 2026-11-11 2.1: Implemented POST /auth/register with bcrypt hashing, JWT issuance, duplicate check (409), and enforced student role | checks: verified 201 creation with token and student role, duplicate 409 USER_ALREADY_EXISTS
 - 2026-11-11 1.9: Authored docs/database.md with ER diagram, collections, indexing strategies, and viva defense rationale | checks: verified 5 collections in MongoDB with relationships, client lint/build, server test
 - 2026-11-11 1.8: Implemented scripts/seed.js (npm run seed) with admin, 4 students, 8 products, bids, notifications, and reports; verified production environment block | checks: npm run seed executed successfully, production refusal test passed
 - 2026-11-11 1.7: Created Report model with status/resolutionAction enums and toJSON transform | checks: verified model validation and status enforcement
