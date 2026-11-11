@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.7   Next task: 1.8
+Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.8   Next task: 1.9
 
 ## Log
+- 2026-11-11 1.8: Implemented scripts/seed.js (npm run seed) with admin, 4 students, 8 products, bids, notifications, and reports; verified production environment block | checks: npm run seed executed successfully, production refusal test passed
 - 2026-11-11 1.7: Created Report model with status/resolutionAction enums and toJSON transform | checks: verified model validation and status enforcement
 - 2026-11-11 1.6: Created Notification model with enum types, compound index, and toJSON transform | checks: verified model validation and type constraint enforcement
 - 2026-11-11 1.5: Created Bid model with compound product + amount index and toJSON transform | checks: verified model validation and indexing
