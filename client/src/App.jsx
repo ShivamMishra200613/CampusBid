@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { AuctionProvider } from './context/AuctionContext';
+import { SocketProvider } from './context/SocketContext';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -29,63 +30,65 @@ export default function App() {
       <ToastProvider>
         <AuthProvider>
           <AuctionProvider>
-            <Router>
-              <div className="min-h-screen flex flex-col bg-primary-container text-on-surface antialiased selection:bg-primary selection:text-white">
-                <Navbar />
-                <main className="flex-grow flex flex-col">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/auctions/:id" element={<AuctionDetailPage />} />
-                    <Route
-                      path="/create"
-                      element={
-                        <ProtectedRoute>
-                          <CreateListingPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/my-listings"
-                      element={
-                        <ProtectedRoute>
-                          <MyListingsPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/my-bids"
-                      element={
-                        <ProtectedRoute>
-                          <MyBidsPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/profile"
-                      element={
-                        <ProtectedRoute>
-                          <ProfilePage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin"
-                      element={
-                        <AdminRoute>
-                          <AdminDashboardPage />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Routes>
-                </main>
-                <Footer />
-                <Toast />
-              </div>
-            </Router>
+            <SocketProvider>
+              <Router>
+                <div className="min-h-screen flex flex-col bg-primary-container text-on-surface antialiased selection:bg-primary selection:text-white">
+                  <Navbar />
+                  <main className="flex-grow flex flex-col">
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/auctions/:id" element={<AuctionDetailPage />} />
+                      <Route
+                        path="/create"
+                        element={
+                          <ProtectedRoute>
+                            <CreateListingPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/my-listings"
+                        element={
+                          <ProtectedRoute>
+                            <MyListingsPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/my-bids"
+                        element={
+                          <ProtectedRoute>
+                            <MyBidsPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/profile"
+                        element={
+                          <ProtectedRoute>
+                            <ProfilePage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin"
+                        element={
+                          <AdminRoute>
+                            <AdminDashboardPage />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </main>
+                  <Footer />
+                  <Toast />
+                </div>
+              </Router>
+            </SocketProvider>
           </AuctionProvider>
         </AuthProvider>
       </ToastProvider>

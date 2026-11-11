@@ -171,16 +171,16 @@ Done when: with the server running, the whole app works with no mock data, and r
 
 ### Phase 8: Real-time features (Socket.IO)
 
-- [ ] 8.1 Install `socket.io` on the server and `socket.io-client` on the client. Create an `http.Server` in `server.js`, attach Socket.IO to it, and export the `io` instance through `sockets/index.js` so controllers and the sweeper can emit.
-- [ ] 8.2 Socket authentication: verify the JWT from `socket.handshake.auth.token` in a middleware. Anonymous sockets are allowed but may only join auction rooms, not user rooms.
-- [ ] 8.3 Rooms: `auction:<id>` (anyone viewing that auction) and `user:<id>` (the logged-in user's private room, joined automatically on connect).
-- [ ] 8.4 Server events: `bid:new` to `auction:<id>` with `{ productId, bid, currentBid, bidCount, highestBidder }` after every accepted bid. `auction:ended` to `auction:<id>` with the winner when the sweeper closes it. `notification:new` to `user:<id>` whenever a notification is created. `auction:viewers` to `auction:<id>` with the current viewer count.
-- [ ] 8.5 Client events: `auction:join` and `auction:leave` with the product id.
-- [ ] 8.6 Client `SocketContext`: connect after login (and for anonymous visitors on detail pages), reconnect with the new token after login or logout, expose `subscribe` helpers, and show a small "Live" or "Reconnecting" indicator.
-- [ ] 8.7 Detail page: join the room on mount and leave on unmount. On `bid:new`, update the price, bid count, and bid history without a refresh, and flash the price. On `auction:ended`, switch to the ended state and disable the bid form. Show the viewer count.
-- [ ] 8.8 Navbar: on `notification:new`, increment the unread badge and show a toast, for example "You have been outbid on X".
-- [ ] 8.9 Home: update the current bid shown on cards in real time for live items.
-- [ ] 8.10 Server test (`server/tests/socket.test.js`) using `socket.io-client`: two clients join the same auction, one bids over REST, both receive `bid:new`. A client with no token cannot join a `user:` room.
+- [x] 8.1 Install `socket.io` on the server and `socket.io-client` on the client. Create an `http.Server` in `server.js`, attach Socket.IO to it, and export the `io` instance through `sockets/index.js` so controllers and the sweeper can emit.
+- [x] 8.2 Socket authentication: verify the JWT from `socket.handshake.auth.token` in a middleware. Anonymous sockets are allowed but may only join auction rooms, not user rooms.
+- [x] 8.3 Rooms: `auction:<id>` (anyone viewing that auction) and `user:<id>` (the logged-in user's private room, joined automatically on connect).
+- [x] 8.4 Server events: `bid:new` to `auction:<id>` with `{ productId, bid, currentBid, bidCount, highestBidder }` after every accepted bid. `auction:ended` to `auction:<id>` with the winner when the sweeper closes it. `notification:new` to `user:<id>` whenever a notification is created. `auction:viewers` to `auction:<id>` with the current viewer count.
+- [x] 8.5 Client events: `auction:join` and `auction:leave` with the product id.
+- [x] 8.6 Client `SocketContext`: connect after login (and for anonymous visitors on detail pages), reconnect with the new token after login or logout, expose `subscribe` helpers, and show a small "Live" or "Reconnecting" indicator.
+- [x] 8.7 Detail page: join the room on mount and leave on unmount. On `bid:new`, update the price, bid count, and bid history without a refresh, and flash the price. On `auction:ended`, switch to the ended state and disable the bid form. Show the viewer count.
+- [x] 8.8 Navbar: on `notification:new`, increment the unread badge and show a toast, for example "You have been outbid on X".
+- [x] 8.9 Home: update the current bid shown on cards in real time for live items.
+- [x] 8.10 Server test (`server/tests/socket.test.js`) using `socket.io-client`: two clients join the same auction, one bids over REST, both receive `bid:new`. A client with no token cannot join a `user:` room.
 
 Done when: two browser windows on the same auction see each other's bids instantly, and the outbid user gets a notification without refreshing.
 

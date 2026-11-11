@@ -2,6 +2,7 @@ import Product from '../models/Product.js';
 import Bid from '../models/Bid.js';
 import Notification from '../models/Notification.js';
 import { notifyOutbid } from '../services/notifier.js';
+import { emitNewBid } from '../sockets/index.js';
 
 export const placeBid = async (req, res, next) => {
   try {
@@ -115,6 +116,22 @@ export const placeBid = async (req, res, next) => {
         product: previousProduct
       });
     }
+
+    // Emit real-time event via Socket.IO
+    emitNewBid({
+      productId: product.id,
+      bid: {
+        id: bid.id,
+        productId: product.id,
+        bidderId: req.user.id,
+        bidderName: req.user.fullName,
+        amount,
+        createdAt: bid.createdAt
+      },
+      currentBid: amount,
+      bidCount: (previousProduct.bidCount || 0) + 1,
+      highestBidder: req.user.id
+    });
 
     res.status(201).json({
       success: true,

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { productsApi } from '../api/client';
 import { validatePrice } from '../utils/validators';
 import AuctionCard from '../components/AuctionCard';
@@ -11,12 +12,15 @@ export default function AuctionDetailPage() {
   const navigate = useNavigate();
   const { placeBid, reportListing, showToast } = useAuction();
   const { user, isAuthenticated } = useAuth();
+  const { socket, joinAuction, leaveAuction } = useSocket();
 
   const [product, setProduct] = useState(null);
   const [recentBids, setRecentBids] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewerCount, setViewerCount] = useState(1);
+  const [flashPrice, setFlashPrice] = useState(false);
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [bidAmount, setBidAmount] = useState('');
@@ -90,6 +94,63 @@ export default function AuctionDetailPage() {
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
   }, [product]);
+
+  // Socket room joining and real-time event subscriptions
+  useEffect(() => {
+    if (!id || !socket) return;
+
+    joinAuction(id);
+
+    const handleBidNew = (data) => {
+      if (data.productId === id) {
+        setProduct((prev) =>
+          prev
+            ? {
+                ...prev,
+                currentBid: data.currentBid,
+                bidCount: data.bidCount,
+                bidsCount: data.bidCount,
+                highestBidder: data.highestBidder
+              }
+            : prev
+        );
+        if (data.bid) {
+          setRecentBids((prev) => [data.bid, ...prev]);
+        }
+        setBidAmount(String(data.currentBid + (product?.minIncrement || 50)));
+
+        // Flash visual highlight
+        setFlashPrice(true);
+        setTimeout(() => setFlashPrice(false), 1200);
+      }
+    };
+
+    const handleAuctionEnded = (data) => {
+      if (data.productId === id) {
+        setProduct((prev) =>
+          prev ? { ...prev, status: 'ended', winner: data.winner } : prev
+        );
+        setTimeLeftString('Ended');
+      }
+    };
+
+    const handleViewers = (data) => {
+      if (data.productId === id) {
+        setViewerCount(data.viewerCount || 1);
+      }
+    };
+
+    socket.on('bid:new', handleBidNew);
+    socket.on('auction:ended', handleAuctionEnded);
+    socket.on('auction:viewers', handleViewers);
+
+    return () => {
+      leaveAuction(id);
+      socket.off('bid:new', handleBidNew);
+      socket.off('auction:ended', handleAuctionEnded);
+      socket.off('auction:viewers', handleViewers);
+    };
+  }, [id, socket, joinAuction, leaveAuction, product?.minIncrement]);
 
   if (loading) {
     return (
@@ -323,7 +384,14 @@ export default function AuctionDetailPage() {
                     <h3 className="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-1">
                       Current Highest Bid
                     </h3>
-                    <div className="font-price-display text-[32px] md:text-[40px] font-bold text-on-surface leading-none tracking-tight">
+                    <div
+                      data-testid="detail-current-bid"
+                      className={`font-price-display text-[32px] md:text-[40px] font-bold leading-none tracking-tight transition-all duration-300 inline-block ${
+                        flashPrice
+                          ? 'text-[#2e7d32] scale-105 bg-green-100/70 px-2 py-0.5 rounded-lg'
+                          : 'text-on-surface'
+                      }`}
+                    >
                       ₹{(product.currentBid || 0).toLocaleString('en-IN')}
                     </div>
                     <span className="font-body-sm text-xs text-secondary mt-1 block">
@@ -332,13 +400,24 @@ export default function AuctionDetailPage() {
                   </div>
 
                   <div className="flex flex-col items-start sm:items-end gap-1.5">
-                    <span
-                      className={`px-3 py-1 text-white font-label-caps text-[10px] uppercase tracking-widest rounded-full ${
-                        isLive ? 'bg-[#4CAF50]' : 'bg-secondary'
-                      }`}
-                    >
-                      {isLive ? 'Live' : 'Ended'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {isLive && (
+                        <span
+                          data-testid="viewer-count"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-surface-container text-on-surface font-label-caps text-[10px] uppercase tracking-wider rounded-full border border-outline-variant"
+                        >
+                          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                          {viewerCount} Viewing
+                        </span>
+                      )}
+                      <span
+                        className={`px-3 py-1 text-white font-label-caps text-[10px] uppercase tracking-widest rounded-full ${
+                          isLive ? 'bg-[#4CAF50]' : 'bg-secondary'
+                        }`}
+                      >
+                        {isLive ? 'Live' : 'Ended'}
+                      </span>
+                    </div>
                     <div className="font-body-md text-sm text-on-surface font-medium flex items-center gap-1.5">
                       <span className="material-symbols-outlined text-secondary text-[18px]">
                         schedule

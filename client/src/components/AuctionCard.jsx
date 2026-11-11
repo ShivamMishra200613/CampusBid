@@ -97,7 +97,7 @@ export default function AuctionCard({ item }) {
           </div>
           <div className="text-right">
             <span className="font-body-sm text-[12px] text-secondary">
-              {item.bidCount || item.bids?.length || 0} bids placed
+              {item.bidCount ?? item.bidsCount ?? item.bids?.length ?? 0} bids placed
             </span>
           </div>
         </div>

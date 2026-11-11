@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import { notifyAuctionEnded } from './notifier.js';
 import { config } from '../config/config.js';
+import { emitAuctionEnded } from '../sockets/index.js';
 
 /**
  * Checks for live auctions whose endTime has arrived or passed,
@@ -37,6 +38,11 @@ export const closeExpiredAuctions = async () => {
 
     if (updated) {
       await notifyAuctionEnded(updated);
+      emitAuctionEnded({
+        productId: updated.id,
+        winner: updated.winner,
+        winningBid: updated.currentBid
+      });
       closedProducts.push(updated);
     }
   }

@@ -255,6 +255,29 @@ export const AuctionProvider = ({ children }) => {
     }
   };
 
+  const updateListingBid = useCallback((productId, currentBid, bidCount) => {
+    setListings((prev) =>
+      prev.map((item) =>
+        item.id === productId
+          ? { ...item, currentBid, bidCount, bidsCount: bidCount }
+          : item
+      )
+    );
+  }, []);
+
+  const handleCatalogAuctionEnded = useCallback((productId) => {
+    setListings((prev) =>
+      prev.map((item) =>
+        item.id === productId ? { ...item, status: 'ended' } : item
+      )
+    );
+  }, []);
+
+  const addNotification = useCallback((notif) => {
+    setNotifications((prev) => [notif, ...prev]);
+    setUnreadCount((c) => c + 1);
+  }, []);
+
   return (
     <AuctionContext.Provider
       value={{
@@ -267,6 +290,9 @@ export const AuctionProvider = ({ children }) => {
         filters,
         dispatchFilters,
         refetchListings: fetchListings,
+        updateListingBid,
+        handleCatalogAuctionEnded,
+        addNotification,
 
         // My Listings
         myListings,

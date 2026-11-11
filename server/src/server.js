@@ -1,17 +1,23 @@
+import http from 'http';
 import app from './app.js';
 import { config } from './config/config.js';
 import { connectDB } from './config/db.js';
 import { startAuctionSweeper } from './services/auctionCloser.js';
+import { initSockets } from './sockets/index.js';
 
 const startServer = async () => {
   try {
     await connectDB();
 
+    const server = http.createServer(app);
+    initSockets(server);
+
     const PORT = config.port;
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`===========================================`);
-      console.log(`  CampusBid API Server running on port ${PORT}`);
+      console.log(`  CampusBid API & Socket Server running on port ${PORT}`);
       console.log(`  API Base URL: http://localhost:${PORT}/api/v1`);
+      console.log(`  Socket.IO: ws://localhost:${PORT}`);
       console.log(`  OpenAPI Specification: ./contracts/openapi.yaml`);
       console.log(`===========================================`);
 
