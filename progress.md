@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.2   Next task: 1.3
+Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.3   Next task: 1.4
 
 ## Log
+- 2026-11-11 1.3: Implemented Mongoose User model with @ves.ac.in validator, hidden passwordHash, and toJSON id mapping | checks: verified schema validation and toJSON transform
 - 2026-11-11 1.2: Updated server.js to connect to MongoDB before listening, kept app.js side-effect free | checks: verified clean app.js import and server.js start + /health 200 OK
 - 2026-11-11 1.1: Created config/db.js with connectDB() retry logic and credential-safe host logging | checks: verified connectDB() connection and disconnection to local MongoDB
 - 2026-11-11 0.6: Verified server test script runs node --test, adjusted client oxlint config to achieve 0 warnings and 0 errors | checks: cd client && npm run lint && npm run build; cd server && npm test
