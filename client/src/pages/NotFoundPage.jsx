@@ -8,9 +8,7 @@ export default function NotFoundPage() {
         <span className="font-price-display text-8xl font-black text-secondary/30 block mb-2">
           404
         </span>
-        <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-3">
-          Page Not Found
-        </h1>
+        <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-3">Page Not Found</h1>
         <p className="font-body-md text-secondary mb-8 leading-relaxed">
           The auction or page you are looking for doesn't exist, has ended, or was moved.
         </p>

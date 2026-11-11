@@ -28,7 +28,9 @@ test.describe('Bidding Workflow & Concurrency Protection E2E', () => {
     await expect(errorMsg).toContainText(/at least/i);
   });
 
-  test('2. Valid bid updates the highest bid price and bid history immediately', async ({ page }) => {
+  test('2. Valid bid updates the highest bid price and bid history immediately', async ({
+    page
+  }) => {
     await loginAs(page, 'student'); // Aditya Verma
 
     await page.goto('/');
@@ -46,7 +48,9 @@ test.describe('Bidding Workflow & Concurrency Protection E2E', () => {
 
     // Wait for bid to be accepted
     const currentBidDisplay = page.locator('[data-testid="detail-current-bid"]');
-    await expect(currentBidDisplay).toContainText(Number(minRequired + 500).toLocaleString('en-IN'));
+    await expect(currentBidDisplay).toContainText(
+      Number(minRequired + 500).toLocaleString('en-IN')
+    );
 
     // Check bid history contains Aditya Verma
     await expect(page.locator('text=Aditya Verma').first()).toBeVisible();
@@ -71,7 +75,9 @@ test.describe('Bidding Workflow & Concurrency Protection E2E', () => {
 
     // Navigate to live Engineering Textbooks bundle
     await page.goto('/');
-    const bookCard = page.locator('[data-testid="auction-card"]', { hasText: 'Engineering Mathematics' });
+    const bookCard = page.locator('[data-testid="auction-card"]', {
+      hasText: 'Engineering Mathematics'
+    });
     await bookCard.click();
 
     // Place winning bid as Priya
@@ -103,7 +109,9 @@ test.describe('Bidding Workflow & Concurrency Protection E2E', () => {
 
     // Get product ID from url
     await page.goto('/');
-    const card = page.locator('[data-testid="auction-card"]', { hasText: 'Engineering Mathematics' });
+    const card = page.locator('[data-testid="auction-card"]', {
+      hasText: 'Engineering Mathematics'
+    });
     const href = await card.getAttribute('href');
     const productId = href.split('/').pop();
 
@@ -112,7 +120,9 @@ test.describe('Bidding Workflow & Concurrency Protection E2E', () => {
 
     // Refresh Priya's My Bids page
     await page.goto('/my-bids');
-    const updatedRow = page.locator('[data-testid="bid-row"]', { hasText: 'Engineering Mathematics' });
+    const updatedRow = page.locator('[data-testid="bid-row"]', {
+      hasText: 'Engineering Mathematics'
+    });
     await expect(updatedRow).toBeVisible();
     await expect(updatedRow).toContainText('Outbid');
   });

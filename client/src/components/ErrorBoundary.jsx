@@ -24,19 +24,14 @@ export default class ErrorBoundary extends React.Component {
             </span>
             <h1 className="font-headline-md text-2xl font-bold mb-2">Something went wrong</h1>
             <p className="font-body-md text-sm text-secondary mb-6">
-              An unexpected client error occurred. Please refresh the page or return to the marketplace.
+              An unexpected client error occurred. Please refresh the page or return to the
+              marketplace.
             </p>
             <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => window.location.reload()}
-                className="btn-primary"
-              >
+              <button onClick={() => window.location.reload()} className="btn-primary">
                 Reload Page
               </button>
-              <a
-                href="/"
-                className="btn-secondary"
-              >
+              <a href="/" className="btn-secondary">
                 Go to Home
               </a>
             </div>

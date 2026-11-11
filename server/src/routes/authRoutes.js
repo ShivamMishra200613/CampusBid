@@ -1,11 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import {
-  register,
-  login,
-  forgotPassword,
-  resetPassword
-} from '../controllers/authController.js';
+import { register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
 import { validate } from '../validators/validate.js';
 import {
   registerSchema,

@@ -4,11 +4,9 @@ import { config } from '../config/config.js';
 import User from '../models/User.js';
 
 export const generateToken = (user) => {
-  return jwt.sign(
-    { sub: user.id || user._id.toString(), role: user.role },
-    config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
-  );
+  return jwt.sign({ sub: user.id || user._id.toString(), role: user.role }, config.jwtSecret, {
+    expiresIn: config.jwtExpiresIn
+  });
 };
 
 export const register = async (req, res, next) => {
@@ -120,14 +118,14 @@ export const forgotPassword = async (req, res, next) => {
       const user = await User.findOne({ email: cleanEmail });
 
       if (user) {
-        const resetToken = jwt.sign(
-          { sub: user.id, type: 'password_reset' },
-          config.jwtSecret,
-          { expiresIn: '15m' }
-        );
+        const resetToken = jwt.sign({ sub: user.id, type: 'password_reset' }, config.jwtSecret, {
+          expiresIn: '15m'
+        });
 
         if (config.nodeEnv !== 'production') {
-          console.log(`[PASSWORD RESET LINK] For ${user.email}: http://localhost:5173/reset-password/${resetToken}`);
+          console.log(
+            `[PASSWORD RESET LINK] For ${user.email}: http://localhost:5173/reset-password/${resetToken}`
+          );
         }
       }
     }

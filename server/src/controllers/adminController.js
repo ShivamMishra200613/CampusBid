@@ -215,7 +215,10 @@ export const suspendUser = async (req, res, next) => {
     if (target.role === 'admin') {
       return res.status(403).json({
         success: false,
-        error: { code: 'CANNOT_SUSPEND_ADMIN', message: 'Cannot suspend another administrator account.' }
+        error: {
+          code: 'CANNOT_SUSPEND_ADMIN',
+          message: 'Cannot suspend another administrator account.'
+        }
       });
     }
 

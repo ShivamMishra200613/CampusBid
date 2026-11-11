@@ -45,14 +45,14 @@ export default {
         outline: '#807663',
         'outline-variant': '#d2c5af',
         'inverse-surface': '#2f3131',
-        'inverse-on-surface': '#f0f1f1',
+        'inverse-on-surface': '#f0f1f1'
       },
       borderRadius: {
         DEFAULT: '0.25rem',
         lg: '0.5rem',
         xl: '0.75rem',
         '2xl': '1rem',
-        full: '9999px',
+        full: '9999px'
       },
       spacing: {
         'card-padding': '1.5rem',
@@ -60,7 +60,7 @@ export default {
         'inline-sm': '0.5rem',
         'inline-md': '1rem',
         'section-gap': '4rem',
-        'grid-gutter': '1.5rem',
+        'grid-gutter': '1.5rem'
       },
       fontFamily: {
         display: ['"Playfair Display"', 'serif'],
@@ -74,7 +74,7 @@ export default {
         'body-md': ['Inter', 'sans-serif'],
         'body-sm': ['Inter', 'sans-serif'],
         'label-caps': ['Inter', 'sans-serif'],
-        'price-display': ['Inter', 'sans-serif'],
+        'price-display': ['Inter', 'sans-serif']
       },
       fontSize: {
         'display-lg': ['64px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
@@ -85,9 +85,9 @@ export default {
         'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
         'body-sm': ['14px', { lineHeight: '1.5', fontWeight: '400' }],
         'label-caps': ['12px', { lineHeight: '1.2', letterSpacing: '0.1em', fontWeight: '600' }],
-        'price-display': ['20px', { lineHeight: '1', letterSpacing: '-0.01em', fontWeight: '600' }],
-      },
-    },
+        'price-display': ['20px', { lineHeight: '1', letterSpacing: '-0.01em', fontWeight: '600' }]
+      }
+    }
   },
-  plugins: [],
-}
+  plugins: []
+};

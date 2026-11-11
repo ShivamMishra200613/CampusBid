@@ -3,13 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 
 export default function MyListingsPage() {
-  const {
-    myListings,
-    loadingMyListings,
-    refetchMyListings,
-    publishListing,
-    deleteListing
-  } = useAuction();
+  const { myListings, loadingMyListings, refetchMyListings, publishListing, deleteListing } =
+    useAuction();
 
   const [activeTab, setActiveTab] = useState('all');
 
@@ -88,11 +83,16 @@ export default function MyListingsPage() {
         {/* Loading / Empty / Content states */}
         {loadingMyListings ? (
           <div data-testid="my-listings-loading" className="py-20 text-center text-secondary">
-            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <span className="material-symbols-outlined text-4xl animate-spin">
+              progress_activity
+            </span>
             <p className="mt-2 font-body-sm text-sm">Loading your listings...</p>
           </div>
         ) : items.length === 0 ? (
-          <div data-testid="my-listings-empty" className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
+          <div
+            data-testid="my-listings-empty"
+            className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright"
+          >
             <span className="material-symbols-outlined text-[48px] text-secondary mb-2">
               inventory_2
             </span>
@@ -122,14 +122,17 @@ export default function MyListingsPage() {
                     isDraft
                       ? 'border-dashed border-outline-variant bg-surface-bright'
                       : isEnded
-                      ? 'border-outline-variant opacity-85'
-                      : 'border-outline-variant'
+                        ? 'border-outline-variant opacity-85'
+                        : 'border-outline-variant'
                   }`}
                 >
                   {/* Image Area */}
                   <div className="relative w-full aspect-square bg-surface-container-low overflow-hidden">
                     <img
-                      src={item.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'}
+                      src={
+                        item.images?.[0] ||
+                        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'
+                      }
                       alt={item.title}
                       className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
                         isEnded ? 'grayscale' : ''
@@ -176,7 +179,8 @@ export default function MyListingsPage() {
                       <div className="text-right">
                         {isLive && (
                           <span className="inline-flex items-center gap-1 font-label-caps text-[10px] bg-[#4CAF50] text-white px-2.5 py-0.5 rounded-full">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Live
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>{' '}
+                            Live
                           </span>
                         )}
                         {isPending && (
@@ -221,7 +225,8 @@ export default function MyListingsPage() {
                         </div>
                       ) : (
                         <div className="flex gap-2">
-                          {(isPending || (isLive && (item.bidsCount === 0 || item.bids?.length === 0))) && (
+                          {(isPending ||
+                            (isLive && (item.bidsCount === 0 || item.bids?.length === 0))) && (
                             <Link
                               to={`/create?edit=${item.id}`}
                               data-testid="edit-listing-button"

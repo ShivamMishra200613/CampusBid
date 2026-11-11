@@ -138,7 +138,10 @@ export default function LoginPage() {
                   className={`editorial-input ${errors.email ? 'border-error' : ''}`}
                 />
                 {errors.email && (
-                  <p data-testid="login-email-error" className="mt-1 text-xs text-error font-body-sm text-red-500">
+                  <p
+                    data-testid="login-email-error"
+                    className="mt-1 text-xs text-error font-body-sm text-red-500"
+                  >
                     {errors.email}
                   </p>
                 )}
@@ -146,7 +149,10 @@ export default function LoginPage() {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="font-label-caps text-label-caps text-on-surface uppercase tracking-wider" htmlFor="password">
+                  <label
+                    className="font-label-caps text-label-caps text-on-surface uppercase tracking-wider"
+                    htmlFor="password"
+                  >
                     Password
                   </label>
                   <button
@@ -188,7 +194,10 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p data-testid="login-password-error" className="mt-1 text-xs text-error font-body-sm text-red-500">
+                  <p
+                    data-testid="login-password-error"
+                    className="mt-1 text-xs text-error font-body-sm text-red-500"
+                  >
                     {errors.password}
                   </p>
                 )}
@@ -203,7 +212,9 @@ export default function LoginPage() {
               >
                 {loading ? (
                   <>
-                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span className="material-symbols-outlined animate-spin text-sm">
+                      progress_activity
+                    </span>
                     <span>Signing in...</span>
                   </>
                 ) : (
@@ -216,7 +227,10 @@ export default function LoginPage() {
             <div className="mt-8 text-center">
               <p className="font-body-sm text-secondary">
                 New here?{' '}
-                <Link to="/register" className="text-on-surface font-semibold underline hover:text-primary transition-colors">
+                <Link
+                  to="/register"
+                  className="text-on-surface font-semibold underline hover:text-primary transition-colors"
+                >
                   Create an account
                 </Link>
               </p>
@@ -239,7 +253,8 @@ export default function LoginPage() {
               Curated Peer Exchange
             </span>
             <p className="font-body-md text-sm text-on-surface font-medium">
-              "CampusBid made it so simple to sell my third-year electronics kits and buy textbooks without WhatsApp chaos."
+              "CampusBid made it so simple to sell my third-year electronics kits and buy textbooks
+              without WhatsApp chaos."
             </p>
             <span className="font-body-sm text-xs text-secondary mt-2 block">
               — D15A Student Review
@@ -297,7 +312,9 @@ export default function LoginPage() {
                   className="btn-primary flex items-center gap-1.5"
                 >
                   {forgotLoading ? (
-                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span className="material-symbols-outlined animate-spin text-sm">
+                      progress_activity
+                    </span>
                   ) : null}
                   Send Reset Link
                 </button>

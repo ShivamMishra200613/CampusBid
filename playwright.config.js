@@ -11,10 +11,7 @@ export default defineConfig({
   },
   fullyParallel: false,
   workers: 1,
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }]
-  ],
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
     baseURL,
     trace: 'retain-on-failure',
@@ -36,7 +33,8 @@ export default defineConfig({
           env: {
             NODE_ENV: 'test',
             PORT: '5001',
-            MONGO_URI_TEST: process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test',
+            MONGO_URI_TEST:
+              process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test',
             CLIENT_ORIGIN: 'http://localhost:5173',
             JWT_SECRET: 'e2e-test-jwt-secret-minimum-32-chars-long-123456789',
             ADMIN_EMAIL: 'admin@ves.ac.in',

@@ -169,18 +169,23 @@ Keep it short and current. Newest entries at the top of "Log".
 # Progress
 
 ## Status
-Phase: <number and name>   Last finished task: <id>   Next task: <id>
+
+Phase: <number and name> Last finished task: <id> Next task: <id>
 
 ## Log
+
 - <date> <task id>: <one line of what changed> | checks: <what you ran and the result>
 
 ## Blocked
+
 - <task id>: <why, what was tried>
 
 ## Questions for the owner
+
 - <question>
 
 ## Notes for the viva
+
 - <anything non-obvious worth explaining later>
 ```
 

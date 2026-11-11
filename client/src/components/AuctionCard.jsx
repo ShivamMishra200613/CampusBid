@@ -15,7 +15,11 @@ export default function AuctionCard({ item }) {
       {/* Image Container */}
       <div className="relative w-full aspect-square bg-[#F5F5F5] overflow-hidden">
         <img
-          src={item.images?.[0] || item.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'}
+          src={
+            item.images?.[0] ||
+            item.image ||
+            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'
+          }
           alt={item.title}
           className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
             !isLive ? 'grayscale' : ''
@@ -66,9 +70,7 @@ export default function AuctionCard({ item }) {
           <span className="font-body-md text-sm font-medium text-on-surface flex items-center gap-1">
             {sellerName}
             {isVerified && (
-              <span className="material-symbols-outlined text-[14px] text-tertiary">
-                verified
-              </span>
+              <span className="material-symbols-outlined text-[14px] text-tertiary">verified</span>
             )}
           </span>
         </div>
@@ -77,9 +79,7 @@ export default function AuctionCard({ item }) {
           <span className="font-label-caps text-[11px] text-secondary uppercase tracking-wider">
             Condition
           </span>
-          <span className="font-body-md text-sm text-on-surface-variant">
-            {item.condition}
-          </span>
+          <span className="font-body-md text-sm text-on-surface-variant">{item.condition}</span>
         </div>
 
         {/* Hairline Divider */}

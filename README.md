@@ -55,12 +55,14 @@ CampusBid is a full-stack, real-time campus auction platform tailored specifical
 Prerequisites: Node.js 20+, Docker (or local MongoDB on port 27017).
 
 1. **Start MongoDB**:
+
    ```bash
    # Using docker-compose dev override
    docker compose -f docker-compose.dev.yml up -d mongo
    ```
 
 2. **Configure Server**:
+
    ```bash
    cd server
    cp .env.example .env
@@ -85,20 +87,24 @@ Prerequisites: Node.js 20+, Docker (or local MongoDB on port 27017).
 Runs MongoDB, Express API, and Nginx reverse proxy in containerized production mode.
 
 1. **Build and launch containers**:
+
    ```bash
    docker compose up --build -d
    ```
 
 2. **Seed the database inside the container**:
+
    ```bash
    docker compose run --rm -e NODE_ENV=development server npm run seed
    ```
 
 3. **Verify running containers**:
+
    ```bash
    curl http://localhost:8080/health
    # Returns: {"status":"ok","database":"connected","service":"CampusBid API Server",...}
    ```
+
    Open `http://localhost:8080` in your browser.
 
 4. **Tear down**:
@@ -112,6 +118,7 @@ Runs MongoDB, Express API, and Nginx reverse proxy in containerized production m
 ### Method 3: Deployed (Render + Vercel + MongoDB Atlas)
 
 Complete step-by-step instructions for cloud deployment are documented in [`DEPLOY.md`](./DEPLOY.md).
+
 - **Backend API**: Deployed on Render Web Service using `render.yaml`.
 - **Frontend SPA**: Deployed on Vercel using `client/vercel.json`.
 - **Database**: Free shared MongoDB Atlas cluster (`M0 Sandbox`).
@@ -122,13 +129,13 @@ Complete step-by-step instructions for cloud deployment are documented in [`DEPL
 
 All demo accounts are pre-configured when running `npm run seed`:
 
-| Name | Role | Email | Password | Purpose |
-| --- | --- | --- | --- | --- |
-| **System Admin** | Admin | `admin@ves.ac.in` | `Admin@1234` | Full moderation queue, reports, statistics, user suspension |
-| **Rahul Sharma** | Student | `rahul.sharma@ves.ac.in` | `Student@123` | Seller demo (listed Arduino Kit, Engineering Drawing Board) |
-| **Priya Patel** | Student | `priya.patel@ves.ac.in` | `Student@123` | Active bidder (highest bidder on Arduino Kit) |
-| **Amit Verma** | Student | `amit.verma@ves.ac.in` | `Student@123` | Outbid student (outbid on Arduino Kit, won Database Book) |
-| **Sneha Kulkarni** | Student | `sneha.k@ves.ac.in` | `Student@123` | Suspended demo account (verifies immediate 403 suspension) |
+| Name               | Role    | Email                    | Password      | Purpose                                                     |
+| ------------------ | ------- | ------------------------ | ------------- | ----------------------------------------------------------- |
+| **System Admin**   | Admin   | `admin@ves.ac.in`        | `Admin@1234`  | Full moderation queue, reports, statistics, user suspension |
+| **Rahul Sharma**   | Student | `rahul.sharma@ves.ac.in` | `Student@123` | Seller demo (listed Arduino Kit, Engineering Drawing Board) |
+| **Priya Patel**    | Student | `priya.patel@ves.ac.in`  | `Student@123` | Active bidder (highest bidder on Arduino Kit)               |
+| **Amit Verma**     | Student | `amit.verma@ves.ac.in`   | `Student@123` | Outbid student (outbid on Arduino Kit, won Database Book)   |
+| **Sneha Kulkarni** | Student | `sneha.k@ves.ac.in`      | `Student@123` | Suspended demo account (verifies immediate 403 suspension)  |
 
 > [!NOTE]
 > All student registrations enforce the `@ves.ac.in` college domain restriction. Passwords require at least 8 characters with at least one number.
@@ -138,24 +145,26 @@ All demo accounts are pre-configured when running `npm run seed`:
 ## Environment Variables
 
 ### Server (`server/.env`)
-| Variable | Description | Example / Default |
-| --- | --- | --- |
-| `NODE_ENV` | Environment mode | `development` or `production` |
-| `PORT` | HTTP Server port | `5000` |
-| `MONGO_URI` | MongoDB connection URI | `mongodb://127.0.0.1:27017/campusbid` |
-| `MONGO_URI_TEST` | Test MongoDB connection URI | `mongodb://127.0.0.1:27017/campusbid_test` |
-| `JWT_SECRET` | Secret key for signing JWT tokens | `min-32-char-secure-jwt-secret` |
-| `JWT_EXPIRES_IN` | Token expiration duration | `7d` |
-| `CLIENT_ORIGIN` | Allowed CORS origin | `http://localhost:5173` |
-| `ADMIN_EMAIL` | Default admin email seeded | `admin@ves.ac.in` |
-| `ADMIN_PASSWORD` | Default admin password seeded | `Admin@1234` |
-| `AUCTION_SWEEP_MS`| Interval for sweeper to close auctions | `10000` (10 seconds) |
-| `CLOUDINARY_URL` | Cloudinary storage URI (optional) | Local disk storage used when empty |
+
+| Variable           | Description                            | Example / Default                          |
+| ------------------ | -------------------------------------- | ------------------------------------------ |
+| `NODE_ENV`         | Environment mode                       | `development` or `production`              |
+| `PORT`             | HTTP Server port                       | `5000`                                     |
+| `MONGO_URI`        | MongoDB connection URI                 | `mongodb://127.0.0.1:27017/campusbid`      |
+| `MONGO_URI_TEST`   | Test MongoDB connection URI            | `mongodb://127.0.0.1:27017/campusbid_test` |
+| `JWT_SECRET`       | Secret key for signing JWT tokens      | `min-32-char-secure-jwt-secret`            |
+| `JWT_EXPIRES_IN`   | Token expiration duration              | `7d`                                       |
+| `CLIENT_ORIGIN`    | Allowed CORS origin                    | `http://localhost:5173`                    |
+| `ADMIN_EMAIL`      | Default admin email seeded             | `admin@ves.ac.in`                          |
+| `ADMIN_PASSWORD`   | Default admin password seeded          | `Admin@1234`                               |
+| `AUCTION_SWEEP_MS` | Interval for sweeper to close auctions | `10000` (10 seconds)                       |
+| `CLOUDINARY_URL`   | Cloudinary storage URI (optional)      | Local disk storage used when empty         |
 
 ### Client (`client/.env`)
-| Variable | Description | Example / Default |
-| --- | --- | --- |
-| `VITE_API_URL` | API base path | `/api/v1` |
+
+| Variable       | Description   | Example / Default |
+| -------------- | ------------- | ----------------- |
+| `VITE_API_URL` | API base path | `/api/v1`         |
 
 ---
 
@@ -185,17 +194,17 @@ curl http://localhost:5000/health
 
 ## Evaluation Checklist Mapping
 
-| Checklist Item | Where It Lives | Proof in the Demo |
-| --- | --- | --- |
-| **Frontend with Tailwind** | `client/src/`, `tailwind.config.js` | Clean responsive UI tested at desktop and 375px mobile viewports; zero external component libraries. |
-| **React & State Management** | `client/src/context/`, `client/src/api/` | `AuthContext` (JWT session restore), `AuctionContext` (filter reducer), `SocketContext`, and `ToastContext`. |
-| **Backend REST API** | `server/src/routes/`, `server/src/controllers/` | Fully modular REST API matching `routes.md` and `openapi.yaml`, with Postman collection. |
-| **MongoDB & Mongoose** | `server/src/models/`, `docs/database.md` | 5 Mongoose schemas (`User`, `Product`, `Bid`, `Notification`, `Report`) with compound & text indexes and `toJSON` transformations. |
-| **Data Validation** | `server/src/validators/`, `client/src/utils/validators.js` | Strict Zod validation on API writes and matching client inline field error states. |
-| **Authentication & Authorization** | `server/src/middleware/auth.js`, `ProtectedRoute.jsx` | `@ves.ac.in` email restriction, bcrypt hashing, JWT verification, admin guards, and suspension checking. |
-| **Real-Time Features (Socket.IO)** | `server/src/sockets/`, `SocketContext.jsx` | Live auction room viewer count, instant outbid alerts, price flashes, and auction closure events. |
-| **Docker Containerization** | `Dockerfile`, `docker-compose.yml`, `nginx.conf` | Multi-stage Docker builds on Alpine images; single-command startup serving SPA and reverse proxying API. |
-| **DevOps & Deployment** | `.github/workflows/`, `render.yaml`, `DEPLOY.md` | Automated GitHub Actions CI pipeline, database health check, production logging, and full deployment guide. |
+| Checklist Item                     | Where It Lives                                             | Proof in the Demo                                                                                                                  |
+| ---------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend with Tailwind**         | `client/src/`, `tailwind.config.js`                        | Clean responsive UI tested at desktop and 375px mobile viewports; zero external component libraries.                               |
+| **React & State Management**       | `client/src/context/`, `client/src/api/`                   | `AuthContext` (JWT session restore), `AuctionContext` (filter reducer), `SocketContext`, and `ToastContext`.                       |
+| **Backend REST API**               | `server/src/routes/`, `server/src/controllers/`            | Fully modular REST API matching `routes.md` and `openapi.yaml`, with Postman collection.                                           |
+| **MongoDB & Mongoose**             | `server/src/models/`, `docs/database.md`                   | 5 Mongoose schemas (`User`, `Product`, `Bid`, `Notification`, `Report`) with compound & text indexes and `toJSON` transformations. |
+| **Data Validation**                | `server/src/validators/`, `client/src/utils/validators.js` | Strict Zod validation on API writes and matching client inline field error states.                                                 |
+| **Authentication & Authorization** | `server/src/middleware/auth.js`, `ProtectedRoute.jsx`      | `@ves.ac.in` email restriction, bcrypt hashing, JWT verification, admin guards, and suspension checking.                           |
+| **Real-Time Features (Socket.IO)** | `server/src/sockets/`, `SocketContext.jsx`                 | Live auction room viewer count, instant outbid alerts, price flashes, and auction closure events.                                  |
+| **Docker Containerization**        | `Dockerfile`, `docker-compose.yml`, `nginx.conf`           | Multi-stage Docker builds on Alpine images; single-command startup serving SPA and reverse proxying API.                           |
+| **DevOps & Deployment**            | `.github/workflows/`, `render.yaml`, `DEPLOY.md`           | Automated GitHub Actions CI pipeline, database health check, production logging, and full deployment guide.                        |
 
 ---
 

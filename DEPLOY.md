@@ -1,6 +1,7 @@
 # CampusBid — Production Deployment Guide
 
 This guide provides exact, step-by-step instructions to deploy CampusBid to production using free-tier cloud providers:
+
 - **Database:** MongoDB Atlas (M0 Free Tier)
 - **Backend API & Real-time WebSockets:** Render (Free Web Service)
 - **Frontend SPA:** Vercel (Hobby Tier)
@@ -73,17 +74,17 @@ This guide provides exact, step-by-step instructions to deploy CampusBid to prod
 3. **Configure Environment Variables in Render:**
    In the **Environment Variables** tab, add:
 
-   | Variable | Value | Description |
-   |---|---|---|
-   | `NODE_ENV` | `production` | Enables production optimizations & logging |
-   | `PORT` | `10000` | Render internal listener port |
-   | `MONGO_URI` | `mongodb+srv://...` | Your MongoDB Atlas connection URI from Step 1 |
-   | `JWT_SECRET` | *(64-char random string)* | Secret for signing HS256 tokens |
-   | `JWT_EXPIRES_IN` | `7d` | Token lifetime |
-   | `CLIENT_ORIGIN` | `https://campusbid.vercel.app` | *Update with your actual Vercel URL from Step 3* |
-   | `AUCTION_SWEEP_MS` | `10000` | Sweeper interval (10 seconds) |
-   | `ADMIN_EMAIL` | `admin@ves.ac.in` | Seeded admin email |
-   | `ADMIN_PASSWORD` | `YourSecureAdminPass123!` | Initial administrator password |
+   | Variable           | Value                          | Description                                      |
+   | ------------------ | ------------------------------ | ------------------------------------------------ |
+   | `NODE_ENV`         | `production`                   | Enables production optimizations & logging       |
+   | `PORT`             | `10000`                        | Render internal listener port                    |
+   | `MONGO_URI`        | `mongodb+srv://...`            | Your MongoDB Atlas connection URI from Step 1    |
+   | `JWT_SECRET`       | _(64-char random string)_      | Secret for signing HS256 tokens                  |
+   | `JWT_EXPIRES_IN`   | `7d`                           | Token lifetime                                   |
+   | `CLIENT_ORIGIN`    | `https://campusbid.vercel.app` | _Update with your actual Vercel URL from Step 3_ |
+   | `AUCTION_SWEEP_MS` | `10000`                        | Sweeper interval (10 seconds)                    |
+   | `ADMIN_EMAIL`      | `admin@ves.ac.in`              | Seeded admin email                               |
+   | `ADMIN_PASSWORD`   | `YourSecureAdminPass123!`      | Initial administrator password                   |
 
 4. **Health Check Path:**
    - Under **Advanced**, set **Health Check Path** to `/health`.
@@ -135,11 +136,13 @@ NODE_ENV=development MONGO_URI="mongodb+srv://campusbid_admin:<password>@cluster
 ## Understanding Free-Tier Cold Starts & WebSockets
 
 ### 1. Render Free-Tier Cold Starts
+
 - **Behavior:** Render free web services spin down after 15 minutes of inactivity.
 - **Wake-up Time:** When a user visits the app after a sleep period, the first request may take 30 to 50 seconds to complete while the container boots.
 - **Remedy / Presentation Tip:** 5 minutes before your viva demonstration, visit `https://campusbid-api.onrender.com/health` in your browser. This will wake up the instance so it remains warm and blazing fast during your evaluation.
 
 ### 2. WebSockets & Fallback
+
 - Render free tier natively supports WebSocket connections through Socket.IO.
 - CampusBid configures `transports: ['websocket', 'polling']`, ensuring seamless fallback to HTTP long-polling if a collegiate proxy or firewall blocks WebSocket traffic.
 

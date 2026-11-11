@@ -96,6 +96,7 @@ erDiagram
 ## 2. Collections and Field Definitions
 
 ### 2.1 `users` Collection
+
 - **`fullName`** (`String`, Required, Trimmed): Student or Administrator full name.
 - **`email`** (`String`, Required, Unique, Lowercase, Trimmed): Must end with `@ves.ac.in`. Enforces VESIT-only access.
 - **`passwordHash`** (`String`, Required, `select: false`): Bcrypt salted hash (cost factor 10). Never returned by queries unless explicitly selected.
@@ -110,6 +111,7 @@ erDiagram
 - **`toJSON` Transform**: Automatically maps `_id` to string `id`, calculates `memberSince`, and removes `passwordHash` and `__v`.
 
 ### 2.2 `products` Collection
+
 - **`title`** (`String`, Required): Name of the item.
 - **`category`** (`String`, Enum: `electronics`, `books`, `furniture`, `fashion`, `sports`, `others`).
 - **`condition`** (`String`, Required, Default: `good`).
@@ -128,12 +130,14 @@ erDiagram
 - **`rejectionReason`** (`String`): Note from admin if listing is rejected during moderation.
 
 ### 2.3 `bids` Collection
+
 - **`product`** (`ObjectId`, Ref: `Product`, Required).
 - **`bidder`** (`ObjectId`, Ref: `User`, Required).
 - **`amount`** (`Number`, Integer Rupees, Min 1, Required).
 - **`timestamps`**: `createdAt` records exact server-side timestamp of bid arrival.
 
 ### 2.4 `notifications` Collection
+
 - **`user`** (`ObjectId`, Ref: `User`, Required): Notification recipient.
 - **`type`** (`String`, Enum: `outbid`, `auction_won`, `auction_ended`, `listing_approved`, `listing_rejected`).
 - **`title`** (`String`, Required), **`message`** (`String`, Required).
@@ -141,6 +145,7 @@ erDiagram
 - **`read`** (`Boolean`, Default: `false`).
 
 ### 2.5 `reports` Collection
+
 - **`product`** (`ObjectId`, Ref: `Product`, Required).
 - **`reportedBy`** (`ObjectId`, Ref: `User`, Required).
 - **`reason`** (`String`, Required).
@@ -152,15 +157,15 @@ erDiagram
 
 ## 3. Indexing Strategy
 
-| Collection | Index Fields | Type | Purpose |
-| :--- | :--- | :--- | :--- |
-| `users` | `email: 1` | Unique | Prevent duplicate registrations and speed up login lookups |
-| `products` | `{ status: 1, endTime: 1 }` | Compound | Fast polling by background sweeper (`AUCTION_SWEEP_MS`) to close ended auctions |
-| `products` | `category: 1` | Single | Filter auctions by category on browse/home pages |
-| `products` | `{ title: "text", description: "text" }` | Text | Full-text search across product catalog |
-| `bids` | `{ product: 1, amount: -1 }` | Compound | Rapid lookup of bid history and highest bid per auction |
-| `notifications` | `{ user: 1, read: 1, createdAt: -1 }` | Compound | Real-time unread notification badge queries |
-| `reports` | `{ status: 1, createdAt: -1 }` | Compound | Admin moderation queue sorting |
+| Collection      | Index Fields                             | Type     | Purpose                                                                         |
+| :-------------- | :--------------------------------------- | :------- | :------------------------------------------------------------------------------ |
+| `users`         | `email: 1`                               | Unique   | Prevent duplicate registrations and speed up login lookups                      |
+| `products`      | `{ status: 1, endTime: 1 }`              | Compound | Fast polling by background sweeper (`AUCTION_SWEEP_MS`) to close ended auctions |
+| `products`      | `category: 1`                            | Single   | Filter auctions by category on browse/home pages                                |
+| `products`      | `{ title: "text", description: "text" }` | Text     | Full-text search across product catalog                                         |
+| `bids`          | `{ product: 1, amount: -1 }`             | Compound | Rapid lookup of bid history and highest bid per auction                         |
+| `notifications` | `{ user: 1, read: 1, createdAt: -1 }`    | Compound | Real-time unread notification badge queries                                     |
+| `reports`       | `{ status: 1, createdAt: -1 }`           | Compound | Admin moderation queue sorting                                                  |
 
 ---
 

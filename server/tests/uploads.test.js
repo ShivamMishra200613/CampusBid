@@ -39,7 +39,9 @@ describe('Image Upload API Tests', () => {
     for (const file of uploadedFilesToCleanup) {
       const p = path.join(uploadsDir, file);
       if (fs.existsSync(p)) {
-        try { fs.unlinkSync(p); } catch {}
+        try {
+          fs.unlinkSync(p);
+        } catch {}
       }
     }
     await disconnectDB();

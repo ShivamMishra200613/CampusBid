@@ -54,7 +54,10 @@ test.describe('Admin Dashboard, Moderation & User Control E2E', () => {
 
     // Rejection modal appears
     await expect(page.locator('h3:has-text("Reject Listing")')).toBeVisible();
-    await page.fill('#rejectReason', 'Item description is incomplete and lacks proof of ownership.');
+    await page.fill(
+      '#rejectReason',
+      'Item description is incomplete and lacks proof of ownership.'
+    );
     await page.click('button:has-text("Confirm Rejection")');
 
     // Toast confirms rejection

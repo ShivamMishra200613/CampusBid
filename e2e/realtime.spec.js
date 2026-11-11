@@ -6,7 +6,9 @@ test.describe('Real-Time Socket.IO Multi-Client Bidding & Notifications E2E', ()
     resetDb();
   });
 
-  test('1. Two browser contexts: User B bids, User A sees live price update and outbid alert without reload', async ({ browser }) => {
+  test('1. Two browser contexts: User B bids, User A sees live price update and outbid alert without reload', async ({
+    browser
+  }) => {
     // 1. Setup Context A (Buyer A - Priya Patel)
     const contextA = await browser.newContext();
     const pageA = await contextA.newPage();
@@ -19,12 +21,16 @@ test.describe('Real-Time Socket.IO Multi-Client Bidding & Notifications E2E', ()
 
     // Both users navigate to the same live auction (Engineering Mathematics bundle, seller Rahul Sharma)
     await pageA.goto('/');
-    const itemCardA = pageA.locator('[data-testid="auction-card"]', { hasText: 'Engineering Mathematics' });
+    const itemCardA = pageA.locator('[data-testid="auction-card"]', {
+      hasText: 'Engineering Mathematics'
+    });
     await itemCardA.click();
     await pageA.waitForURL(/\/auctions\/[a-f0-9]{24}/);
 
     await pageB.goto('/');
-    const itemCardB = pageB.locator('[data-testid="auction-card"]', { hasText: 'Engineering Mathematics' });
+    const itemCardB = pageB.locator('[data-testid="auction-card"]', {
+      hasText: 'Engineering Mathematics'
+    });
     await itemCardB.click();
     await pageB.waitForURL(/\/auctions\/[a-f0-9]{24}/);
 

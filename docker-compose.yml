@@ -4,11 +4,11 @@ services:
     container_name: campusbid_mongo
     restart: unless-stopped
     expose:
-      - "27017"
+      - '27017'
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,7 +31,7 @@ services:
       - ADMIN_EMAIL=admin@ves.ac.in
       - ADMIN_PASSWORD=AdminPassword123!
     ports:
-      - "5000:5000"
+      - '5000:5000'
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -45,7 +45,7 @@ services:
     container_name: campusbid_client
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - server
 

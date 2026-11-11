@@ -1,13 +1,6 @@
 import mongoose from 'mongoose';
 
-const productCategories = [
-  'electronics',
-  'books',
-  'furniture',
-  'fashion',
-  'sports',
-  'others'
-];
+const productCategories = ['electronics', 'books', 'furniture', 'fashion', 'sports', 'others'];
 
 const productConditions = [
   'new',

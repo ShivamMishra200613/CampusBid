@@ -8,7 +8,9 @@ test.describe('Responsive Design & Mobile Viewport E2E (375px)', () => {
 
   test.use({ viewport: { width: 375, height: 667 } });
 
-  test('1. Home page renders without horizontal overflow at 375px and mobile menu functions', async ({ page }) => {
+  test('1. Home page renders without horizontal overflow at 375px and mobile menu functions', async ({
+    page
+  }) => {
     await page.goto('/');
 
     // Check no horizontal scrollbar overflow
@@ -31,7 +33,9 @@ test.describe('Responsive Design & Mobile Viewport E2E (375px)', () => {
     await page.screenshot({ path: 'e2e/screenshots/home-mobile-375px.png', fullPage: false });
   });
 
-  test('2. Auction detail page renders cleanly at 375px without horizontal overflow', async ({ page }) => {
+  test('2. Auction detail page renders cleanly at 375px without horizontal overflow', async ({
+    page
+  }) => {
     await page.goto('/');
 
     // Open first auction

@@ -95,7 +95,9 @@ export default function ResetPasswordPage() {
           >
             {loading ? (
               <>
-                <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                <span className="material-symbols-outlined animate-spin text-sm">
+                  progress_activity
+                </span>
                 <span>Resetting Password...</span>
               </>
             ) : (
@@ -105,7 +107,10 @@ export default function ResetPasswordPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <Link to="/login" className="font-label-caps text-xs text-secondary hover:text-black uppercase tracking-wider">
+          <Link
+            to="/login"
+            className="font-label-caps text-xs text-secondary hover:text-black uppercase tracking-wider"
+          >
             ← Back to Sign In
           </Link>
         </div>

@@ -77,7 +77,9 @@ describe('Products & Listings API Tests', () => {
   });
 
   after(async () => {
-    await User.deleteMany({ email: { $in: ['prod.seller@ves.ac.in', 'other.seller@ves.ac.in', 'prod.admin@ves.ac.in'] } });
+    await User.deleteMany({
+      email: { $in: ['prod.seller@ves.ac.in', 'other.seller@ves.ac.in', 'prod.admin@ves.ac.in'] }
+    });
     await Product.deleteMany({ seller: { $in: [sellerUser._id, otherSellerUser._id] } });
     await disconnectDB();
   });

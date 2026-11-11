@@ -16,8 +16,8 @@ export default function Toast() {
           isError
             ? 'bg-error text-white border-error-container'
             : isInfo
-            ? 'bg-surface-container-highest text-on-surface border-outline-variant'
-            : 'bg-black text-white border-outline-variant'
+              ? 'bg-surface-container-highest text-on-surface border-outline-variant'
+              : 'bg-black text-white border-outline-variant'
         }`}
       >
         <span className="material-symbols-outlined text-[20px]">

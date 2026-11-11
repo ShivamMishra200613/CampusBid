@@ -48,10 +48,13 @@ export default function AuctionDetailPage() {
 
         // Load related items in same category
         if (res.product.category) {
-          productsApi.getProducts({ category: res.product.category, limit: 5 })
+          productsApi
+            .getProducts({ category: res.product.category, limit: 5 })
             .then((catRes) => {
               if (catRes.success && catRes.products) {
-                setRelatedProducts(catRes.products.filter((p) => p.id !== res.product.id).slice(0, 4));
+                setRelatedProducts(
+                  catRes.products.filter((p) => p.id !== res.product.id).slice(0, 4)
+                );
               }
             })
             .catch(() => {});
@@ -86,7 +89,9 @@ export default function AuctionDetailPage() {
         const h = Math.floor(diff / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
         const s = Math.floor((diff % 60000) / 1000);
-        setTimeLeftString(`${String(h).padStart(2, '0')}h : ${String(m).padStart(2, '0')}m : ${String(s).padStart(2, '0')}s left`);
+        setTimeLeftString(
+          `${String(h).padStart(2, '0')}h : ${String(m).padStart(2, '0')}m : ${String(s).padStart(2, '0')}s left`
+        );
       }
     };
 
@@ -127,9 +132,7 @@ export default function AuctionDetailPage() {
 
     const handleAuctionEnded = (data) => {
       if (data.productId === id) {
-        setProduct((prev) =>
-          prev ? { ...prev, status: 'ended', winner: data.winner } : prev
-        );
+        setProduct((prev) => (prev ? { ...prev, status: 'ended', winner: data.winner } : prev));
         setTimeLeftString('Ended');
       }
     };
@@ -175,12 +178,14 @@ export default function AuctionDetailPage() {
 
   const isLive = product.status === 'live' && timeLeftString !== 'Ended';
   const minBid = (product.currentBid || 0) + (product.minIncrement || 50);
-  const images = product.images && product.images.length > 0
-    ? product.images
-    : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
+  const images =
+    product.images && product.images.length > 0
+      ? product.images
+      : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
 
   const isSeller = user && (user.id === product.seller?.id || user.id === product.seller);
-  const isHighestBidder = user && (user.id === product.highestBidder?.id || user.id === product.highestBidder);
+  const isHighestBidder =
+    user && (user.id === product.highestBidder?.id || user.id === product.highestBidder);
   const hasUserBid = user && recentBids.some((b) => b.bidderId === user.id);
   const isOutbid = hasUserBid && !isHighestBidder && isLive;
 
@@ -232,7 +237,9 @@ export default function AuctionDetailPage() {
 
     setIsSubmittingReport(true);
     try {
-      const fullReason = reportNotes.trim() ? `${reportReason}: ${reportNotes.trim()}` : reportReason;
+      const fullReason = reportNotes.trim()
+        ? `${reportReason}: ${reportNotes.trim()}`
+        : reportReason;
       await reportListing(product.id, fullReason);
       setReportModalOpen(false);
       setReportNotes('');
@@ -270,14 +277,20 @@ export default function AuctionDetailPage() {
 
         {/* User Bidding Status Alerts */}
         {isHighestBidder && isLive && (
-          <div data-testid="winning-badge" className="mb-6 p-4 rounded-xl bg-[#4CAF50]/10 border border-[#4CAF50]/30 text-[#2e7d32] flex items-center gap-2 font-body-sm font-semibold">
+          <div
+            data-testid="winning-badge"
+            className="mb-6 p-4 rounded-xl bg-[#4CAF50]/10 border border-[#4CAF50]/30 text-[#2e7d32] flex items-center gap-2 font-body-sm font-semibold"
+          >
             <span className="material-symbols-outlined text-xl">verified</span>
             <span>You are currently the highest bidder on this artifact!</span>
           </div>
         )}
 
         {isOutbid && (
-          <div data-testid="outbid-badge" className="mb-6 p-4 rounded-xl bg-error/10 border border-error/30 text-error flex items-center gap-2 font-body-sm font-semibold">
+          <div
+            data-testid="outbid-badge"
+            className="mb-6 p-4 rounded-xl bg-error/10 border border-error/30 text-error flex items-center gap-2 font-body-sm font-semibold"
+          >
             <span className="material-symbols-outlined text-xl">warning</span>
             <span>You have been outbid! Place a higher bid to regain the lead.</span>
           </div>
@@ -320,7 +333,11 @@ export default function AuctionDetailPage() {
                           : 'border-outline-variant hover:border-on-surface'
                       }`}
                     >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover rounded-[6px]" />
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover rounded-[6px]"
+                      />
                     </button>
                   ))}
                 </div>
@@ -346,7 +363,10 @@ export default function AuctionDetailPage() {
               {/* Seller Verification Info */}
               <div className="flex items-center gap-3 mb-6 p-3 rounded-xl bg-surface-bright border border-outline-variant">
                 <img
-                  src={product.seller?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                  src={
+                    product.seller?.avatar ||
+                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
+                  }
                   alt={product.seller?.name || 'Seller'}
                   className="w-11 h-11 rounded-full object-cover border border-outline-variant"
                 />
@@ -395,7 +415,8 @@ export default function AuctionDetailPage() {
                       ₹{(product.currentBid || 0).toLocaleString('en-IN')}
                     </div>
                     <span className="font-body-sm text-xs text-secondary mt-1 block">
-                      Starting Bid: ₹{(product.startingBid || 0).toLocaleString('en-IN')} • Min Increment: ₹{product.minIncrement || 50}
+                      Starting Bid: ₹{(product.startingBid || 0).toLocaleString('en-IN')} • Min
+                      Increment: ₹{product.minIncrement || 50}
                     </span>
                   </div>
 
@@ -434,7 +455,11 @@ export default function AuctionDetailPage() {
                   </div>
                 ) : isLive ? (
                   <div>
-                    <form onSubmit={handleBidSubmit} noValidate className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <form
+                      onSubmit={handleBidSubmit}
+                      noValidate
+                      className="flex flex-col sm:flex-row gap-3 pt-2"
+                    >
                       <div className="relative flex-grow">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 font-body-md text-lg text-secondary">
                           ₹
@@ -465,7 +490,10 @@ export default function AuctionDetailPage() {
                       </button>
                     </form>
                     {bidError && (
-                      <p data-testid="bid-amount-error" className="mt-2 ml-4 text-xs text-red-500 font-body-sm">
+                      <p
+                        data-testid="bid-amount-error"
+                        className="mt-2 ml-4 text-xs text-red-500 font-body-sm"
+                      >
                         {bidError}
                       </p>
                     )}
@@ -475,7 +503,11 @@ export default function AuctionDetailPage() {
                     This auction has closed.{' '}
                     {product.winner ? (
                       <span>
-                        Winner: <strong className="text-black">{product.winner.fullName || 'Student'}</strong> (₹{(product.currentBid || 0).toLocaleString('en-IN')})
+                        Winner:{' '}
+                        <strong className="text-black">
+                          {product.winner.fullName || 'Student'}
+                        </strong>{' '}
+                        (₹{(product.currentBid || 0).toLocaleString('en-IN')})
                       </span>
                     ) : (
                       <span>No bids were placed.</span>
@@ -485,7 +517,10 @@ export default function AuctionDetailPage() {
               </div>
 
               {/* Expandable Bid History */}
-              <details className="group border border-outline-variant rounded-xl p-4 bg-surface-bright" open>
+              <details
+                className="group border border-outline-variant rounded-xl p-4 bg-surface-bright"
+                open
+              >
                 <summary className="flex justify-between items-center cursor-pointer font-label-caps text-label-caps uppercase tracking-widest text-on-surface list-none">
                   <span>Bid History ({recentBids.length})</span>
                   <span className="material-symbols-outlined transition-transform duration-200 group-open:rotate-180 text-[20px]">
@@ -516,14 +551,19 @@ export default function AuctionDetailPage() {
                               ₹{(b.amount || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="py-2.5 text-right text-secondary font-mono text-xs">
-                              {new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(b.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   ) : (
-                    <p className="text-secondary text-sm italic py-2">No bids recorded yet. Be the first to bid!</p>
+                    <p className="text-secondary text-sm italic py-2">
+                      No bids recorded yet. Be the first to bid!
+                    </p>
                   )}
                 </div>
               </details>
@@ -559,10 +599,11 @@ export default function AuctionDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-2xl animate-fade-in">
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
-              <h3 className="font-headline-md text-lg font-bold text-on-surface">
-                Report Listing
-              </h3>
-              <button onClick={() => setReportModalOpen(false)} className="text-secondary hover:text-black">
+              <h3 className="font-headline-md text-lg font-bold text-on-surface">Report Listing</h3>
+              <button
+                onClick={() => setReportModalOpen(false)}
+                className="text-secondary hover:text-black"
+              >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>

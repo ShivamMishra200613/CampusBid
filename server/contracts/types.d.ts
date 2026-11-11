@@ -35,13 +35,7 @@ export interface User {
 }
 
 export type ProductCategory =
-  | 'all'
-  | 'electronics'
-  | 'books'
-  | 'furniture'
-  | 'fashion'
-  | 'sports'
-  | 'others';
+  'all' | 'electronics' | 'books' | 'furniture' | 'fashion' | 'sports' | 'others';
 
 export type ProductCondition =
   | 'new'

@@ -77,7 +77,10 @@ userSchema.set('toJSON', {
     delete ret.__v;
     delete ret.passwordHash;
     if (!ret.memberSince && ret.createdAt) {
-      ret.memberSince = new Date(ret.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      ret.memberSince = new Date(ret.createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
+      });
     }
     return ret;
   }
