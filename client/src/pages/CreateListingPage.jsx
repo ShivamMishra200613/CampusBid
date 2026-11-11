@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
-import { productsApi } from '../api/client';
+import { productsApi, uploadApi } from '../api/client';
 import { validateTitle, validatePrice, validateRequired } from '../utils/validators';
 
 export default function CreateListingPage() {
@@ -93,22 +93,12 @@ export default function CreateListingPage() {
       setIsUploading(true);
       setUploadProgressText(`Uploading ${files.length} photo${files.length > 1 ? 's' : ''}...`);
 
-      const formDataUpload = new FormData();
-      files.forEach((f) => formDataUpload.append('images', f));
-
-      const token = localStorage.getItem('campusbid_token') || '';
-      const res = await fetch('/api/v1/uploads', {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formDataUpload
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error?.message || 'Upload failed');
+      const res = await uploadApi.uploadImages(files);
+      if (!res.success) {
+        throw new Error(res.error?.message || 'Upload failed');
       }
 
-      setImages((prev) => [...prev, ...data.urls]);
+      setImages((prev) => [...prev, ...res.urls]);
       showToast(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded successfully!`, 'success');
     } catch (err) {
       showToast(err.message || 'Image upload failed. You can paste a URL instead.', 'error');

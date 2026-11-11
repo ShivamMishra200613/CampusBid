@@ -6,9 +6,10 @@ import User from '../models/User.js';
 let ioInstance = null;
 
 export const initSockets = (httpServer) => {
+  const cleanOrigin = (config.clientOrigin || 'http://localhost:5173').replace(/\/+$/, '');
   const io = new Server(httpServer, {
     cors: {
-      origin: config.clientOrigin || 'http://localhost:5173',
+      origin: [cleanOrigin, `${cleanOrigin}/`],
       credentials: true
     }
   });

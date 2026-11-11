@@ -1,6 +1,23 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 export const TOKEN_KEY = 'campusbid_token';
 
+export const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  const apiUrl = import.meta.env.VITE_API_URL;
+  if (apiUrl && (apiUrl.startsWith('http://') || apiUrl.startsWith('https://'))) {
+    try {
+      const serverOrigin = new URL(apiUrl).origin;
+      return `${serverOrigin}${url.startsWith('/') ? url : `/${url}`}`;
+    } catch {
+      return url;
+    }
+  }
+  return url;
+};
+
 export class ApiError extends Error {
   constructor(code, message, details = null, status = 500) {
     super(message);

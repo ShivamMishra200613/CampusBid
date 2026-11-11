@@ -11,6 +11,8 @@ import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 
+const cleanOrigin = (config.clientOrigin || 'http://localhost:5173').replace(/\/+$/, '');
+
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' }
@@ -19,7 +21,7 @@ app.use(
 
 app.use(
   cors({
-    origin: config.clientOrigin,
+    origin: [cleanOrigin, `${cleanOrigin}/`],
     credentials: true
   })
 );

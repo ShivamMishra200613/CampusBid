@@ -6,6 +6,21 @@ import { useAuction } from './AuctionContext';
 
 const SocketContext = createContext(null);
 
+const getSocketUrl = () => {
+  const customSocketUrl = import.meta.env.VITE_SOCKET_URL;
+  if (customSocketUrl) return customSocketUrl;
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+  if (apiUrl && (apiUrl.startsWith('http://') || apiUrl.startsWith('https://'))) {
+    try {
+      return new URL(apiUrl).origin;
+    } catch {
+      return '/';
+    }
+  }
+  return '/';
+};
+
 export const SocketProvider = ({ children }) => {
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -17,8 +32,9 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('campusbid_token');
+    const socketUrl = getSocketUrl();
 
-    const newSocket = io('/', {
+    const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       auth: { token: token || undefined },
       reconnectionAttempts: 10,
