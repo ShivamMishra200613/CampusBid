@@ -92,7 +92,6 @@ export const createProductSchema = z
     }),
     images: z
       .array(z.string().trim().min(1, 'Image URL cannot be empty'))
-      .min(1, 'At least one image is required')
       .max(5, 'Maximum 5 images allowed')
       .optional()
       .default([]),
@@ -109,7 +108,7 @@ export const updateProductSchema = z
     startingBid: z.number().positive().min(1).optional(),
     minIncrement: z.number().positive().min(1).optional(),
     duration: z.enum(['24h', '3d', '7d']).optional(),
-    images: z.array(z.string()).min(1).max(5).optional(),
+    images: z.array(z.string().trim().min(1)).max(5).optional(),
     isDraft: z.boolean().optional()
   })
   .strict();

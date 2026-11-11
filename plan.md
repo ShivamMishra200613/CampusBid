@@ -119,18 +119,18 @@ Done when: every write endpoint rejects bad input with a `400` and a field-level
 
 All endpoints follow `server/contracts/routes.md` and `openapi.yaml`. Response shape: top-level keys, as described in `agents.md`.
 
-- [ ] 4.1 Split `routes/index.js` into one router per module and move logic into controllers.
-- [ ] 4.2 Products: `GET /products` with `search`, `category`, `condition`, `status`, `minPrice`, `maxPrice`, `sort`, `page`, `limit`. Return `total`, `page`, `pages`. Public listing shows only `live` and `ended` products. `GET /products/:id` returns the product, seller summary, and the 5 most recent bids. `POST /products`, `PUT /products/:id` (owner, only before the first bid), `DELETE /products/:id` (owner or admin; soft delete by setting `status: removed`).
-- [ ] 4.3 `GET /products/mine` (own listings including drafts) and `POST /products/:id/publish` for drafts.
-- [ ] 4.4 Moderation: new listings go to `pending_approval` unless `isDraft`. `GET /admin/listings/pending` and `POST /admin/listings/:id/moderate` (`approve` makes it `live` and sets `endTime` from the duration at approval time; `reject` stores a reason and notifies the seller).
-- [ ] 4.5 Bids: `POST /products/:id/bids` implements all four contract rules (listing is live, now is before `endTime`, amount at least `currentBid + minIncrement`, bidder is not the seller). Use one atomic `findOneAndUpdate` with those conditions in the filter so two simultaneous bids cannot both win. Create the `Bid` document, set `highestBidder`, increment `bidCount`.
-- [ ] 4.6 `GET /products/:id/bids` (full history, paginated) and `GET /bids/my-bids?filter=all|winning|outbid|ended` computed from real data, with status `Winning`, `Outbid`, `Won`, or `Lost`.
-- [ ] 4.7 Notifications: `GET /notifications?unreadOnly=true`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`. A user can only touch their own.
-- [ ] 4.8 Reports: `POST /products/:id/report` (any student) and the admin side `GET /admin/reports`, `POST /admin/reports/:id/resolve` with the four resolution actions actually applied (`remove_listing` sets the product to `removed`, `suspend_user` sets `isSuspended` on the seller).
-- [ ] 4.9 Admin users: `GET /admin/users` (search and pagination), `PATCH /admin/users/:id/suspend` and `PATCH /admin/users/:id/unsuspend`. An admin cannot suspend themselves or another admin.
-- [ ] 4.10 `GET /admin/stats` computed from the database (active users, total volume of ended auctions, pending approvals, flagged listings, live auctions, completed auctions).
-- [ ] 4.11 Update `openapi.yaml`, `routes.md`, and `postman_collection.json` to match what is implemented, including the Bearer auth on each request in Postman.
-- [ ] 4.12 Server tests for products, bids, notifications, and admin (`server/tests/*.test.js`). Include the concurrency test: fire 10 bids at once at the same price and assert exactly one succeeds.
+- [x] 4.1 Split `routes/index.js` into one router per module and move logic into controllers.
+- [x] 4.2 Products: `GET /products` with `search`, `category`, `condition`, `status`, `minPrice`, `maxPrice`, `sort`, `page`, `limit`. Return `total`, `page`, `pages`. Public listing shows only `live` and `ended` products. `GET /products/:id` returns the product, seller summary, and the 5 most recent bids. `POST /products`, `PUT /products/:id` (owner, only before the first bid), `DELETE /products/:id` (owner or admin; soft delete by setting `status: removed`).
+- [x] 4.3 `GET /products/mine` (own listings including drafts) and `POST /products/:id/publish` for drafts.
+- [x] 4.4 Moderation: new listings go to `pending_approval` unless `isDraft`. `GET /admin/listings/pending` and `POST /admin/listings/:id/moderate` (`approve` makes it `live` and sets `endTime` from the duration at approval time; `reject` stores a reason and notifies the seller).
+- [x] 4.5 Bids: `POST /products/:id/bids` implements all four contract rules (listing is live, now is before `endTime`, amount at least `currentBid + minIncrement`, bidder is not the seller). Use one atomic `findOneAndUpdate` with those conditions in the filter so two simultaneous bids cannot both win. Create the `Bid` document, set `highestBidder`, increment `bidCount`.
+- [x] 4.6 `GET /products/:id/bids` (full history, paginated) and `GET /bids/my-bids?filter=all|winning|outbid|ended` computed from real data, with status `Winning`, `Outbid`, `Won`, or `Lost`.
+- [x] 4.7 Notifications: `GET /notifications?unreadOnly=true`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`. A user can only touch their own.
+- [x] 4.8 Reports: `POST /products/:id/report` (any student) and the admin side `GET /admin/reports`, `POST /admin/reports/:id/resolve` with the four resolution actions actually applied (`remove_listing` sets the product to `removed`, `suspend_user` sets `isSuspended` on the seller).
+- [x] 4.9 Admin users: `GET /admin/users` (search and pagination), `PATCH /admin/users/:id/suspend` and `PATCH /admin/users/:id/unsuspend`. An admin cannot suspend themselves or another admin.
+- [x] 4.10 `GET /admin/stats` computed from the database (active users, total volume of ended auctions, pending approvals, flagged listings, live auctions, completed auctions).
+- [x] 4.11 Update `openapi.yaml`, `routes.md`, and `postman_collection.json` to match what is implemented, including the Bearer auth on each request in Postman.
+- [x] 4.12 Server tests for products, bids, notifications, and admin (`server/tests/*.test.js`). Include the concurrency test: fire 10 bids at once at the same price and assert exactly one succeeds.
 
 Done when: every endpoint in `routes.md` exists, behaves as documented, and the server test suite passes against a real MongoDB.
 
