@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 2: Authentication and Authorization   Last finished task: 2.6   Next task: 2.7
+Phase: Phase 2: Authentication and Authorization   Last finished task: 2.7   Next task: 2.8
 
 ## Log
+- 2026-11-11 2.7: Implemented POST /auth/forgot-password and POST /auth/reset-password with signed reset tokens, dev console logging, and user enumeration protection | checks: verified 200 on forgot-password, console link output, 400 on invalid token, and successful reset + login
 - 2026-11-11 2.6: Migrated /users/me GET and PUT to userController with database persistence; strictly protected role, email, and isSuspended against modification | checks: verified GET returns authenticated DB user, PUT updates permitted fields and ignores role/email changes
 - 2026-11-11 2.5: Applied authenticate and requireAdmin middleware across routes per routes.md contract specification | checks: verified 401 on unauthenticated access to /users/me, 403 on student accessing /admin/stats, 200 on public /products
 - 2026-11-11 2.4: Implemented optionalAuth middleware to populate req.user when valid Bearer token exists without rejecting anonymous requests | checks: verified null on missing/bad tokens and valid user object on authenticated tokens
