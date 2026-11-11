@@ -65,3 +65,27 @@ export const requireAdmin = (req, res, next) => {
   }
   next();
 };
+
+export const optionalAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    req.user = null;
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret);
+    const userId = decoded.sub || decoded.id;
+    const user = await User.findById(userId);
+
+    if (user && !user.isSuspended) {
+      req.user = user;
+    } else {
+      req.user = null;
+    }
+  } catch (err) {
+    req.user = null;
+  }
+  next();
+};
