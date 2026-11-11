@@ -41,6 +41,7 @@ Phase: Phase 11: Playwright end-to-end tests   Last finished task: 10.7   Next t
 ## Blocked
 
 ## Questions for the owner
+- Phase 10 is complete: reached the HUMAN CHECKPOINT. All deployment configurations (`render.yaml`, `client/vercel.json`, `.github/workflows/ci.yml`, `.github/workflows/docker.yml`) and the full step-by-step deployment guide (`DEPLOY.md`) are prepared. Please review `DEPLOY.md` to deploy the platform on MongoDB Atlas, Render, and Vercel at your convenience. When you are ready, provide the live URL or let us proceed to implement Phase 11 (Playwright E2E suite against local dev/test servers) and Phase 12 (Evaluation documentation).
 
 ## Notes for the viva
 - Baseline Express server responds on /health and mounts mock API at /api/v1.
