@@ -17,6 +17,12 @@ dist-ssr/
 !.env.example
 !**/.env.example
 
+# Temporary and working notes
+CLEANUP_REPORT.md
+
+# Docker compose overrides
+docker-compose.override.yml
+
 # Uploads
 uploads/
 **/uploads/
