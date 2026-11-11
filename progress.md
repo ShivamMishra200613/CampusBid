@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.5   Next task: 1.6
+Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.6   Next task: 1.7
 
 ## Log
+- 2026-11-11 1.6: Created Notification model with enum types, compound index, and toJSON transform | checks: verified model validation and type constraint enforcement
 - 2026-11-11 1.5: Created Bid model with compound product + amount index and toJSON transform | checks: verified model validation and indexing
 - 2026-11-11 1.4: Created Product model with status/endTime, category, and text indexes, enums, and toJSON mapping | checks: verified model validation, default bid logic, and schema indexing
 - 2026-11-11 1.3: Implemented Mongoose User model with @ves.ac.in validator, hidden passwordHash, and toJSON id mapping | checks: verified schema validation and toJSON transform
