@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 
 export default function MyListingsPage() {
-  const { auctions, myDrafts, publishDraft, deleteListing } = useAuction();
+  const {
+    myListings,
+    loadingMyListings,
+    refetchMyListings,
+    publishListing,
+    deleteListing
+  } = useAuction();
+
   const [activeTab, setActiveTab] = useState('all');
 
-  // Listings by logged-in user
-  const userLiveAuctions = auctions.filter((a) => a.status === 'live');
-  const userEndedAuctions = auctions.filter((a) => a.status === 'ended');
+  useEffect(() => {
+    refetchMyListings();
+  }, [refetchMyListings]);
+
+  const liveItems = myListings.filter((a) => a.status === 'live');
+  const endedItems = myListings.filter((a) => a.status === 'ended');
+  const draftItems = myListings.filter((a) => a.status === 'draft');
+  const pendingItems = myListings.filter((a) => a.status === 'pending_approval');
 
   const getFilteredItems = () => {
-    if (activeTab === 'active') return userLiveAuctions;
-    if (activeTab === 'ended') return userEndedAuctions;
-    if (activeTab === 'drafts') return myDrafts;
-    return [...userLiveAuctions, ...userEndedAuctions, ...myDrafts];
+    if (activeTab === 'active') return liveItems;
+    if (activeTab === 'ended') return endedItems;
+    if (activeTab === 'drafts') return draftItems;
+    if (activeTab === 'pending') return pendingItems;
+    return myListings;
   };
 
   const items = getFilteredItems();
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to remove this listing?')) {
+      await deleteListing(id);
+    }
+  };
+
+  const handlePublish = async (id) => {
+    await publishListing(id);
+  };
 
   return (
     <div className="w-full">
@@ -33,7 +56,7 @@ export default function MyListingsPage() {
             </p>
           </div>
 
-          <Link to="/create" className="btn-primary">
+          <Link to="/create" className="btn-primary" data-testid="create-new-listing-btn">
             + New Listing
           </Link>
         </div>
@@ -41,15 +64,17 @@ export default function MyListingsPage() {
         {/* Tab Filters */}
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 border-b border-outline-variant">
           {[
-            { key: 'all', label: 'All Items', count: userLiveAuctions.length + userEndedAuctions.length + myDrafts.length },
-            { key: 'active', label: 'Active Live', count: userLiveAuctions.length },
-            { key: 'ended', label: 'Ended / Sold', count: userEndedAuctions.length },
-            { key: 'drafts', label: 'Drafts', count: myDrafts.length }
+            { key: 'all', label: 'All Items', count: myListings.length },
+            { key: 'active', label: 'Active Live', count: liveItems.length },
+            { key: 'pending', label: 'Pending Approval', count: pendingItems.length },
+            { key: 'ended', label: 'Ended / Sold', count: endedItems.length },
+            { key: 'drafts', label: 'Drafts', count: draftItems.length }
           ].map((tab) => (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors ${
+              className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'bg-black text-white font-bold'
                   : 'bg-surface-bright text-secondary hover:text-black border border-outline-variant'
@@ -60,9 +85,14 @@ export default function MyListingsPage() {
           ))}
         </div>
 
-        {/* Listings Grid */}
-        {items.length === 0 ? (
-          <div className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
+        {/* Loading / Empty / Content states */}
+        {loadingMyListings ? (
+          <div data-testid="my-listings-loading" className="py-20 text-center text-secondary">
+            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <p className="mt-2 font-body-sm text-sm">Loading your listings...</p>
+          </div>
+        ) : items.length === 0 ? (
+          <div data-testid="my-listings-empty" className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
             <span className="material-symbols-outlined text-[48px] text-secondary mb-2">
               inventory_2
             </span>
@@ -72,7 +102,7 @@ export default function MyListingsPage() {
             <p className="font-body-md text-secondary mt-1">
               Have unwanted textbooks or gadgets? Put them up for auction today.
             </p>
-            <Link to="/create" className="btn-primary mt-6">
+            <Link to="/create" className="btn-primary mt-6 inline-block">
               Create First Listing
             </Link>
           </div>
@@ -82,10 +112,12 @@ export default function MyListingsPage() {
               const isDraft = item.status === 'draft';
               const isEnded = item.status === 'ended';
               const isLive = item.status === 'live';
+              const isPending = item.status === 'pending_approval';
 
               return (
                 <div
                   key={item.id}
+                  data-testid="my-listing-card"
                   className={`group border rounded-xl overflow-hidden bg-surface-container-lowest transition-all hover:shadow-md ${
                     isDraft
                       ? 'border-dashed border-outline-variant bg-surface-bright'
@@ -111,18 +143,11 @@ export default function MyListingsPage() {
                       </span>
                     </div>
 
-                    {/* Status Badge */}
-                    {isEnded && (
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <span className="bg-surface-container-lowest text-on-surface font-label-caps text-xs px-4 py-1.5 rounded-full border border-outline-variant font-bold shadow-md">
-                          SOLD
-                        </span>
-                      </div>
-                    )}
-
                     {/* Delete action button */}
                     <button
-                      onClick={() => deleteListing(item.id)}
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      data-testid="delete-listing-button"
                       title="Delete Listing"
                       className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 text-secondary hover:text-error flex items-center justify-center border border-outline-variant shadow-sm transition-colors"
                     >
@@ -150,16 +175,18 @@ export default function MyListingsPage() {
 
                       <div className="text-right">
                         {isLive && (
-                          <>
-                            <span className="inline-flex items-center gap-1 font-label-caps text-[10px] bg-[#4CAF50] text-white px-2.5 py-0.5 rounded-full mb-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Live
-                            </span>
-                            <p className="font-body-sm text-xs text-secondary">02h : 15m left</p>
-                          </>
+                          <span className="inline-flex items-center gap-1 font-label-caps text-[10px] bg-[#4CAF50] text-white px-2.5 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Live
+                          </span>
+                        )}
+                        {isPending && (
+                          <span className="inline-flex items-center gap-1 font-label-caps text-[10px] bg-[#f59e0b] text-white px-2.5 py-0.5 rounded-full">
+                            Under Review
+                          </span>
                         )}
                         {isEnded && (
                           <span className="inline-flex items-center gap-1 font-label-caps text-[10px] bg-surface-container-high text-secondary px-2.5 py-0.5 rounded-full">
-                            Completed
+                            Ended
                           </span>
                         )}
                         {isDraft && (
@@ -173,23 +200,47 @@ export default function MyListingsPage() {
                     {/* Quick Action Button */}
                     <div className="pt-2">
                       {isDraft ? (
-                        <button
-                          onClick={() => publishDraft(item.id)}
-                          className="w-full py-2 bg-on-surface text-white rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">publish</span>
-                          Publish Listing
-                        </button>
+                        <div className="flex gap-2">
+                          <Link
+                            to={`/create?edit=${item.id}`}
+                            data-testid="edit-listing-button"
+                            className="flex-1 py-2 border border-outline-variant rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1 text-on-surface"
+                          >
+                            <span className="material-symbols-outlined text-[15px]">edit</span>
+                            Edit
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => handlePublish(item.id)}
+                            data-testid="publish-draft-button"
+                            className="flex-1 py-2 bg-on-surface text-white rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-gray-800 transition-colors flex items-center justify-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-[15px]">publish</span>
+                            Submit
+                          </button>
+                        </div>
                       ) : (
-                        <Link
-                          to={`/auctions/${item.id}`}
-                          className="w-full py-2 border border-outline-variant rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1.5 text-on-surface"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">
-                            {isEnded ? 'receipt_long' : 'visibility'}
-                          </span>
-                          {isEnded ? 'View Receipt' : 'View Live Listing'}
-                        </Link>
+                        <div className="flex gap-2">
+                          {(isPending || (isLive && (item.bidsCount === 0 || item.bids?.length === 0))) && (
+                            <Link
+                              to={`/create?edit=${item.id}`}
+                              data-testid="edit-listing-button"
+                              className="flex-1 py-2 border border-outline-variant rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1 text-on-surface"
+                            >
+                              <span className="material-symbols-outlined text-[15px]">edit</span>
+                              Edit
+                            </Link>
+                          )}
+                          <Link
+                            to={`/auctions/${item.id}`}
+                            className="flex-1 py-2 border border-outline-variant rounded-full font-label-caps text-[11px] uppercase tracking-wider hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1.5 text-on-surface"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">
+                              {isEnded ? 'receipt_long' : 'visibility'}
+                            </span>
+                            {isEnded ? 'View Result' : 'View Listing'}
+                          </Link>
+                        </div>
                       )}
                     </div>
                   </div>

@@ -1,51 +1,138 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
+import { productsApi } from '../api/client';
 import { validatePrice } from '../utils/validators';
 import AuctionCard from '../components/AuctionCard';
 
 export default function AuctionDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { auctions, placeBid, showToast } = useAuction();
-  const { isAuthenticated } = useAuth();
+  const { placeBid, reportListing, showToast } = useAuction();
+  const { user, isAuthenticated } = useAuth();
 
-  const product = auctions.find((a) => a.id === id) || auctions[0];
+  const [product, setProduct] = useState(null);
+  const [recentBids, setRecentBids] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-
-  // Next minimum bid
-  const minBid = (product?.currentBid || 0) + (product?.minIncrement || 50);
-  const [bidAmount, setBidAmount] = useState(minBid);
+  const [bidAmount, setBidAmount] = useState('');
   const [bidError, setBidError] = useState('');
+  const [isSubmittingBid, setIsSubmittingBid] = useState(false);
+
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState('Counterfeit');
+  const [reportNotes, setReportNotes] = useState('');
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+
+  const [timeLeftString, setTimeLeftString] = useState('');
+
+  const loadProduct = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await productsApi.getProductById(id);
+      if (res.success && res.product) {
+        setProduct(res.product);
+        setRecentBids(res.recentBids || []);
+
+        const nextMin = (res.product.currentBid || 0) + (res.product.minIncrement || 50);
+        setBidAmount(String(nextMin));
+
+        // Load related items in same category
+        if (res.product.category) {
+          productsApi.getProducts({ category: res.product.category, limit: 5 })
+            .then((catRes) => {
+              if (catRes.success && catRes.products) {
+                setRelatedProducts(catRes.products.filter((p) => p.id !== res.product.id).slice(0, 4));
+              }
+            })
+            .catch(() => {});
+        }
+      } else {
+        setError('Product not found.');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load auction details.');
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [id]);
+    loadProduct();
+  }, [loadProduct]);
 
-  if (!product) {
+  // Live countdown timer
+  useEffect(() => {
+    if (!product || product.status !== 'live' || !product.endTime) {
+      setTimeLeftString('Ended');
+      return;
+    }
+
+    const updateTimer = () => {
+      const diff = new Date(product.endTime) - Date.now();
+      if (diff <= 0) {
+        setTimeLeftString('Ended');
+      } else {
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        setTimeLeftString(`${String(h).padStart(2, '0')}h : ${String(m).padStart(2, '0')}m : ${String(s).padStart(2, '0')}s left`);
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [product]);
+
+  if (loading) {
     return (
-      <div className="main-stage text-center py-20">
-        <h2 className="font-headline-md text-2xl font-bold">Product not found</h2>
-        <Link to="/" className="btn-primary mt-6">
+      <div data-testid="detail-loading" className="main-stage text-center py-24 text-secondary">
+        <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+        <p className="mt-2 font-body-sm text-sm">Loading artifact details...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div data-testid="detail-error" className="main-stage text-center py-20">
+        <span className="material-symbols-outlined text-5xl text-error mb-2">error</span>
+        <h2 className="font-headline-md text-2xl font-bold">{error || 'Product not found'}</h2>
+        <Link to="/" className="btn-primary mt-6 inline-block">
           Back to Auctions
         </Link>
       </div>
     );
   }
 
-  const isLive = product.status === 'live';
-  const images = product.images && product.images.length > 0 ? product.images : [
-    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800'
-  ];
+  const isLive = product.status === 'live' && timeLeftString !== 'Ended';
+  const minBid = (product.currentBid || 0) + (product.minIncrement || 50);
+  const images = product.images && product.images.length > 0
+    ? product.images
+    : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
 
-  const handleBidSubmit = (e) => {
+  const isSeller = user && (user.id === product.seller?.id || user.id === product.seller);
+  const isHighestBidder = user && (user.id === product.highestBidder?.id || user.id === product.highestBidder);
+  const hasUserBid = user && recentBids.some((b) => b.bidderId === user.id);
+  const isOutbid = hasUserBid && !isHighestBidder && isLive;
+
+  const handleBidSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
       showToast('Please sign in to place a bid.', 'error');
       navigate('/login');
+      return;
+    }
+
+    if (isSeller) {
+      setBidError('Sellers cannot bid on their own listings.');
       return;
     }
 
@@ -62,26 +149,43 @@ export default function AuctionDetailPage() {
     }
 
     setBidError('');
-    const success = placeBid(product.id, num);
-    if (success) {
-      setBidAmount(num + product.minIncrement);
+    setIsSubmittingBid(true);
+
+    try {
+      await placeBid(product.id, num);
+      await loadProduct();
+    } catch (err) {
+      setBidError(err.message || 'Bid submission failed.');
+    } finally {
+      setIsSubmittingBid(false);
     }
   };
 
-  const handleReportSubmit = (e) => {
+  const handleReportSubmit = async (e) => {
     e.preventDefault();
-    setReportModalOpen(false);
-    showToast('Listing reported to VESIT administration for moderation.', 'success');
-  };
+    if (!isAuthenticated) {
+      showToast('Please sign in to report a listing.', 'error');
+      navigate('/login');
+      return;
+    }
 
-  const relatedProducts = auctions
-    .filter((a) => a.id !== product.id && a.category === product.category)
-    .slice(0, 4);
+    setIsSubmittingReport(true);
+    try {
+      const fullReason = reportNotes.trim() ? `${reportReason}: ${reportNotes.trim()}` : reportReason;
+      await reportListing(product.id, fullReason);
+      setReportModalOpen(false);
+      setReportNotes('');
+    } catch {
+      // Error handled in context toast
+    } finally {
+      setIsSubmittingReport(false);
+    }
+  };
 
   return (
     <div className="w-full">
       <div className="main-stage">
-        {/* Back Link */}
+        {/* Back Link & Report Button */}
         <div className="mb-6 flex items-center justify-between">
           <Link
             to="/"
@@ -91,17 +195,35 @@ export default function AuctionDetailPage() {
             Back to Catalog
           </Link>
 
-          <button
-            onClick={() => setReportModalOpen(true)}
-            className="inline-flex items-center gap-1 text-[11px] font-label-caps uppercase tracking-wider text-secondary hover:text-error transition-colors"
-          >
-            <span className="material-symbols-outlined text-[16px]">flag</span>
-            Report Listing
-          </button>
+          {!isSeller && (
+            <button
+              onClick={() => setReportModalOpen(true)}
+              data-testid="report-listing-button"
+              className="inline-flex items-center gap-1 text-[11px] font-label-caps uppercase tracking-wider text-secondary hover:text-error transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">flag</span>
+              Report Listing
+            </button>
+          )}
         </div>
 
+        {/* User Bidding Status Alerts */}
+        {isHighestBidder && isLive && (
+          <div data-testid="winning-badge" className="mb-6 p-4 rounded-xl bg-[#4CAF50]/10 border border-[#4CAF50]/30 text-[#2e7d32] flex items-center gap-2 font-body-sm font-semibold">
+            <span className="material-symbols-outlined text-xl">verified</span>
+            <span>You are currently the highest bidder on this artifact!</span>
+          </div>
+        )}
+
+        {isOutbid && (
+          <div data-testid="outbid-badge" className="mb-6 p-4 rounded-xl bg-error/10 border border-error/30 text-error flex items-center gap-2 font-body-sm font-semibold">
+            <span className="material-symbols-outlined text-xl">warning</span>
+            <span>You have been outbid! Place a higher bid to regain the lead.</span>
+          </div>
+        )}
+
         {/* Product Details Main Stage Card */}
-        <div className="bg-surface rounded-2xl border border-outline-variant overflow-hidden p-6 md:p-10 lg:p-12 mb-16">
+        <div className="bg-surface rounded-2xl border border-outline-variant overflow-hidden p-6 md:p-10 lg:p-12 mb-16 shadow-sm">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
             {/* --------------------------------------------------
                 LEFT COLUMN: IMAGERY & THUMBNAILS
@@ -124,21 +246,24 @@ export default function AuctionDetailPage() {
               </div>
 
               {/* Thumbnails Row */}
-              <div className="grid grid-cols-4 gap-3">
-                {images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImageIndex(idx)}
-                    className={`aspect-square rounded-lg overflow-hidden border transition-all p-[1px] ${
-                      activeImageIndex === idx
-                        ? 'border-on-surface ring-2 ring-on-surface'
-                        : 'border-outline-variant hover:border-on-surface'
-                    }`}
-                  >
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover rounded-[6px]" />
-                  </button>
-                ))}
-              </div>
+              {images.length > 1 && (
+                <div className="grid grid-cols-4 gap-3">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveImageIndex(idx)}
+                      className={`aspect-square rounded-lg overflow-hidden border transition-all p-[1px] ${
+                        activeImageIndex === idx
+                          ? 'border-on-surface ring-2 ring-on-surface'
+                          : 'border-outline-variant hover:border-on-surface'
+                      }`}
+                    >
+                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover rounded-[6px]" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* --------------------------------------------------
@@ -166,12 +291,12 @@ export default function AuctionDetailPage() {
                 />
                 <div className="flex flex-col">
                   <span className="font-body-md text-base font-semibold text-on-surface">
-                    {product.seller?.name || 'Alex V.'}
+                    {product.seller?.name || 'VESIT Student'}
                   </span>
                   <div className="flex items-center text-tertiary gap-1">
                     <span className="material-symbols-outlined text-[16px]">verified</span>
                     <span className="font-body-sm text-[12px] font-medium">
-                      Verified VESIT Student • Batch 2026
+                      Verified VESIT Student
                     </span>
                   </div>
                 </div>
@@ -218,13 +343,17 @@ export default function AuctionDetailPage() {
                       <span className="material-symbols-outlined text-secondary text-[18px]">
                         schedule
                       </span>
-                      <span>02h : 15m : 45s left</span>
+                      <span>{timeLeftString}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Bid Form */}
-                {isLive ? (
+                {/* Bid Form or Seller Notice */}
+                {isSeller ? (
+                  <div className="p-4 bg-surface-container rounded-lg text-center font-body-sm text-secondary">
+                    You listed this auction. Sellers cannot bid on their own listings.
+                  </div>
+                ) : isLive ? (
                   <div>
                     <form onSubmit={handleBidSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
                       <div className="relative flex-grow">
@@ -249,10 +378,11 @@ export default function AuctionDetailPage() {
                       </div>
                       <button
                         type="submit"
+                        disabled={isSubmittingBid}
                         data-testid="place-bid-button"
-                        className="h-14 px-8 bg-on-surface text-white rounded-full font-label-caps text-label-caps uppercase tracking-widest hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm"
+                        className="h-14 px-8 bg-on-surface text-white rounded-full font-label-caps text-label-caps uppercase tracking-widest hover:bg-gray-800 transition-colors whitespace-nowrap shadow-sm disabled:opacity-50"
                       >
-                        Place Bid
+                        {isSubmittingBid ? 'Placing...' : 'Place Bid'}
                       </button>
                     </form>
                     {bidError && (
@@ -263,7 +393,14 @@ export default function AuctionDetailPage() {
                   </div>
                 ) : (
                   <div className="p-4 bg-surface-container rounded-lg text-center font-body-sm text-secondary">
-                    This auction has officially closed. Winning Bidder: <strong className="text-black">{product.winningBidder?.name || 'Alex Mercer'} (₹{product.currentBid?.toLocaleString('en-IN')})</strong>
+                    This auction has closed.{' '}
+                    {product.winner ? (
+                      <span>
+                        Winner: <strong className="text-black">{product.winner.fullName || 'Student'}</strong> (₹{(product.currentBid || 0).toLocaleString('en-IN')})
+                      </span>
+                    ) : (
+                      <span>No bids were placed.</span>
+                    )}
                   </div>
                 )}
               </div>
@@ -271,14 +408,14 @@ export default function AuctionDetailPage() {
               {/* Expandable Bid History */}
               <details className="group border border-outline-variant rounded-xl p-4 bg-surface-bright" open>
                 <summary className="flex justify-between items-center cursor-pointer font-label-caps text-label-caps uppercase tracking-widest text-on-surface list-none">
-                  <span>Bid History ({product.bids?.length || 0})</span>
+                  <span>Bid History ({recentBids.length})</span>
                   <span className="material-symbols-outlined transition-transform duration-200 group-open:rotate-180 text-[20px]">
                     expand_more
                   </span>
                 </summary>
 
                 <div className="pt-4 overflow-x-auto">
-                  {product.bids && product.bids.length > 0 ? (
+                  {recentBids.length > 0 ? (
                     <table className="w-full text-left font-body-sm text-sm text-on-surface">
                       <thead>
                         <tr className="border-b border-outline-variant text-secondary font-label-caps text-[11px] uppercase">
@@ -288,7 +425,7 @@ export default function AuctionDetailPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-outline-variant">
-                        {product.bids.map((b, idx) => (
+                        {recentBids.map((b, idx) => (
                           <tr key={b.id || idx} className="hover:bg-surface transition-colors">
                             <td className="py-2.5 font-medium flex items-center gap-1.5">
                               {idx === 0 && (
@@ -300,7 +437,7 @@ export default function AuctionDetailPage() {
                               ₹{(b.amount || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="py-2.5 text-right text-secondary font-mono text-xs">
-                              {b.timeAgo || 'Recent'}
+                              {new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </td>
                           </tr>
                         ))}
@@ -369,6 +506,8 @@ export default function AuctionDetailPage() {
                 <label className="editorial-label">Additional details</label>
                 <textarea
                   rows="3"
+                  value={reportNotes}
+                  onChange={(e) => setReportNotes(e.target.value)}
                   placeholder="Explain why this listing violates campus guidelines..."
                   className="w-full rounded-xl border border-outline-variant p-3 font-body-md text-sm outline-none focus:border-on-surface"
                 ></textarea>
@@ -381,8 +520,12 @@ export default function AuctionDetailPage() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary">
-                  Submit Report
+                <button
+                  type="submit"
+                  disabled={isSubmittingReport}
+                  className="btn-primary disabled:opacity-50"
+                >
+                  {isSubmittingReport ? 'Submitting...' : 'Submit Report'}
                 </button>
               </div>
             </form>

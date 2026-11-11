@@ -1,22 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useAuction } from '../context/AuctionContext';
+import { useToast } from '../context/ToastContext';
 import { validateRequired } from '../utils/validators';
 
 export default function ProfilePage() {
   const { user, updateProfile } = useAuth();
-  const { showToast } = useAuction();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || 'Alex Mercer',
-    phone: user?.phone || '+91 98765 43210',
-    classBranch: user?.classBranch || 'D12C / EXTC',
-    bio: user?.bio || 'Engineering student interested in electronics and vintage books. Always looking for a good deal on reference materials.',
-    outbidAlerts: user?.notificationPreferences?.outbidAlerts ?? true,
-    auctionEndingAlerts: user?.notificationPreferences?.auctionEndingAlerts ?? true,
-    newMessageAlerts: user?.notificationPreferences?.newMessageAlerts ?? false
+    fullName: '',
+    phone: '',
+    classBranch: 'D12C / EXTC',
+    bio: '',
+    outbidAlerts: true,
+    auctionEndingAlerts: true,
+    newMessageAlerts: false
   });
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || '',
+        phone: user.phone || '',
+        classBranch: user.classBranch || 'D12C / EXTC',
+        bio: user.bio || '',
+        outbidAlerts: user.notificationPreferences?.outbidAlerts ?? true,
+        auctionEndingAlerts: user.notificationPreferences?.auctionEndingAlerts ?? true,
+        newMessageAlerts: user.notificationPreferences?.newMessageAlerts ?? false
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -29,7 +44,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     const nameErr = validateRequired(formData.fullName, 'Full name');
     if (nameErr) {
@@ -37,19 +52,26 @@ export default function ProfilePage() {
       return;
     }
 
-    setErrors({});
-    updateProfile({
-      fullName: formData.fullName,
-      phone: formData.phone,
-      classBranch: formData.classBranch,
-      bio: formData.bio,
-      notificationPreferences: {
-        outbidAlerts: formData.outbidAlerts,
-        auctionEndingAlerts: formData.auctionEndingAlerts,
-        newMessageAlerts: formData.newMessageAlerts
-      }
-    });
-    showToast('Profile details updated successfully!', 'success');
+    try {
+      setSaving(true);
+      setErrors({});
+      await updateProfile({
+        fullName: formData.fullName,
+        phone: formData.phone,
+        classBranch: formData.classBranch,
+        bio: formData.bio,
+        notificationPreferences: {
+          outbidAlerts: formData.outbidAlerts,
+          auctionEndingAlerts: formData.auctionEndingAlerts,
+          newMessageAlerts: formData.newMessageAlerts
+        }
+      });
+      showToast('Profile details updated successfully!', 'success');
+    } catch (err) {
+      showToast(err.message || 'Failed to update profile.', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -63,62 +85,50 @@ export default function ProfilePage() {
             <div className="w-32 h-32 rounded-full border border-outline-variant overflow-hidden mb-6 bg-surface-variant shadow-sm">
               <img
                 src={user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}
-                alt={user?.fullName}
+                alt={user?.fullName || 'User Profile'}
                 className="w-full h-full object-cover"
               />
             </div>
 
             <h1 className="font-headline-md text-2xl font-bold mb-1 text-on-surface">
-              {user?.fullName || 'Alex Mercer'}
+              {user?.fullName || 'Student Profile'}
             </h1>
             <p className="font-body-md text-sm text-secondary mb-1">
-              {user?.classBranch || 'D12C / EXTC'}
+              {user?.classBranch || 'VESIT Student'}
             </p>
-            <p className="font-body-sm text-xs text-secondary mb-4">
-              Roll No. {user?.rollNo || '2021EXTC042'}
-            </p>
+            {user?.rollNo && (
+              <p className="font-body-sm text-xs text-secondary mb-4">
+                Roll No. {user.rollNo}
+              </p>
+            )}
 
             <div className="bg-tertiary-container/30 text-tertiary border border-tertiary/40 px-3.5 py-1 rounded-full font-label-caps text-[11px] flex items-center gap-1 mb-6 font-bold">
               <span className="material-symbols-outlined text-[16px]">verified</span>
-              Verified VESIT Student
+              {user?.role === 'admin' ? 'Administrator' : 'Verified VESIT Student'}
             </div>
 
             <p className="font-label-caps text-[11px] text-secondary uppercase tracking-widest mb-8">
-              Member since {user?.memberSince || 'June 2023'}
+              Account Status: {user?.isSuspended ? 'Suspended' : 'Active'}
             </p>
 
             {/* Metrics List */}
             <div className="w-full border-t border-outline-variant pt-6 space-y-3">
               <div className="flex justify-between items-center text-left py-1.5 border-b border-outline-variant">
                 <span className="font-label-caps text-[11px] text-secondary uppercase tracking-wider">
-                  Items Sold
+                  Role
                 </span>
-                <span className="font-price-display font-bold text-on-surface">
-                  {user?.stats?.itemsSold ?? 12}
+                <span className="font-bold text-on-surface capitalize">
+                  {user?.role || 'student'}
                 </span>
               </div>
 
               <div className="flex justify-between items-center text-left py-1.5 border-b border-outline-variant">
                 <span className="font-label-caps text-[11px] text-secondary uppercase tracking-wider">
-                  Items Bought
+                  Campus Verified
                 </span>
-                <span className="font-price-display font-bold text-on-surface">
-                  {user?.stats?.itemsBought ?? 8}
+                <span className="font-bold text-tertiary">
+                  Yes
                 </span>
-              </div>
-
-              <div className="flex justify-between items-center text-left py-1.5">
-                <span className="font-label-caps text-[11px] text-secondary uppercase tracking-wider">
-                  Campus Rating
-                </span>
-                <div className="flex items-center gap-1">
-                  <span className="font-price-display font-bold text-on-surface">
-                    {user?.stats?.rating ?? 4.9}
-                  </span>
-                  <span className="material-symbols-outlined text-primary text-[18px]">
-                    star
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -162,7 +172,7 @@ export default function ProfilePage() {
                       <input
                         id="email"
                         type="email"
-                        value={user?.email || 'alex.mercer@ves.ac.in'}
+                        value={user?.email || ''}
                         readOnly
                         className="w-full rounded-full border border-outline-variant pl-4 pr-10 py-3 font-body-md text-sm text-secondary bg-surface-container cursor-not-allowed outline-none"
                       />
@@ -184,6 +194,7 @@ export default function ProfilePage() {
                       type="tel"
                       value={formData.phone}
                       onChange={handleChange}
+                      placeholder="+91 98765 43210"
                       className="editorial-input"
                     />
                   </div>
@@ -218,6 +229,7 @@ export default function ProfilePage() {
                     rows="3"
                     value={formData.bio}
                     onChange={handleChange}
+                    placeholder="Tell other students about yourself, what you study, or items you frequently sell."
                     className="w-full appearance-none rounded-2xl border border-outline-variant bg-transparent p-4 font-body-md text-sm text-on-surface focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none resize-none transition-colors"
                   ></textarea>
                 </div>
@@ -230,7 +242,7 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     <label className="flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-surface-bright">
                       <span className="font-body-md text-sm text-secondary">
-                        Outbid notifications (Instant SMS &amp; Web Alert)
+                        Outbid notifications (Instant Web Alerts)
                       </span>
                       <input
                         type="checkbox"
@@ -243,7 +255,7 @@ export default function ProfilePage() {
 
                     <label className="flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-surface-bright">
                       <span className="font-body-md text-sm text-secondary">
-                        Auction ending reminders (1 hour before close)
+                        Auction ending reminders
                       </span>
                       <input
                         type="checkbox"
@@ -256,7 +268,7 @@ export default function ProfilePage() {
 
                     <label className="flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-surface-bright">
                       <span className="font-body-md text-sm text-secondary">
-                        New message &amp; buyer inquiries
+                        New message &amp; inquiry alerts
                       </span>
                       <input
                         type="checkbox"
@@ -270,8 +282,19 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="pt-4 flex justify-end">
-                  <button type="submit" className="btn-primary w-full sm:w-auto">
-                    Save Profile Changes
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
+                  >
+                    {saving ? (
+                      <>
+                        <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      'Save Profile Changes'
+                    )}
                   </button>
                 </div>
               </form>

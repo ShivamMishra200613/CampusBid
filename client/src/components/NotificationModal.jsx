@@ -3,7 +3,7 @@ import { useAuction } from '../context/AuctionContext';
 import { Link } from 'react-router-dom';
 
 export default function NotificationModal({ isOpen, onClose }) {
-  const { notifications, markNotificationRead, markAllNotificationsRead } = useAuction();
+  const { notifications, markNotificationAsRead, markAllNotificationsAsRead } = useAuction();
 
   if (!isOpen) return null;
 
@@ -20,7 +20,7 @@ export default function NotificationModal({ isOpen, onClose }) {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={markAllNotificationsRead}
+              onClick={markAllNotificationsAsRead}
               className="text-[12px] font-label-caps uppercase tracking-wider text-secondary hover:text-on-surface transition-colors"
             >
               Mark all read
@@ -40,55 +40,60 @@ export default function NotificationModal({ isOpen, onClose }) {
               No notifications at the moment.
             </div>
           ) : (
-            notifications.map((notif) => (
-              <div
-                key={notif.id}
-                onClick={() => markNotificationRead(notif.id)}
-                className={`p-4 transition-colors hover:bg-surface-container-low cursor-pointer ${
-                  !notif.read ? 'bg-primary-fixed/20' : 'bg-surface-container-lowest'
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                      notif.type === 'outbid'
-                        ? 'bg-error-container text-error'
-                        : notif.type === 'auction_won'
-                        ? 'bg-tertiary-container text-tertiary'
-                        : 'bg-primary-fixed text-on-primary-fixed'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">
-                      {notif.type === 'outbid'
-                        ? 'gavel'
-                        : notif.type === 'auction_won'
-                        ? 'emoji_events'
-                        : 'notifications'}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-label-caps text-[12px] font-bold text-on-surface">
-                        {notif.title}
-                      </p>
-                      <span className="text-[11px] text-secondary font-body-sm">{notif.createdAt}</span>
+            notifications.map((notif) => {
+              const targetProductId = notif.product?.id || notif.product || notif.productId;
+              return (
+                <div
+                  key={notif.id}
+                  onClick={() => markNotificationAsRead(notif.id)}
+                  className={`p-4 transition-colors hover:bg-surface-container-low cursor-pointer ${
+                    !notif.read ? 'bg-primary-fixed/20' : 'bg-surface-container-lowest'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                        notif.type === 'outbid'
+                          ? 'bg-error-container text-error'
+                          : notif.type === 'auction_won'
+                          ? 'bg-tertiary-container text-tertiary'
+                          : 'bg-primary-fixed text-on-primary-fixed'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        {notif.type === 'outbid'
+                          ? 'gavel'
+                          : notif.type === 'auction_won'
+                          ? 'emoji_events'
+                          : 'notifications'}
+                      </span>
                     </div>
-                    <p className="font-body-sm text-[13px] text-on-surface-variant mt-1 leading-relaxed">
-                      {notif.message}
-                    </p>
-                    {notif.productId && (
-                      <Link
-                        to={`/auctions/${notif.productId}`}
-                        onClick={onClose}
-                        className="inline-block mt-2 font-label-caps text-[11px] text-primary underline uppercase tracking-wider hover:text-black"
-                      >
-                        View Auction →
-                      </Link>
-                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="font-label-caps text-[12px] font-bold text-on-surface">
+                          {notif.title}
+                        </p>
+                        <span className="text-[11px] text-secondary font-body-sm">
+                          {notif.createdAt ? new Date(notif.createdAt).toLocaleDateString() : ''}
+                        </span>
+                      </div>
+                      <p className="font-body-sm text-[13px] text-on-surface-variant mt-1 leading-relaxed">
+                        {notif.message}
+                      </p>
+                      {targetProductId && (
+                        <Link
+                          to={`/auctions/${targetProductId}`}
+                          onClick={onClose}
+                          className="inline-block mt-2 font-label-caps text-[11px] text-primary underline uppercase tracking-wider hover:text-black"
+                        >
+                          View Auction →
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

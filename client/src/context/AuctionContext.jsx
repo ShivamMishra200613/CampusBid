@@ -1,359 +1,303 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import initialAuctions from '../data/auctions';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useReducer,
+  useCallback
+} from 'react';
+import {
+  productsApi,
+  bidsApi,
+  notificationsApi
+} from '../api/client';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 
-const AuctionContext = createContext();
+const AuctionContext = createContext(null);
 
-const INITIAL_REPORTS = [
-  {
-    id: 'rep_1',
-    productId: '3',
-    productTitle: 'MacBook Pro M1 (Reported)',
-    reason: 'Counterfeit',
-    status: 'Reviewing',
-    reportedBy: 'User_892',
-    reportedAt: 'Today, 10:15 AM'
-  },
-  {
-    id: 'rep_2',
-    productId: '1',
-    productTitle: 'Campus Event Tickets',
-    reason: 'Inappropriate Content',
-    status: 'Action Required',
-    reportedBy: 'User_104',
-    reportedAt: 'Yesterday, 4:30 PM'
+const initialFilterState = {
+  category: 'all',
+  status: 'live',
+  sort: 'ending_soon',
+  search: '',
+  minPrice: '',
+  maxPrice: '',
+  page: 1,
+  limit: 12
+};
+
+function filterReducer(state, action) {
+  switch (action.type) {
+    case 'SET_CATEGORY':
+      return { ...state, category: action.payload, page: 1 };
+    case 'SET_STATUS':
+      return { ...state, status: action.payload, page: 1 };
+    case 'SET_SORT':
+      return { ...state, sort: action.payload, page: 1 };
+    case 'SET_SEARCH':
+      return { ...state, search: action.payload, page: 1 };
+    case 'SET_PRICE_RANGE':
+      return { ...state, minPrice: action.payload.min, maxPrice: action.payload.max, page: 1 };
+    case 'SET_PAGE':
+      return { ...state, page: action.payload };
+    case 'RESET_FILTERS':
+      return { ...initialFilterState };
+    default:
+      return state;
   }
-];
-
-const INITIAL_PENDING_LISTINGS = [
-  {
-    id: 'pending_1',
-    title: 'Vintage Leather Armchair',
-    seller: 'J. Smith',
-    submittedAt: '2h ago',
-    image: 'https://images.unsplash.com/photo-1580481077195-c3a8b30f9131?w=300',
-    category: 'furniture',
-    startingBid: 3500
-  },
-  {
-    id: 'pending_2',
-    title: 'Rare Architecture Books (Set of 5)',
-    seller: 'A. Miller',
-    submittedAt: '4h ago',
-    image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300',
-    category: 'books',
-    startingBid: 1200
-  },
-  {
-    id: 'pending_3',
-    title: 'Pro Drawing Tablet',
-    seller: 'K. Lee',
-    submittedAt: '5h ago',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300',
-    category: 'electronics',
-    startingBid: 2500
-  }
-];
+}
 
 export const AuctionProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { toast, showToast, hideToast } = useToast();
 
-  const [auctions, setAuctions] = useState(() => {
-    const saved = localStorage.getItem('campusbid_auctions');
-    return saved ? JSON.parse(saved) : initialAuctions;
-  });
+  // 1. Listings State with useReducer for filter changes
+  const [filters, dispatchFilters] = useReducer(filterReducer, initialFilterState);
+  const [listings, setListings] = useState([]);
+  const [totalListings, setTotalListings] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingListings, setLoadingListings] = useState(false);
+  const [listingsError, setListingsError] = useState(null);
 
-  const [myBids, setMyBids] = useState(() => {
-    const saved = localStorage.getItem('campusbid_mybids');
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: 'mb_1',
-        productId: '1',
-        productTitle: 'Vintage Smith-Corona Typewriter',
-        productImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300',
-        sellerName: 'Alex V.',
-        sellerVerified: true,
-        yourBid: 2400,
-        highestBid: 2500,
-        status: 'Outbid',
-        timeLeft: '02h : 15m : 45s',
-        endTime: new Date(Date.now() + 2 * 3600 * 1000).toISOString()
-      },
-      {
-        id: 'mb_2',
-        productId: '3',
-        productTitle: 'Sony ANC Noise-Cancelling Headphones',
-        productImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300',
-        sellerName: 'Sophia B.',
-        sellerVerified: true,
-        yourBid: 4720,
-        highestBid: 4720,
-        status: 'Won',
-        timeLeft: 'Ended',
-        endTime: new Date(Date.now() - 3600 * 1000).toISOString()
-      },
-      {
-        id: 'mb_3',
-        productId: '5',
-        productTitle: 'Firefox Target 21s Commuter Bicycle',
-        productImage: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=300',
-        sellerName: 'Alex V.',
-        sellerVerified: true,
-        yourBid: 2800,
-        highestBid: 2800,
-        status: 'Winning',
-        timeLeft: '14h : 00m : 00s',
-        endTime: new Date(Date.now() + 14 * 3600 * 1000).toISOString()
+  const fetchListings = useCallback(async () => {
+    try {
+      setLoadingListings(true);
+      setListingsError(null);
+      const res = await productsApi.getProducts(filters);
+      if (res.success) {
+        setListings(res.products || []);
+        setTotalListings(res.total || 0);
+        setTotalPages(res.pages || 1);
       }
-    ];
-  });
-
-  const [myDrafts, setMyDrafts] = useState([
-    {
-      id: 'draft_1',
-      title: 'Adjustable Drafting Table (Draft)',
-      category: 'furniture',
-      condition: 'Vintage',
-      startingBid: 4500,
-      description: 'Draft listing of drafting table',
-      status: 'draft',
-      images: ['https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300']
+    } catch (err) {
+      setListingsError(err.message || 'Failed to load listings.');
+    } finally {
+      setLoadingListings(false);
     }
-  ]);
-
-  const [pendingListings, setPendingListings] = useState(INITIAL_PENDING_LISTINGS);
-  const [reports, setReports] = useState(INITIAL_REPORTS);
-
-  const [notifications, setNotifications] = useState([
-    {
-      id: 'notif_1',
-      type: 'outbid',
-      title: 'You have been outbid!',
-      message: 'Marcus H. placed a higher bid of ₹2,500 on Vintage Smith-Corona Typewriter.',
-      productId: '1',
-      read: false,
-      createdAt: '12 mins ago'
-    },
-    {
-      id: 'notif_2',
-      type: 'auction_won',
-      title: 'Auction Won!',
-      message: 'Congratulations! You won Sony ANC Noise-Cancelling Headphones for ₹4,720.',
-      productId: '3',
-      read: false,
-      createdAt: '1 hour ago'
-    }
-  ]);
-
-  const [toast, setToast] = useState(null);
+  }, [filters]);
 
   useEffect(() => {
-    localStorage.setItem('campusbid_auctions', JSON.stringify(auctions));
-  }, [auctions]);
+    fetchListings();
+  }, [fetchListings]);
+
+  // 2. Notifications State
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  const fetchNotifications = useCallback(async () => {
+    if (!isAuthenticated) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    try {
+      setLoadingNotifications(true);
+      const res = await notificationsApi.getNotifications();
+      if (res.success) {
+        setNotifications(res.notifications || []);
+        setUnreadCount(res.unreadCount || 0);
+      }
+    } catch {
+      // Non-critical, ignore in background
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    localStorage.setItem('campusbid_mybids', JSON.stringify(myBids));
-  }, [myBids]);
+    fetchNotifications();
+  }, [fetchNotifications]);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type, id: Date.now() });
-    setTimeout(() => setToast(null), 3500);
-  };
-
-  const placeBid = (productId, amount) => {
-    const targetAuction = auctions.find((a) => a.id === productId);
-    if (!targetAuction) {
-      showToast('Auction not found', 'error');
-      return false;
-    }
-
-    if (targetAuction.status !== 'live') {
-      showToast('This auction has already ended.', 'error');
-      return false;
-    }
-
-    const minRequired = targetAuction.currentBid + targetAuction.minIncrement;
-    if (amount < minRequired) {
-      showToast(`Minimum valid bid is ₹${minRequired.toLocaleString('en-IN')}`, 'error');
-      return false;
-    }
-
-    const newBidObj = {
-      id: `bid_${Date.now()}`,
-      bidderName: user ? user.fullName : 'Alex Mercer',
-      bidderId: user ? user.id : 'usr_68201',
-      amount: Number(amount),
-      timeAgo: 'Just now',
-      createdAt: new Date().toISOString()
-    };
-
-    setAuctions((prev) =>
-      prev.map((item) => {
-        if (item.id === productId) {
-          return {
-            ...item,
-            currentBid: Number(amount),
-            bidCount: (item.bidCount || 0) + 1,
-            bids: [newBidObj, ...(item.bids || [])]
-          };
-        }
-        return item;
-      })
-    );
-
-    // Update My Bids
-    setMyBids((prev) => {
-      const existing = prev.filter((b) => b.productId !== productId);
-      return [
-        {
-          id: `mb_${Date.now()}`,
-          productId: targetAuction.id,
-          productTitle: targetAuction.title,
-          productImage: targetAuction.images[0],
-          sellerName: targetAuction.seller?.name || 'VESIT Student',
-          sellerVerified: targetAuction.seller?.isVerified || false,
-          yourBid: Number(amount),
-          highestBid: Number(amount),
-          status: 'Winning',
-          timeLeft: '02h : 15m : 45s',
-          endTime: targetAuction.endTime
-        },
-        ...existing
-      ];
-    });
-
-    showToast(`Bid of ₹${Number(amount).toLocaleString('en-IN')} placed successfully!`, 'success');
-    return true;
-  };
-
-  const createListing = (data) => {
-    const durationHours = data.duration === '24h' ? 24 : data.duration === '7d' ? 168 : 72;
-    const newProduct = {
-      id: String(Date.now()),
-      title: data.title,
-      category: data.category,
-      condition: data.condition,
-      description: data.description,
-      seller: {
-        id: user ? user.id : 'usr_68201',
-        name: user ? user.fullName : 'Alex Mercer',
-        isVerified: true,
-        avatar: user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120'
-      },
-      currentBid: Number(data.startingBid),
-      startingBid: Number(data.startingBid),
-      minIncrement: Number(data.minIncrement) || 50,
-      bidCount: 0,
-      status: data.isDraft ? 'draft' : 'live',
-      endTime: new Date(Date.now() + durationHours * 3600 * 1000).toISOString(),
-      createdAt: new Date().toISOString(),
-      images: data.images && data.images.length > 0 ? data.images : [
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'
-      ],
-      bids: []
-    };
-
-    if (data.isDraft) {
-      setMyDrafts((prev) => [newProduct, ...prev]);
-      showToast('Listing saved to drafts!', 'success');
-    } else {
-      setAuctions((prev) => [newProduct, ...prev]);
-      showToast('Auction published live on CampusBid!', 'success');
-    }
-    return newProduct;
-  };
-
-  const publishDraft = (draftId) => {
-    const draft = myDrafts.find((d) => d.id === draftId);
-    if (!draft) return;
-    const published = {
-      ...draft,
-      status: 'live',
-      endTime: new Date(Date.now() + 72 * 3600 * 1000).toISOString()
-    };
-    setMyDrafts((prev) => prev.filter((d) => d.id !== draftId));
-    setAuctions((prev) => [published, ...prev]);
-    showToast('Draft published to live marketplace!', 'success');
-  };
-
-  const deleteListing = (id) => {
-    setAuctions((prev) => prev.filter((a) => a.id !== id));
-    setMyDrafts((prev) => prev.filter((d) => d.id !== id));
-    showToast('Listing deleted successfully.', 'success');
-  };
-
-  const approveListing = (pendingId) => {
-    const item = pendingListings.find((p) => p.id === pendingId);
-    if (item) {
-      const approvedProduct = {
-        id: String(Date.now()),
-        title: item.title,
-        category: item.category || 'others',
-        condition: 'Good',
-        description: 'Moderated and approved listing for VESIT students.',
-        seller: {
-          id: `usr_${item.seller.replace(/\s+/g, '_').toLowerCase()}`,
-          name: item.seller,
-          isVerified: true,
-          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120'
-        },
-        currentBid: item.startingBid || 1000,
-        startingBid: item.startingBid || 1000,
-        minIncrement: 50,
-        bidCount: 0,
-        status: 'live',
-        endTime: new Date(Date.now() + 72 * 3600 * 1000).toISOString(),
-        createdAt: new Date().toISOString(),
-        images: [item.image],
-        bids: []
-      };
-      setAuctions((prev) => [approvedProduct, ...prev]);
-      setPendingListings((prev) => prev.filter((p) => p.id !== pendingId));
-      showToast(`Listing "${item.title}" approved and published!`, 'success');
+  const markNotificationAsRead = async (id) => {
+    try {
+      await notificationsApi.markAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      showToast(err.message || 'Could not mark notification as read.', 'error');
     }
   };
 
-  const rejectListing = (pendingId) => {
-    setPendingListings((prev) => prev.filter((p) => p.id !== pendingId));
-    showToast('Listing rejected.', 'info');
+  const markAllNotificationsAsRead = async () => {
+    try {
+      await notificationsApi.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+      showToast('All notifications marked as read.', 'info');
+    } catch (err) {
+      showToast(err.message || 'Could not update notifications.', 'error');
+    }
   };
 
-  const resolveReport = (reportId) => {
-    setReports((prev) => prev.filter((r) => r.id !== reportId));
-    showToast('Dispute / report marked as resolved.', 'success');
+  // 3. User My Listings
+  const [myListings, setMyListings] = useState([]);
+  const [loadingMyListings, setLoadingMyListings] = useState(false);
+
+  const fetchMyListings = useCallback(async () => {
+    if (!isAuthenticated) {
+      setMyListings([]);
+      return;
+    }
+    try {
+      setLoadingMyListings(true);
+      const res = await productsApi.getMyProducts();
+      if (res.success) {
+        setMyListings(res.products || []);
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to fetch your listings.', 'error');
+    } finally {
+      setLoadingMyListings(false);
+    }
+  }, [isAuthenticated, showToast]);
+
+  // 4. User My Bids
+  const [myBids, setMyBids] = useState([]);
+  const [loadingMyBids, setLoadingMyBids] = useState(false);
+
+  const fetchMyBids = useCallback(async (filter = 'all') => {
+    if (!isAuthenticated) {
+      setMyBids([]);
+      return;
+    }
+    try {
+      setLoadingMyBids(true);
+      const res = await bidsApi.getMyBids(filter);
+      if (res.success) {
+        setMyBids(res.bids || []);
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to fetch your bids.', 'error');
+    } finally {
+      setLoadingMyBids(false);
+    }
+  }, [isAuthenticated, showToast]);
+
+  // 5. Product Actions
+  const createListing = async (payload) => {
+    try {
+      const res = await productsApi.createProduct(payload);
+      showToast(
+        payload.isDraft ? 'Draft saved successfully!' : 'Listing submitted for admin moderation!',
+        'success'
+      );
+      fetchMyListings();
+      fetchListings();
+      return res.product;
+    } catch (err) {
+      showToast(err.message || 'Failed to create listing.', 'error');
+      throw err;
+    }
   };
 
-  const markNotificationRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const updateListing = async (id, payload) => {
+    try {
+      const res = await productsApi.updateProduct(id, payload);
+      showToast('Listing updated successfully!', 'success');
+      fetchMyListings();
+      fetchListings();
+      return res.product;
+    } catch (err) {
+      showToast(err.message || 'Failed to update listing.', 'error');
+      throw err;
+    }
   };
 
-  const markAllNotificationsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const deleteListing = async (id) => {
+    try {
+      await productsApi.deleteProduct(id);
+      showToast('Listing deleted successfully.', 'info');
+      fetchMyListings();
+      fetchListings();
+    } catch (err) {
+      showToast(err.message || 'Failed to delete listing.', 'error');
+      throw err;
+    }
+  };
+
+  const publishListing = async (id) => {
+    try {
+      await productsApi.publishProduct(id);
+      showToast('Draft submitted for admin moderation!', 'success');
+      fetchMyListings();
+      fetchListings();
+    } catch (err) {
+      showToast(err.message || 'Failed to publish draft.', 'error');
+      throw err;
+    }
+  };
+
+  const placeBid = async (productId, amount) => {
+    try {
+      const res = await bidsApi.placeBid(productId, amount);
+      showToast(res.message || 'Bid placed successfully!', 'success');
+      fetchListings();
+      fetchMyBids();
+      return res;
+    } catch (err) {
+      showToast(err.message || 'Failed to place bid.', 'error');
+      throw err;
+    }
+  };
+
+  const reportListing = async (productId, reason) => {
+    try {
+      const res = await productsApi.reportProduct(productId, reason);
+      showToast(res.message || 'Report submitted to campus moderators.', 'info');
+      return res;
+    } catch (err) {
+      showToast(err.message || 'Failed to submit report.', 'error');
+      throw err;
+    }
   };
 
   return (
     <AuctionContext.Provider
       value={{
-        auctions,
+        // Listings
+        listings,
+        totalListings,
+        totalPages,
+        loadingListings,
+        listingsError,
+        filters,
+        dispatchFilters,
+        refetchListings: fetchListings,
+
+        // My Listings
+        myListings,
+        loadingMyListings,
+        refetchMyListings: fetchMyListings,
+
+        // My Bids
         myBids,
-        myDrafts,
-        pendingListings,
-        reports,
+        loadingMyBids,
+        refetchMyBids: fetchMyBids,
+
+        // Notifications
         notifications,
-        toast,
-        placeBid,
+        unreadCount,
+        loadingNotifications,
+        refetchNotifications: fetchNotifications,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+
+        // Actions
         createListing,
-        publishDraft,
+        updateListing,
         deleteListing,
-        approveListing,
-        rejectListing,
-        resolveReport,
-        markNotificationRead,
-        markAllNotificationsRead,
-        showToast
+        publishListing,
+        placeBid,
+        reportListing,
+
+        // Toast passthrough
+        toast,
+        showToast,
+        hideToast
       }}
     >
       {children}
@@ -361,4 +305,10 @@ export const AuctionProvider = ({ children }) => {
   );
 };
 
-export const useAuction = () => useContext(AuctionContext);
+export const useAuction = () => {
+  const context = useContext(AuctionContext);
+  if (!context) {
+    throw new Error('useAuction must be used within an AuctionProvider');
+  }
+  return context;
+};

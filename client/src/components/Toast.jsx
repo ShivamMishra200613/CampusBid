@@ -1,8 +1,8 @@
 import React from 'react';
-import { useAuction } from '../context/AuctionContext';
+import { useToast } from '../context/ToastContext';
 
 export default function Toast() {
-  const { toast } = useAuction();
+  const { toast } = useToast();
 
   if (!toast) return null;
 

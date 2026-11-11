@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 
 export default function MyBidsPage() {
-  const { myBids } = useAuction();
+  const { myBids, loadingMyBids, refetchMyBids } = useAuction();
   const [filter, setFilter] = useState('all');
 
-  const filteredBids = myBids.filter((bid) => {
-    if (filter === 'winning') return bid.status === 'Winning';
-    if (filter === 'outbid') return bid.status === 'Outbid';
-    if (filter === 'ended') return bid.status === 'Ended' || bid.status === 'Won';
-    return true;
-  });
+  useEffect(() => {
+    refetchMyBids(filter);
+  }, [filter, refetchMyBids]);
+
+  const winningCount = myBids.filter((b) => b.status === 'Winning').length;
+  const outbidCount = myBids.filter((b) => b.status === 'Outbid').length;
+  const endedCount = myBids.filter((b) => b.status === 'Ended' || b.status === 'Won' || b.status === 'Lost').length;
 
   return (
     <div className="w-full">
@@ -36,14 +37,15 @@ export default function MyBidsPage() {
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 border-b border-outline-variant">
           {[
             { key: 'all', label: 'All Bids', count: myBids.length },
-            { key: 'winning', label: 'Winning', count: myBids.filter((b) => b.status === 'Winning').length },
-            { key: 'outbid', label: 'Outbid', count: myBids.filter((b) => b.status === 'Outbid').length },
-            { key: 'ended', label: 'Won / Ended', count: myBids.filter((b) => b.status === 'Ended' || b.status === 'Won').length }
+            { key: 'winning', label: 'Winning', count: winningCount },
+            { key: 'outbid', label: 'Outbid', count: outbidCount },
+            { key: 'ended', label: 'Won / Ended', count: endedCount }
           ].map((tab) => (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setFilter(tab.key)}
-              className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors ${
+              className={`font-label-caps text-label-caps uppercase tracking-wider px-5 py-2.5 rounded-full transition-colors whitespace-nowrap ${
                 filter === tab.key
                   ? 'bg-black text-white font-bold'
                   : 'bg-surface-bright text-secondary hover:text-black border border-outline-variant'
@@ -54,9 +56,14 @@ export default function MyBidsPage() {
           ))}
         </div>
 
-        {/* Table Container */}
-        {filteredBids.length === 0 ? (
-          <div className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
+        {/* Loading / Empty / Content states */}
+        {loadingMyBids ? (
+          <div data-testid="my-bids-loading" className="py-20 text-center text-secondary">
+            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <p className="mt-2 font-body-sm text-sm">Loading your bids...</p>
+          </div>
+        ) : myBids.length === 0 ? (
+          <div data-testid="my-bids-empty" className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
             <span className="material-symbols-outlined text-[48px] text-secondary mb-2">
               gavel
             </span>
@@ -66,12 +73,12 @@ export default function MyBidsPage() {
             <p className="font-body-md text-secondary mt-1">
               Find an active auction and place your bid to start competing.
             </p>
-            <Link to="/" className="btn-primary mt-6">
+            <Link to="/" className="btn-primary mt-6 inline-block">
               Explore Live Auctions
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto border border-outline-variant rounded-2xl bg-surface-container-lowest shadow-sm">
+          <div className="overflow-x-auto border border-outline-variant rounded-2xl bg-surface-container-lowest shadow-sm mb-12">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-outline-variant text-secondary font-label-caps text-label-caps uppercase tracking-wider bg-surface-bright">
@@ -86,12 +93,12 @@ export default function MyBidsPage() {
               </thead>
 
               <tbody className="font-body-md text-sm divide-y divide-outline-variant">
-                {filteredBids.map((bid) => {
+                {myBids.map((bid) => {
                   const isWinning = bid.status === 'Winning';
                   const isOutbid = bid.status === 'Outbid';
 
                   return (
-                    <tr key={bid.id} className="hover:bg-surface-container-low transition-colors group">
+                    <tr key={bid.id} data-testid="bid-row" className="hover:bg-surface-container-low transition-colors group">
                       {/* Item Thumbnail & Title */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
@@ -126,13 +133,13 @@ export default function MyBidsPage() {
                       {/* Your Bid */}
                       <td className="py-4 px-4 font-price-display font-semibold text-on-surface">
                         <span className={isOutbid ? 'line-through text-secondary' : ''}>
-                          ₹{bid.yourBid.toLocaleString('en-IN')}
+                          ₹{(bid.yourBid || 0).toLocaleString('en-IN')}
                         </span>
                       </td>
 
                       {/* Highest Bid */}
                       <td className="py-4 px-4 font-price-display font-bold text-on-surface">
-                        ₹{bid.highestBid.toLocaleString('en-IN')}
+                        ₹{(bid.highestBid || 0).toLocaleString('en-IN')}
                       </td>
 
                       {/* Status Badge */}

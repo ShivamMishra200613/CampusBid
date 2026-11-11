@@ -1,37 +1,42 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { useAuction } from '../context/AuctionContext';
 import AuctionCard from '../components/AuctionCard';
-import { categories } from '../data/auctions';
+import { CATEGORIES, SORT_OPTIONS } from '../utils/constants';
 
 export default function HomePage() {
-  const { auctions } = useAuction();
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const {
+    listings,
+    totalListings,
+    totalPages,
+    loadingListings,
+    listingsError,
+    filters,
+    dispatchFilters,
+    refetchListings
+  } = useAuction();
 
-  const filteredAuctions = useMemo(() => {
-    return auctions.filter((item) => {
-      const matchCategory =
-        selectedCategory === 'all' ||
-        item.category.toLowerCase() === selectedCategory.toLowerCase();
+  const handleCategorySelect = (catKey) => {
+    dispatchFilters({ type: 'SET_CATEGORY', payload: catKey });
+  };
 
-      const matchStatus =
-        statusFilter === 'all' || item.status === statusFilter;
+  const handleStatusSelect = (status) => {
+    dispatchFilters({ type: 'SET_STATUS', payload: status });
+  };
 
-      const matchSearch =
-        searchQuery.trim() === '' ||
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  const handleSortSelect = (e) => {
+    dispatchFilters({ type: 'SET_SORT', payload: e.target.value });
+  };
 
-      return matchCategory && matchStatus && matchSearch && item.status !== 'draft';
-    });
-  }, [auctions, selectedCategory, statusFilter, searchQuery]);
+  const handleSearchChange = (e) => {
+    dispatchFilters({ type: 'SET_SEARCH', payload: e.target.value });
+  };
 
-  const getCategoryCount = (catKey) => {
-    if (catKey === 'all') return auctions.filter((a) => a.status !== 'draft').length;
-    return auctions.filter(
-      (a) => a.status !== 'draft' && a.category.toLowerCase() === catKey.toLowerCase()
-    ).length;
+  const handleResetFilters = () => {
+    dispatchFilters({ type: 'RESET_FILTERS' });
+  };
+
+  const handlePageChange = (newPage) => {
+    dispatchFilters({ type: 'SET_PAGE', payload: newPage });
   };
 
   return (
@@ -97,10 +102,10 @@ export default function HomePage() {
         </div>
 
         {/* =========================================================
-            2. SEARCH & CATEGORY FILTER BAR
+            2. SEARCH, SORT & CATEGORY FILTER BAR
             ========================================================= */}
         <div className="mb-10 space-y-6">
-          {/* Search Toolbar */}
+          {/* Search & Sort Toolbar */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:max-w-md">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary text-[20px]">
@@ -108,14 +113,16 @@ export default function HomePage() {
               </span>
               <input
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search auctions by keyword, title, or book..."
+                value={filters.search}
+                onChange={handleSearchChange}
+                placeholder="Search auctions by keyword, title, or description..."
+                data-testid="search-input"
                 className="w-full pl-11 pr-4 py-3 bg-surface-bright rounded-full border border-outline-variant font-body-md text-sm text-on-surface placeholder:text-secondary focus:border-on-surface focus:outline-none focus:ring-1 focus:ring-on-surface transition-colors"
               />
-              {searchQuery && (
+              {filters.search && (
                 <button
-                  onClick={() => setSearchQuery('')}
+                  type="button"
+                  onClick={() => dispatchFilters({ type: 'SET_SEARCH', payload: '' })}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-black"
                 >
                   <span className="material-symbols-outlined text-[18px]">cancel</span>
@@ -123,23 +130,37 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* Status Filter Toggle */}
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <span className="font-label-caps text-label-caps text-secondary uppercase tracking-wider hidden sm:inline-block">
-                Status:
-              </span>
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+              {/* Sort Selector */}
+              <select
+                value={filters.sort}
+                onChange={handleSortSelect}
+                data-testid="sort-select"
+                aria-label="Sort auctions"
+                className="px-3 py-2 bg-surface-bright rounded-full border border-outline-variant font-label-caps text-xs uppercase tracking-wider text-on-surface cursor-pointer focus:outline-none"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* Status Filter Toggle */}
               <div className="inline-flex rounded-full border border-outline-variant p-1 bg-surface-bright">
                 {['all', 'live', 'ended'].map((status) => (
                   <button
                     key={status}
-                    onClick={() => setStatusFilter(status)}
+                    type="button"
+                    onClick={() => handleStatusSelect(status)}
+                    data-testid={`status-filter-${status}`}
                     className={`px-4 py-1.5 rounded-full font-label-caps text-[11px] uppercase tracking-wider transition-colors ${
-                      statusFilter === status
+                      filters.status === status
                         ? 'bg-black text-white'
                         : 'text-secondary hover:text-black'
                     }`}
                   >
-                    {status === 'all' ? 'All' : status === 'live' ? 'Live Only' : 'Ended'}
+                    {status === 'all' ? 'All' : status === 'live' ? 'Live' : 'Ended'}
                   </button>
                 ))}
               </div>
@@ -148,20 +169,21 @@ export default function HomePage() {
 
           {/* Categories Horizontal Bar */}
           <div className="flex items-center justify-start md:justify-center overflow-x-auto pb-2 border-b border-outline-variant gap-3 md:gap-6 no-scrollbar">
-            {categories.map((cat) => {
-              const count = getCategoryCount(cat.key);
-              const isSelected = selectedCategory === cat.key;
+            {CATEGORIES.map((cat) => {
+              const isSelected = filters.category === cat.key;
               return (
                 <button
                   key={cat.key}
-                  onClick={() => setSelectedCategory(cat.key)}
+                  type="button"
+                  onClick={() => handleCategorySelect(cat.key)}
+                  data-testid={`category-filter-${cat.key}`}
                   className={`font-label-caps text-label-caps uppercase tracking-wider whitespace-nowrap pb-3 transition-colors relative ${
                     isSelected
                       ? 'text-on-surface font-bold border-b-2 border-on-surface'
                       : 'text-secondary hover:text-on-surface'
                   }`}
                 >
-                  {cat.label} <span className="opacity-60 text-[11px]">({count})</span>
+                  {cat.label}
                 </button>
               );
             })}
@@ -169,35 +191,101 @@ export default function HomePage() {
         </div>
 
         {/* =========================================================
-            3. AUCTION GRID
+            3. AUCTION GRID (Three States: Loading, Error, Empty)
             ========================================================= */}
-        {filteredAuctions.length === 0 ? (
-          <div className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright my-8">
-            <span className="material-symbols-outlined text-[48px] text-secondary mb-3">
-              search_off
-            </span>
+        {loadingListings ? (
+          <div
+            data-testid="listings-loading"
+            className="py-20 flex flex-col items-center justify-center text-secondary gap-3"
+          >
+            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <span className="font-body-sm text-sm">Loading active auctions...</span>
+          </div>
+        ) : listingsError ? (
+          <div
+            data-testid="listings-error"
+            className="py-16 text-center border border-error/30 rounded-2xl bg-error-container/10 my-8 p-6"
+          >
+            <span className="material-symbols-outlined text-[48px] text-error mb-2">error</span>
+            <h3 className="font-headline-md text-xl text-on-surface font-bold">Failed to load auctions</h3>
+            <p className="font-body-md text-secondary mt-1">{listingsError}</p>
+            <button
+              type="button"
+              onClick={refetchListings}
+              className="mt-4 px-6 py-2 bg-on-surface text-white rounded-full font-label-caps text-xs uppercase tracking-widest hover:opacity-80"
+            >
+              Retry
+            </button>
+          </div>
+        ) : listings.length === 0 ? (
+          <div
+            data-testid="listings-empty"
+            className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright my-8"
+          >
+            <span className="material-symbols-outlined text-[48px] text-secondary mb-3">search_off</span>
             <h3 className="font-headline-md text-[22px] text-on-surface font-bold">
               No matching auctions found
             </h3>
             <p className="font-body-md text-secondary mt-1">
-              Try adjusting your search query or selecting a different category filter.
+              Try adjusting your search keyword or selecting a different category filter.
             </p>
             <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setSearchQuery('');
-                setStatusFilter('all');
-              }}
+              type="button"
+              onClick={handleResetFilters}
+              data-testid="reset-filters-button"
               className="mt-4 px-6 py-2 bg-on-surface text-white rounded-full font-label-caps text-label-caps uppercase tracking-widest hover:opacity-80"
             >
               Reset Filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-10 mb-16">
-            {filteredAuctions.map((item) => (
-              <AuctionCard key={item.id} item={item} />
-            ))}
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <span className="font-label-caps text-xs uppercase tracking-wider text-secondary">
+                Showing {listings.length} of {totalListings} auctions
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-10 mb-12">
+              {listings.map((item) => (
+                <AuctionCard key={item.id} item={item} />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mb-16">
+                <button
+                  type="button"
+                  disabled={filters.page <= 1}
+                  onClick={() => handlePageChange(filters.page - 1)}
+                  className="px-3 py-1.5 rounded-lg border border-outline-variant font-label-caps text-xs uppercase disabled:opacity-30 hover:bg-surface-bright"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    type="button"
+                    onClick={() => handlePageChange(pg)}
+                    className={`w-8 h-8 rounded-lg font-label-caps text-xs flex items-center justify-center transition-colors ${
+                      filters.page === pg
+                        ? 'bg-black text-white font-bold'
+                        : 'border border-outline-variant hover:bg-surface-bright text-secondary'
+                    }`}
+                  >
+                    {pg}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  disabled={filters.page >= totalPages}
+                  onClick={() => handlePageChange(filters.page + 1)}
+                  className="px-3 py-1.5 rounded-lg border border-outline-variant font-label-caps text-xs uppercase disabled:opacity-30 hover:bg-surface-bright"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         )}
 

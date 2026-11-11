@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuction } from '../context/AuctionContext';
 import { useAuth } from '../context/AuthContext';
+import { productsApi } from '../api/client';
 import { validateTitle, validatePrice, validateRequired } from '../utils/validators';
 
 export default function CreateListingPage() {
   const navigate = useNavigate();
-  const { createListing, showToast } = useAuction();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+
+  const { createListing, updateListing, showToast } = useAuction();
   const { isAuthenticated } = useAuth();
 
   const fileInputRef = useRef(null);
@@ -26,6 +30,31 @@ export default function CreateListingPage() {
     minIncrement: '50',
     duration: '3d'
   });
+
+  useEffect(() => {
+    if (editId) {
+      productsApi
+        .getProductById(editId)
+        .then((res) => {
+          if (res.success && res.product) {
+            const p = res.product;
+            setFormData({
+              title: p.title || '',
+              category: p.category || 'electronics',
+              condition: p.condition || 'Like New',
+              description: p.description || '',
+              startingBid: String(p.startingBid || ''),
+              minIncrement: String(p.minIncrement || '50'),
+              duration: p.duration || '3d'
+            });
+            setImages(p.images || []);
+          }
+        })
+        .catch((err) => {
+          showToast(err.message || 'Could not load listing for editing.', 'error');
+        });
+    }
+  }, [editId, showToast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -126,7 +155,7 @@ export default function CreateListingPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (isDraft = false) => {
+  const handleSubmit = async (isDraft = false) => {
     if (!isAuthenticated) {
       showToast('Please log in to list an auction.', 'error');
       navigate('/login');
@@ -143,15 +172,27 @@ export default function CreateListingPage() {
 
     const payload = {
       ...formData,
+      startingBid: Number(formData.startingBid),
+      minIncrement: Number(formData.minIncrement) || 50,
       images,
       isDraft
     };
 
-    createListing(payload);
-    if (isDraft) {
-      navigate('/my-listings');
-    } else {
-      navigate('/');
+    try {
+      if (editId) {
+        const updated = await updateListing(editId, payload);
+        showToast('Listing updated successfully!', 'success');
+        navigate(`/auctions/${updated.id || editId}`);
+      } else {
+        const created = await createListing(payload);
+        if (isDraft) {
+          navigate('/my-listings');
+        } else {
+          navigate(`/auctions/${created.id}`);
+        }
+      }
+    } catch {
+      // Handled in toast
     }
   };
 
@@ -172,10 +213,10 @@ export default function CreateListingPage() {
         {/* Form Header */}
         <div className="mb-10 pb-6 border-b border-outline-variant">
           <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface font-bold leading-tight">
-            List a New Item
+            {editId ? 'Edit Auction Listing' : 'List a New Item'}
           </h1>
           <p className="font-body-md text-secondary mt-1">
-            Create an auction listing for verified VESIT students.
+            {editId ? 'Update details of your collegiate auction.' : 'Create an auction listing for verified VESIT students.'}
           </p>
         </div>
 
@@ -476,19 +517,21 @@ export default function CreateListingPage() {
 
           {/* Form Actions */}
           <div className="pt-8 border-t border-outline-variant flex flex-col sm:flex-row justify-end items-center gap-4">
-            <button
-              type="button"
-              onClick={() => handleSubmit(true)}
-              className="btn-secondary w-full sm:w-auto"
-            >
-              Save as Draft
-            </button>
+            {!editId && (
+              <button
+                type="button"
+                onClick={() => handleSubmit(true)}
+                className="btn-secondary w-full sm:w-auto"
+              >
+                Save as Draft
+              </button>
+            )}
             <button
               type="button"
               onClick={() => handleSubmit(false)}
               className="btn-primary w-full sm:w-auto"
             >
-              Publish Auction Listing →
+              {editId ? 'Save Changes' : 'Publish Auction Listing →'}
             </button>
           </div>
         </div>

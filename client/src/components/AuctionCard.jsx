@@ -9,6 +9,7 @@ export default function AuctionCard({ item }) {
   return (
     <Link
       to={`/auctions/${item.id}`}
+      data-testid="auction-card"
       className="group block bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md hover:border-on-surface"
     >
       {/* Image Container */}

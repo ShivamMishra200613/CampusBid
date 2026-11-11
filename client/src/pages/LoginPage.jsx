@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useAuction } from '../context/AuctionContext';
+import { useToast } from '../context/ToastContext';
+import { authApi } from '../api/client';
 import { validateEmail, validateRequired } from '../utils/validators';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
-  const { showToast } = useAuction();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [forgotModal, setForgotModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
   const [errors, setErrors] = useState({});
+
+  // Forgot Password modal state
+  const [forgotModal, setForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMsg, setForgotMsg] = useState('');
+  const [forgotErr, setForgotErr] = useState('');
 
   const validateForm = () => {
     const errs = {};
@@ -27,21 +37,50 @@ export default function LoginPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
     }
-    const role = email.includes('admin') ? 'admin' : 'student';
-    login(email, role);
-    showToast(`Logged in as ${role === 'admin' ? 'Administrator' : 'VESIT Student'}!`, 'success');
-    navigate('/');
+
+    try {
+      setLoading(true);
+      setServerError('');
+      const loggedUser = await login(email, password);
+      showToast(`Logged in successfully! Welcome, ${loggedUser.fullName || 'Student'}.`, 'success');
+
+      if (loggedUser.role === 'admin') {
+        navigate('/admin');
+      } else {
+        const destination = location.state?.from?.pathname || '/';
+        navigate(destination);
+      }
+    } catch (err) {
+      setServerError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleForgot = (e) => {
+  const handleForgot = async (e) => {
     e.preventDefault();
-    setForgotModal(false);
-    showToast('Password reset link sent to your @ves.ac.in inbox.', 'success');
+    const emailErr = validateEmail(forgotEmail);
+    if (emailErr) {
+      setForgotErr(emailErr);
+      return;
+    }
+
+    try {
+      setForgotLoading(true);
+      setForgotErr('');
+      const res = await authApi.forgotPassword(forgotEmail);
+      setForgotMsg(res.message || 'Reset instructions generated. Check server console for link.');
+      showToast('Password reset requested! Check server logs in dev mode.', 'info');
+    } catch (err) {
+      setForgotErr(err.message || 'Failed to request password reset.');
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   return (
@@ -69,6 +108,15 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {serverError && (
+              <div
+                data-testid="login-server-error"
+                className="mb-6 p-4 rounded-xl bg-error-container/40 border border-error/30 text-error font-body-sm text-sm"
+              >
+                {serverError}
+              </div>
+            )}
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -85,6 +133,7 @@ export default function LoginPage() {
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                    if (serverError) setServerError('');
                   }}
                   className={`editorial-input ${errors.email ? 'border-error' : ''}`}
                 />
@@ -102,7 +151,12 @@ export default function LoginPage() {
                   </label>
                   <button
                     type="button"
-                    onClick={() => setForgotModal(true)}
+                    onClick={() => {
+                      setForgotMsg('');
+                      setForgotErr('');
+                      setForgotEmail('');
+                      setForgotModal(true);
+                    }}
                     className="font-label-caps text-[11px] text-secondary hover:text-black uppercase tracking-wider transition-colors"
                   >
                     Forgot password?
@@ -119,6 +173,7 @@ export default function LoginPage() {
                     onChange={(e) => {
                       setPassword(e.target.value);
                       if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+                      if (serverError) setServerError('');
                     }}
                     className={`editorial-input pr-12 ${errors.password ? 'border-error' : ''}`}
                   />
@@ -142,10 +197,18 @@ export default function LoginPage() {
               {/* Submit */}
               <button
                 type="submit"
+                disabled={loading}
                 data-testid="login-submit-button"
-                className="w-full rounded-full bg-on-surface text-white font-label-caps text-label-caps uppercase tracking-widest py-4 mt-6 hover:bg-gray-800 transition-colors shadow-md"
+                className="w-full rounded-full bg-on-surface text-white font-label-caps text-label-caps uppercase tracking-widest py-4 mt-6 hover:bg-gray-800 transition-colors shadow-md flex items-center justify-center gap-2"
               >
-                Log In →
+                {loading ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  'Log In →'
+                )}
               </button>
             </form>
 
@@ -193,12 +256,30 @@ export default function LoginPage() {
               Reset Password
             </h3>
             <p className="font-body-sm text-secondary mb-4">
-              Enter your college email address and we'll send you a password recovery verification link.
+              Enter your VES college email address. A password reset link will be generated.
             </p>
+
+            {forgotMsg && (
+              <div className="mb-4 p-3 bg-tertiary-container/40 border border-tertiary/30 text-tertiary rounded-xl text-xs font-body-sm">
+                {forgotMsg}
+              </div>
+            )}
+
+            {forgotErr && (
+              <div className="mb-4 p-3 bg-error-container/40 border border-error/30 text-error rounded-xl text-xs font-body-sm">
+                {forgotErr}
+              </div>
+            )}
+
             <form onSubmit={handleForgot} className="space-y-4">
               <input
                 type="email"
                 required
+                value={forgotEmail}
+                onChange={(e) => {
+                  setForgotEmail(e.target.value);
+                  setForgotErr('');
+                }}
                 placeholder="name.surname@ves.ac.in"
                 className="editorial-input"
               />
@@ -208,10 +289,17 @@ export default function LoginPage() {
                   onClick={() => setForgotModal(false)}
                   className="btn-secondary"
                 >
-                  Cancel
+                  Close
                 </button>
-                <button type="submit" className="btn-primary">
-                  Send Recovery Link
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="btn-primary flex items-center gap-1.5"
+                >
+                  {forgotLoading ? (
+                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                  ) : null}
+                  Send Reset Link
                 </button>
               </div>
             </form>

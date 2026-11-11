@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useAuction } from '../context/AuctionContext';
+import { useToast } from '../context/ToastContext';
 import { validateEmail, validatePassword, validateRequired } from '../utils/validators';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const { showToast } = useAuction();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -19,6 +19,8 @@ export default function RegisterPage() {
     agreeTerms: true
   });
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -30,6 +32,7 @@ export default function RegisterPage() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
+    if (serverError) setServerError('');
   };
 
   const validateForm = () => {
@@ -57,15 +60,29 @@ export default function RegisterPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
     }
 
-    register(formData);
-    showToast('Registration successful! Welcome to CampusBid.', 'success');
-    navigate('/');
+    try {
+      setLoading(true);
+      setServerError('');
+      await register({
+        fullName: formData.fullName,
+        email: formData.email,
+        classBranch: formData.classBranch,
+        rollNo: formData.rollNo,
+        password: formData.password
+      });
+      showToast('Registration successful! Welcome to CampusBid.', 'success');
+      navigate('/');
+    } catch (err) {
+      setServerError(err.message || 'Registration failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -95,6 +112,15 @@ export default function RegisterPage() {
                 Create your student account to start bidding and listing.
               </p>
             </div>
+
+            {serverError && (
+              <div
+                data-testid="register-server-error"
+                className="mb-6 p-4 rounded-xl bg-error-container/40 border border-error/30 text-error font-body-sm text-sm"
+              >
+                {serverError}
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -268,10 +294,18 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <button
                 type="submit"
+                disabled={loading}
                 data-testid="register-submit-button"
                 className="w-full rounded-full bg-on-surface text-white font-label-caps text-label-caps uppercase tracking-widest py-4 mt-4 hover:bg-gray-800 transition-colors shadow-md flex items-center justify-center gap-2"
               >
-                Create Account →
+                {loading ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span>Creating Account...</span>
+                  </>
+                ) : (
+                  'Create Account →'
+                )}
               </button>
             </form>
 

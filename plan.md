@@ -154,18 +154,18 @@ Done when: a student can pick image files on Create Listing and see them on the 
 
 ### Phase 7: Frontend integration (React and state management)
 
-- [ ] 7.1 Create `client/src/api/client.js`: a `fetch` wrapper that reads the base URL from `VITE_API_URL` (default `/api/v1`), attaches the Bearer token, parses the error envelope into a thrown `ApiError`, and on `401` clears the session and redirects to `/login`.
-- [ ] 7.2 Rewrite `AuthContext`: real `login`, `register`, `logout`, `updateProfile`, `loadMe` on startup. Store only the token in `localStorage`. No default user: a fresh visitor is logged out. Remove `toggleRole`, `DEFAULT_STUDENT`, and `DEFAULT_ADMIN`.
-- [ ] 7.3 Add `ProtectedRoute` and `AdminRoute` components. Redirect logged-out users to `/login` and remember where they were going. Redirect non-admins away from `/admin`. Admins who log in land on `/admin`.
-- [ ] 7.4 Rewrite `AuctionContext` into focused pieces: listings (fetch with filters and pagination), single auction, my bids, my listings, notifications. Each exposes `loading`, `error`, and a `refetch`. Use `useReducer` where a state has several related transitions (for example the listings filter state). Move the toast out into its own `ToastContext`.
-- [ ] 7.5 Delete `client/src/data/auctions.js` and every mock array in the contexts. No page may import mock data.
-- [ ] 7.6 Home: server-side search, category, status, price range, sort, and pagination. Show skeleton cards while loading and an empty state when there are no results.
-- [ ] 7.7 Auction detail: load from the API, show a real "not found" for unknown ids, a live countdown (a `useCountdown` hook that ticks every second and stops at zero), full bid history, a working bid form with validation and server error display, and a working report form.
-- [ ] 7.8 Create Listing, My Listings, My Bids, Profile: wire to the API. Edit and delete on My Listings call the API. Publishing a draft calls the API.
-- [ ] 7.9 Admin dashboard: stats, pending listings (approve or reject with reason), reports (resolve with an action), and a new users table with suspend and unsuspend.
-- [ ] 7.10 Login: remove the prefilled credentials. Wire "Forgot password" to the real endpoints with a reset page at `/reset-password/:token`.
-- [ ] 7.11 Add a proper 404 page and replace the wildcard route that renders Home. Add an error boundary at the app root.
-- [ ] 7.12 Set `vite.config.js` proxy to forward `/api`, `/socket.io`, and `/uploads` to the server in development.
+- [x] 7.1 Create `client/src/api/client.js`: a `fetch` wrapper that reads the base URL from `VITE_API_URL` (default `/api/v1`), attaches the Bearer token, parses the error envelope into a thrown `ApiError`, and on `401` clears the session and redirects to `/login`.
+- [x] 7.2 Rewrite `AuthContext`: real `login`, `register`, `logout`, `updateProfile`, `loadMe` on startup. Store only the token in `localStorage`. No default user: a fresh visitor is logged out. Remove `toggleRole`, `DEFAULT_STUDENT`, and `DEFAULT_ADMIN`.
+- [x] 7.3 Add `ProtectedRoute` and `AdminRoute` components. Redirect logged-out users to `/login` and remember where they were going. Redirect non-admins away from `/admin`. Admins who log in land on `/admin`.
+- [x] 7.4 Rewrite `AuctionContext` into focused pieces: listings (fetch with filters and pagination), single auction, my bids, my listings, notifications. Each exposes `loading`, `error`, and a `refetch`. Use `useReducer` where a state has several related transitions (for example the listings filter state). Move the toast out into its own `ToastContext`.
+- [x] 7.5 Delete `client/src/data/auctions.js` and every mock array in the contexts. No page may import mock data.
+- [x] 7.6 Home: server-side search, category, status, price range, sort, and pagination. Show skeleton cards while loading and an empty state when there are no results.
+- [x] 7.7 Auction detail: load from the API, show a real "not found" for unknown ids, a live countdown (a `useCountdown` hook that ticks every second and stops at zero), full bid history, a working bid form with validation and server error display, and a working report form.
+- [x] 7.8 Create Listing, My Listings, My Bids, Profile: wire to the API. Edit and delete on My Listings call the API. Publishing a draft calls the API.
+- [x] 7.9 Admin dashboard: stats, pending listings (approve or reject with reason), reports (resolve with an action), and a new users table with suspend and unsuspend.
+- [x] 7.10 Login: remove the prefilled credentials. Wire "Forgot password" to the real endpoints with a reset page at `/reset-password/:token`.
+- [x] 7.11 Add a proper 404 page and replace the wildcard route that renders Home. Add an error boundary at the app root.
+- [x] 7.12 Set `vite.config.js` proxy to forward `/api`, `/socket.io`, and `/uploads` to the server in development.
 
 Done when: with the server running, the whole app works with no mock data, and refreshing any page keeps the session.
 
