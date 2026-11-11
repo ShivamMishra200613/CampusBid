@@ -78,7 +78,7 @@ Done when: both apps install, build, and start from a clean clone, lint passes, 
 
 ### Phase 1: MongoDB and Mongoose
 
-- [ ] 1.1 Install `mongoose` (already a dependency; verify the version works) and create `config/db.js` with a `connectDB()` that retries once and logs the host (never the password).
+- [x] 1.1 Install `mongoose` (already a dependency; verify the version works) and create `config/db.js` with a `connectDB()` that retries once and logs the host (never the password).
 - [ ] 1.2 Update `server.js` to connect to the database before listening. Keep `app.js` free of side effects so tests can import it.
 - [ ] 1.3 Create the `User` model: `fullName`, `email` (unique, lowercase, `@ves.ac.in` match), `passwordHash` (`select: false`), `classBranch`, `rollNo`, `role` (`student` | `admin`), `isVerifiedStudent`, `isSuspended`, `phone`, `bio`, `avatarUrl`, `notificationPreferences`, timestamps. Add a `toJSON` transform that removes `passwordHash` and `__v` and maps `_id` to `id`.
 - [ ] 1.4 Create the `Product` model: `title`, `category` (enum), `condition`, `description`, `seller` (ref User), `startingBid`, `currentBid`, `minIncrement`, `bidCount`, `highestBidder` (ref User), `status` (`draft` | `pending_approval` | `live` | `ended` | `removed`), `endTime`, `images` (array), `winner` (ref User), timestamps. Indexes: `status + endTime`, `category`, text index on `title` and `description`.

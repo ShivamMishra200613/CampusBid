@@ -1,9 +1,10 @@
 # Progress
 
 ## Status
-Phase: Phase 1: MongoDB and Mongoose   Last finished task: 0.6   Next task: 1.1
+Phase: Phase 1: MongoDB and Mongoose   Last finished task: 1.1   Next task: 1.2
 
 ## Log
+- 2026-11-11 1.1: Created config/db.js with connectDB() retry logic and credential-safe host logging | checks: verified connectDB() connection and disconnection to local MongoDB
 - 2026-11-11 0.6: Verified server test script runs node --test, adjusted client oxlint config to achieve 0 warnings and 0 errors | checks: cd client && npm run lint && npm run build; cd server && npm test
 - 2026-11-11 0.5: Verified root progress.md exists and adheres to agents.md section 11 format | checks: format check against agents.md
 - 2026-11-11 0.4: Removed hardcoded JWT secret fallback and R2 config from config.js; enforced production failure on missing JWT_SECRET or MONGO_URI | checks: verified node execution in production and dev modes
