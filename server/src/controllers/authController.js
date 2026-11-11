@@ -63,3 +63,51 @@ export const register = async (req, res, next) => {
     next(err);
   }
 };
+
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      const err = new Error('Email and password are required.');
+      err.statusCode = 400;
+      err.code = 'VALIDATION_ERROR';
+      return next(err);
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail }).select('+passwordHash');
+
+    if (!user) {
+      const err = new Error('Invalid email or password.');
+      err.statusCode = 401;
+      err.code = 'INVALID_CREDENTIALS';
+      return next(err);
+    }
+
+    if (user.isSuspended) {
+      const err = new Error('Your account has been suspended by an administrator.');
+      err.statusCode = 403;
+      err.code = 'ACCOUNT_SUSPENDED';
+      return next(err);
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      const err = new Error('Invalid email or password.');
+      err.statusCode = 401;
+      err.code = 'INVALID_CREDENTIALS';
+      return next(err);
+    }
+
+    const token = generateToken(user);
+
+    res.json({
+      success: true,
+      token,
+      user: user.toJSON()
+    });
+  } catch (err) {
+    next(err);
+  }
+};

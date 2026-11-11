@@ -93,7 +93,7 @@ Done when: `npm run seed` fills the database, and a Mongo shell or Compass shows
 ### Phase 2: Authentication and Authorization
 
 - [x] 2.1 `POST /auth/register`: validate, reject duplicate email with `409 USER_ALREADY_EXISTS`, hash the password with bcrypt (cost 10), create the user, return a signed JWT and the user. Role is always `student`; ignore any `role` in the body.
-- [ ] 2.2 `POST /auth/login`: look up by email, compare the hash, reject with a generic `401 INVALID_CREDENTIALS` for both unknown email and wrong password, reject suspended users with `403 ACCOUNT_SUSPENDED`. Return JWT and user.
+- [x] 2.2 `POST /auth/login`: look up by email, compare the hash, reject with a generic `401 INVALID_CREDENTIALS` for both unknown email and wrong password, reject suspended users with `403 ACCOUNT_SUSPENDED`. Return JWT and user.
 - [ ] 2.3 JWT payload: `sub` (user id), `role`. Expiry from `JWT_EXPIRES_IN`. Update `authenticate` to load the user from the database, so suspended or deleted users lose access immediately. Keep `requireAdmin`.
 - [ ] 2.4 Add `optionalAuth` middleware for public routes that behave differently when a user is present.
 - [ ] 2.5 Apply middleware to every route according to the table in `server/contracts/routes.md`. Public: register, login, `GET /products`, `GET /products/:id`. Student: create product, bid, my-bids, notifications, profile. Owner-only: edit or delete own listing. Admin-only: everything under `/admin`.

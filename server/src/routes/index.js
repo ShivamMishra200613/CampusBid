@@ -129,16 +129,6 @@ export const mockDb = {
 // MODULE 1: AUTH & USERS
 // -------------------------------------------------------------
 
-router.post('/auth/login', (req, res) => {
-  const { email } = req.body;
-  const user = mockDb.users.find(u => u.email === email) || mockDb.users[0];
-  res.json({
-    success: true,
-    token: `token_mock_${user.id}`,
-    user
-  });
-});
-
 router.get('/users/me', (req, res) => {
   res.json({ success: true, user: mockDb.users[0] });
 });
