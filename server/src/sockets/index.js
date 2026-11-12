@@ -24,7 +24,9 @@ export const initSockets = (httpServer) => {
         try {
           const decoded = jwt.verify(token, config.jwtSecret);
           if (decoded && decoded.sub) {
-            const user = await User.findById(decoded.sub).select('_id email role fullName isSuspended');
+            const user = await User.findById(decoded.sub).select(
+              '_id email role fullName isSuspended'
+            );
             if (user && !user.isSuspended) {
               socket.user = {
                 id: user._id.toString(),

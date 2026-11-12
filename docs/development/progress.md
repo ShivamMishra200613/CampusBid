@@ -1,9 +1,11 @@
 # Progress
 
 ## Status
-Phase: Phase 12: Evaluation readiness   Last finished task: 12.4   Next task: None (Project Complete)
+
+Phase: Phase 12: Evaluation readiness Last finished task: 12.4 Next task: None (Project Complete)
 
 ## Log
+
 - 2026-11-11 12.4: Completed Phase 12 Evaluation Readiness: authored docs/evaluation.md (comprehensive technical mapping for all 9 checklist criteria, exact files to open, and 27 likely viva questions and answers), authored docs/demo-script.md (10-minute viva presentation order, demo accounts, two-window real-time bidding steps, and talking points), verified seed demo data narrative (2m countdown ending auction, active bidding items, won item, draft item, pending item, and dispute report), and filled the evaluation mapping checklist in plan.md and docs/Plan.md | checks: server tests 61/61 pass; client lint 0 errors 0 warnings, build clean; Playwright E2E suite 26/26 passed 3 consecutive times; all checklist criteria verified Complete
 - 2026-11-11 11.10: Completed Phase 11 Playwright End-to-End Test Suite: installed @playwright/test and Chromium, created playwright.config.js (Chromium only, webServer on port 5001 with test DB and client on port 5173), e2e/helpers.js (resetDb, loginAs, bidViaApi, ACCOUNTS), and 7 full spec files (auth.spec.js, browse.spec.js, listing.spec.js, bidding.spec.js, realtime.spec.js with 2 browser contexts, admin.spec.js, and responsive.spec.js with 375px viewport checks); verified npm run e2e runs 3 consecutive times with 26/26 tests passing on clean test DB | checks: npm run e2e 3x consecutive runs passed (Run 1: 26/26, Run 2: 26/26, Run 3: 26/26 in ~2m each); server tests 61/61 pass; client lint 0 errors 0 warnings, build clean
 - 2026-11-11 10.7: Completed Phase 10 DevOps and Deployment: added .github/workflows/ci.yml and docker.yml, render.yaml, client/vercel.json, DEPLOY.md deployment guide, enhanced GET /health with database connectivity status and 503 fallback, morgan structured request logging, root README.md with architecture, 3 running methods, demo accounts, and evaluation matrix, and server/tests/health.test.js | checks: server tests 61/61 pass; client lint 0 warnings 0 errors, client build clean; GET /health verified
@@ -43,8 +45,10 @@ Phase: Phase 12: Evaluation readiness   Last finished task: 12.4   Next task: No
 ## Blocked
 
 ## Questions for the owner
+
 - Phase 10 is complete: reached the HUMAN CHECKPOINT. All deployment configurations (`render.yaml`, `client/vercel.json`, `.github/workflows/ci.yml`, `.github/workflows/docker.yml`) and the full step-by-step deployment guide (`DEPLOY.md`) are prepared. Please review `DEPLOY.md` to deploy the platform on MongoDB Atlas, Render, and Vercel at your convenience. When you are ready, provide the live URL or let us proceed to implement Phase 11 (Playwright E2E suite against local dev/test servers) and Phase 12 (Evaluation documentation).
 
 ## Notes for the viva
+
 - Baseline Express server responds on /health and mounts mock API at /api/v1.
 - Initial client uses React 19 + Vite 8 + Tailwind 3.

@@ -26,13 +26,25 @@ router.get('/mine', authenticate, getMyProducts);
 router.post('/', authenticate, validate(createProductSchema), createProduct);
 
 router.get('/:id', validateObjectId('id'), getProductById);
-router.put('/:id', authenticate, validateObjectId('id'), validate(updateProductSchema), updateProduct);
+router.put(
+  '/:id',
+  authenticate,
+  validateObjectId('id'),
+  validate(updateProductSchema),
+  updateProduct
+);
 router.delete('/:id', authenticate, validateObjectId('id'), deleteProduct);
 
 router.post('/:id/bids', authenticate, validateObjectId('id'), validate(placeBidSchema), placeBid);
 router.get('/:id/bids', validateObjectId('id'), getProductBids);
 
 router.post('/:id/publish', authenticate, validateObjectId('id'), publishProduct);
-router.post('/:id/report', authenticate, validateObjectId('id'), validate(reportListingSchema), reportProduct);
+router.post(
+  '/:id/report',
+  authenticate,
+  validateObjectId('id'),
+  validate(reportListingSchema),
+  reportProduct
+);
 
 export default router;

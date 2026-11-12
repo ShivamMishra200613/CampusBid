@@ -65,10 +65,9 @@ export const createProductSchema = z
       .trim()
       .min(3, 'Title must be at least 3 characters')
       .max(120, 'Title cannot exceed 120 characters'),
-    category: z.enum(
-      ['electronics', 'books', 'furniture', 'fashion', 'sports', 'others'],
-      { required_error: 'Category is required' }
-    ),
+    category: z.enum(['electronics', 'books', 'furniture', 'fashion', 'sports', 'others'], {
+      required_error: 'Category is required'
+    }),
     condition: z
       .string({ required_error: 'Condition is required' })
       .trim()
@@ -102,7 +101,9 @@ export const createProductSchema = z
 export const updateProductSchema = z
   .object({
     title: z.string().trim().min(3).max(120).optional(),
-    category: z.enum(['electronics', 'books', 'furniture', 'fashion', 'sports', 'others']).optional(),
+    category: z
+      .enum(['electronics', 'books', 'furniture', 'fashion', 'sports', 'others'])
+      .optional(),
     condition: z.string().trim().min(2).optional(),
     description: z.string().trim().min(10).optional(),
     startingBid: z.number().positive().min(1).optional(),

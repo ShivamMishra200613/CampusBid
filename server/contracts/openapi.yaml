@@ -449,7 +449,14 @@ paths:
               properties:
                 reason:
                   type: string
-                  enum: [Counterfeit, Inappropriate Content, Misleading Information, Prohibited Item, Other]
+                  enum:
+                    [
+                      Counterfeit,
+                      Inappropriate Content,
+                      Misleading Information,
+                      Prohibited Item,
+                      Other
+                    ]
                 comments:
                   type: string
       responses:
@@ -485,7 +492,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  url: { type: string, format: uri, example: 'https://r2.campusbid.ves.ac.in/uploads/item_982.webp' }
+                  url:
+                    {
+                      type: string,
+                      format: uri,
+                      example: 'https://r2.campusbid.ves.ac.in/uploads/item_982.webp'
+                    }
 
   # =========================================================================
   # MODULE 4: BIDDING SYSTEM
@@ -998,8 +1010,14 @@ components:
         role: { type: string, enum: [student, admin], example: 'student' }
         isVerifiedStudent: { type: boolean, example: true }
         phone: { type: string, example: '+91 98765 43210' }
-        bio: { type: string, example: 'Engineering student interested in vintage tech and textbooks.' }
-        avatarUrl: { type: string, format: uri, example: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb' }
+        bio:
+          { type: string, example: 'Engineering student interested in vintage tech and textbooks.' }
+        avatarUrl:
+          {
+            type: string,
+            format: uri,
+            example: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb'
+          }
         memberSince: { type: string, example: 'June 2023' }
         stats:
           type: object
@@ -1046,7 +1064,8 @@ components:
 
     CreateProductRequest:
       type: object
-      required: [title, category, condition, description, startingBid, minIncrement, duration, images]
+      required:
+        [title, category, condition, description, startingBid, minIncrement, duration, images]
       properties:
         title:
           type: string
@@ -1181,9 +1200,11 @@ components:
       type: object
       properties:
         id: { type: string, example: 'notif_301' }
-        type: { type: string, enum: [outbid, auction_won, auction_ended, new_bid], example: 'outbid' }
+        type:
+          { type: string, enum: [outbid, auction_won, auction_ended, new_bid], example: 'outbid' }
         title: { type: string, example: 'You have been outbid!' }
-        message: { type: string, example: 'A higher bid of ₹2,700 was placed on Vintage Film Camera.' }
+        message:
+          { type: string, example: 'A higher bid of ₹2,700 was placed on Vintage Film Camera.' }
         productId: { type: string, example: 'prod_101' }
         read: { type: boolean, example: false }
         createdAt: { type: string, format: date-time }

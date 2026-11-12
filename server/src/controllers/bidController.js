@@ -66,10 +66,7 @@ export const placeBid = async (req, res, next) => {
         _id: productId,
         status: 'live',
         seller: { $ne: req.user.id },
-        $or: [
-          { endTime: null },
-          { endTime: { $gt: now } }
-        ],
+        $or: [{ endTime: null }, { endTime: { $gt: now } }],
         $expr: {
           $gte: [amount, { $add: ['$currentBid', '$minIncrement'] }]
         }
@@ -105,10 +102,7 @@ export const placeBid = async (req, res, next) => {
     });
 
     // Notify previous highest bidder of being outbid (respects notificationPreferences.outbidAlerts)
-    if (
-      previousProduct.highestBidder &&
-      previousProduct.highestBidder.toString() !== req.user.id
-    ) {
+    if (previousProduct.highestBidder && previousProduct.highestBidder.toString() !== req.user.id) {
       await notifyOutbid({
         previousBidderId: previousProduct.highestBidder,
         currentBidderName: req.user.fullName,
@@ -212,10 +206,11 @@ export const getMyBids = async (req, res, next) => {
       if (!productMap.has(pid) || productMap.get(pid).yourBid < b.amount) {
         let status = 'Outbid';
         const isLive = b.product.status === 'live';
-        const isHighest = b.product.highestBidder?._id?.toString() === req.user.id ||
-                          b.product.highestBidder?.id === req.user.id;
-        const isWinner = b.product.winner?._id?.toString() === req.user.id ||
-                         b.product.winner?.id === req.user.id;
+        const isHighest =
+          b.product.highestBidder?._id?.toString() === req.user.id ||
+          b.product.highestBidder?.id === req.user.id;
+        const isWinner =
+          b.product.winner?._id?.toString() === req.user.id || b.product.winner?.id === req.user.id;
 
         if (isLive) {
           status = isHighest ? 'Winning' : 'Outbid';
@@ -238,7 +233,9 @@ export const getMyBids = async (req, res, next) => {
           id: b.id,
           productId: pid,
           productTitle: b.product.title,
-          productImage: b.product.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300',
+          productImage:
+            b.product.images?.[0] ||
+            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300',
           sellerName: b.product.seller?.fullName || 'VESIT Student',
           sellerVerified: b.product.seller?.isVerifiedStudent ?? true,
           yourBid: b.amount,

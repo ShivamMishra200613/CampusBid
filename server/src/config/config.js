@@ -22,9 +22,10 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isProduction,
   port: parseInt(process.env.PORT, 10) || 5000,
-  mongoUri: process.env.NODE_ENV === 'test'
-    ? (process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test')
-    : (process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusbid'),
+  mongoUri:
+    process.env.NODE_ENV === 'test'
+      ? process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test'
+      : process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/campusbid',
   mongoUriTest: process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/campusbid_test',
   jwtSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',

@@ -188,7 +188,11 @@ export default function AdminDashboardPage() {
   const handleToggleSuspend = async (targetUser) => {
     const isCurrentlySuspended = targetUser.isSuspended;
     const action = isCurrentlySuspended ? 'reactivate' : 'suspend';
-    if (!window.confirm(`Are you sure you want to ${action} ${targetUser.fullName || targetUser.email}?`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to ${action} ${targetUser.fullName || targetUser.email}?`
+      )
+    ) {
       return;
     }
 
@@ -222,7 +226,8 @@ export default function AdminDashboardPage() {
               </span>
             </div>
             <p className="font-body-md text-secondary">
-              Review pending collegiate listings, resolve campus reports, and moderate student accounts.
+              Review pending collegiate listings, resolve campus reports, and moderate student
+              accounts.
             </p>
           </div>
 
@@ -335,7 +340,9 @@ export default function AdminDashboardPage() {
               <div className="p-4 flex-grow">
                 {loadingListings ? (
                   <div className="py-16 text-center text-secondary">
-                    <span className="material-symbols-outlined text-3xl animate-spin">progress_activity</span>
+                    <span className="material-symbols-outlined text-3xl animate-spin">
+                      progress_activity
+                    </span>
                     <p className="mt-2 text-xs">Loading queue...</p>
                   </div>
                 ) : pendingListings.length === 0 ? (
@@ -344,7 +351,9 @@ export default function AdminDashboardPage() {
                       check_circle
                     </span>
                     <p className="font-semibold text-on-surface">All pending listings reviewed!</p>
-                    <p className="text-xs text-secondary mt-1">No items currently awaiting approval.</p>
+                    <p className="text-xs text-secondary mt-1">
+                      No items currently awaiting approval.
+                    </p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -359,11 +368,18 @@ export default function AdminDashboardPage() {
                       </thead>
                       <tbody className="font-body-sm text-sm divide-y divide-outline-variant">
                         {pendingListings.map((item) => (
-                          <tr key={item.id} data-testid="pending-listing-row" className="hover:bg-surface-bright transition-colors">
+                          <tr
+                            key={item.id}
+                            data-testid="pending-listing-row"
+                            className="hover:bg-surface-bright transition-colors"
+                          >
                             <td className="py-3.5 px-3 flex items-center gap-3">
                               <div className="w-11 h-11 bg-surface-container rounded-lg overflow-hidden shrink-0 border border-outline-variant">
                                 <img
-                                  src={item.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120'}
+                                  src={
+                                    item.images?.[0] ||
+                                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120'
+                                  }
                                   alt={item.title}
                                   className="w-full h-full object-cover"
                                 />
@@ -433,7 +449,9 @@ export default function AdminDashboardPage() {
               <div className="p-6 flex flex-col gap-4 flex-grow">
                 {loadingReports ? (
                   <div className="py-16 text-center text-secondary">
-                    <span className="material-symbols-outlined text-3xl animate-spin">progress_activity</span>
+                    <span className="material-symbols-outlined text-3xl animate-spin">
+                      progress_activity
+                    </span>
                     <p className="mt-2 text-xs">Loading reports...</p>
                   </div>
                 ) : reports.length === 0 ? (
@@ -442,7 +460,9 @@ export default function AdminDashboardPage() {
                       verified_user
                     </span>
                     <p className="font-semibold text-on-surface">No unresolved reports!</p>
-                    <p className="text-xs text-secondary mt-1">Campus marketplace integrity is healthy.</p>
+                    <p className="text-xs text-secondary mt-1">
+                      Campus marketplace integrity is healthy.
+                    </p>
                   </div>
                 ) : (
                   reports.map((rep) => {
@@ -485,8 +505,12 @@ export default function AdminDashboardPage() {
                         </div>
 
                         <div className="border-t border-outline-variant pt-2 flex justify-between items-center font-body-sm text-[11px] text-secondary">
-                          <span>By: {rep.reportedBy?.fullName || rep.reportedBy?.email || 'Student'}</span>
-                          <span>{rep.createdAt ? new Date(rep.createdAt).toLocaleDateString() : ''}</span>
+                          <span>
+                            By: {rep.reportedBy?.fullName || rep.reportedBy?.email || 'Student'}
+                          </span>
+                          <span>
+                            {rep.createdAt ? new Date(rep.createdAt).toLocaleDateString() : ''}
+                          </span>
                         </div>
                       </div>
                     );
@@ -530,7 +554,9 @@ export default function AdminDashboardPage() {
             <div className="p-4">
               {loadingUsers ? (
                 <div className="py-20 text-center text-secondary">
-                  <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+                  <span className="material-symbols-outlined text-4xl animate-spin">
+                    progress_activity
+                  </span>
                   <p className="mt-2 text-sm">Loading users directory...</p>
                 </div>
               ) : users.length === 0 ? (
@@ -556,16 +582,25 @@ export default function AdminDashboardPage() {
                         const isAdminUser = u.role === 'admin';
 
                         return (
-                          <tr key={u.id} data-testid="user-row" className="hover:bg-surface-bright transition-colors">
+                          <tr
+                            key={u.id}
+                            data-testid="user-row"
+                            className="hover:bg-surface-bright transition-colors"
+                          >
                             <td className="py-3.5 px-4">
                               <div className="flex items-center gap-3">
                                 <img
-                                  src={u.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                                  src={
+                                    u.avatarUrl ||
+                                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
+                                  }
                                   alt={u.fullName}
                                   className="w-9 h-9 rounded-full object-cover border border-outline-variant"
                                 />
                                 <div>
-                                  <p className="font-semibold text-on-surface">{u.fullName || 'Student'}</p>
+                                  <p className="font-semibold text-on-surface">
+                                    {u.fullName || 'Student'}
+                                  </p>
                                   <p className="text-xs text-secondary">{u.email}</p>
                                 </div>
                               </div>
@@ -577,7 +612,9 @@ export default function AdminDashboardPage() {
                             <td className="py-3.5 px-4">
                               <span
                                 className={`px-2.5 py-0.5 rounded-full font-label-caps text-[10px] uppercase font-bold ${
-                                  isAdminUser ? 'bg-black text-white' : 'bg-surface-container text-secondary'
+                                  isAdminUser
+                                    ? 'bg-black text-white'
+                                    : 'bg-surface-container text-secondary'
                                 }`}
                               >
                                 {u.role}
@@ -598,7 +635,9 @@ export default function AdminDashboardPage() {
                               {isSelf ? (
                                 <span className="text-xs text-secondary italic">Current Admin</span>
                               ) : isAdminUser ? (
-                                <span className="text-xs text-secondary italic">Admin Protected</span>
+                                <span className="text-xs text-secondary italic">
+                                  Admin Protected
+                                </span>
                               ) : (
                                 <button
                                   type="button"
@@ -659,7 +698,8 @@ export default function AdminDashboardPage() {
               Reject Listing
             </h3>
             <p className="font-body-sm text-secondary text-xs mb-4">
-              Specify reason for rejecting "{rejectModal.title}". The seller will receive a notification.
+              Specify reason for rejecting "{rejectModal.title}". The seller will receive a
+              notification.
             </p>
 
             <form onSubmit={handleConfirmReject} className="space-y-4">
@@ -749,11 +789,7 @@ export default function AdminDashboardPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={actionLoading}
-                  className="btn-primary"
-                >
+                <button type="submit" disabled={actionLoading} className="btn-primary">
                   Resolve Report
                 </button>
               </div>

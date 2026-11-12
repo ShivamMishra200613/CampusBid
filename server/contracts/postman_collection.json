@@ -66,7 +66,11 @@
               "mode": "raw",
               "raw": "{\n  \"fullName\": \"Shivam Mishra\",\n  \"email\": \"shivam.mishra@ves.ac.in\",\n  \"classBranch\": \"D15A / CMPN\",\n  \"rollNo\": \"28\",\n  \"password\": \"SecurePass123!\",\n  \"confirmPassword\": \"SecurePass123!\",\n  \"agreeTerms\": true\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
           }
         },
         {
@@ -94,7 +98,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"alex.mercer@ves.ac.in\",\n  \"password\": \"CollegePass#123\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
           }
         },
         {
@@ -122,7 +130,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@ves.ac.in\",\n  \"password\": \"change-me-admin\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
           }
         },
         {
@@ -134,7 +146,11 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"alex.mercer@ves.ac.in\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["auth", "forgot-password"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "forgot-password"]
+            }
           }
         },
         {
@@ -146,7 +162,11 @@
               "mode": "raw",
               "raw": "{\n  \"token\": \"PASTE_RESET_TOKEN_HERE\",\n  \"newPassword\": \"NewPassword123!\",\n  \"confirmPassword\": \"NewPassword123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["auth", "reset-password"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            }
           }
         }
       ]
@@ -157,22 +177,36 @@
         {
           "name": "Get Current Profile",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            }
           }
         },
         {
           "name": "Update Current Profile",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PUT",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fullName\": \"Alex Mercer\",\n  \"phone\": \"+91 98765 43210\",\n  \"classBranch\": \"D12C / EXTC\",\n  \"bio\": \"Electronics student and enthusiast.\",\n  \"notificationPreferences\": {\n    \"outbidAlerts\": true,\n    \"auctionEndingAlerts\": true,\n    \"newMessageAlerts\": false\n  }\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            }
           }
         }
       ]
@@ -200,21 +234,35 @@
           "name": "Get Product Details",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
           }
         },
         {
           "name": "Get My Listings",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/products/mine", "host": ["{{baseUrl}}"], "path": ["products", "mine"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/mine",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "mine"]
+            }
           }
         },
         {
           "name": "Create Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
@@ -227,43 +275,71 @@
         {
           "name": "Update Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PUT",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Arduino Uno Starter Kit (Updated)\",\n  \"description\": \"Complete kit with additional jumper wires and sensors.\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
           }
         },
         {
           "name": "Publish Draft Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}/publish", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}", "publish"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}", "publish"]
+            }
           }
         },
         {
           "name": "Report Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"Item violates campus auction guidelines.\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}/report", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}", "report"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}/report",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}", "report"]
+            }
           }
         },
         {
           "name": "Delete Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
           }
         }
       ]
@@ -274,29 +350,48 @@
         {
           "name": "Place Bid",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"amount\": 1350\n}"
             },
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}/bids", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}", "bids"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}/bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}", "bids"]
+            }
           }
         },
         {
           "name": "Get Product Bid History",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/products/{{productId}}/bids", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}", "bids"] }
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}/bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}", "bids"]
+            }
           }
         },
         {
           "name": "Get My Bids",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bids/my-bids?filter=all", "host": ["{{baseUrl}}"], "path": ["bids", "my-bids"], "query": [{ "key": "filter", "value": "all" }] }
+            "url": {
+              "raw": "{{baseUrl}}/bids/my-bids?filter=all",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids", "my-bids"],
+              "query": [{ "key": "filter", "value": "all" }]
+            }
           }
         }
       ]
@@ -307,25 +402,46 @@
         {
           "name": "Get Notifications",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/notifications", "host": ["{{baseUrl}}"], "path": ["notifications"] }
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"]
+            }
           }
         },
         {
           "name": "Mark Notification Read",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PATCH",
-            "url": { "raw": "{{baseUrl}}/notifications/{{notificationId}}/read", "host": ["{{baseUrl}}"], "path": ["notifications", "{{notificationId}}", "read"] }
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{notificationId}}", "read"]
+            }
           }
         },
         {
           "name": "Mark All Read",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PATCH",
-            "url": { "raw": "{{baseUrl}}/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["notifications", "read-all"] }
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            }
           }
         }
       ]
@@ -336,75 +452,131 @@
         {
           "name": "Platform Analytics",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "stats"]
+            }
           }
         },
         {
           "name": "Get Pending Listings",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/admin/listings/pending", "host": ["{{baseUrl}}"], "path": ["admin", "listings", "pending"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/listings/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "listings", "pending"]
+            }
           }
         },
         {
           "name": "Moderate Listing",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"action\": \"approve\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/admin/listings/{{productId}}/moderate", "host": ["{{baseUrl}}"], "path": ["admin", "listings", "{{productId}}", "moderate"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/listings/{{productId}}/moderate",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "listings", "{{productId}}", "moderate"]
+            }
           }
         },
         {
           "name": "Get Reports",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/admin/reports", "host": ["{{baseUrl}}"], "path": ["admin", "reports"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "reports"]
+            }
           }
         },
         {
           "name": "Resolve Report",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"resolutionAction\": \"remove_listing\",\n  \"notes\": \"Listing removed due to guideline violation.\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/admin/reports/{{reportId}}/resolve", "host": ["{{baseUrl}}"], "path": ["admin", "reports", "{{reportId}}", "resolve"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports/{{reportId}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "reports", "{{reportId}}", "resolve"]
+            }
           }
         },
         {
           "name": "List Users",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/admin/users?page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
           }
         },
         {
           "name": "Suspend User",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PATCH",
-            "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}/suspend", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}", "suspend"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/{{userId}}/suspend",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "{{userId}}", "suspend"]
+            }
           }
         },
         {
           "name": "Unsuspend User",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
             "method": "PATCH",
-            "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}/unsuspend", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}", "unsuspend"] }
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/{{userId}}/unsuspend",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "{{userId}}", "unsuspend"]
+            }
           }
         }
       ]

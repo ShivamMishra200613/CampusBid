@@ -65,7 +65,8 @@ export default function HomePage() {
               THE SENSE OF AUCTION
             </h1>
             <p className="font-body-md text-white/90 max-w-xl mx-auto mt-2 text-sm sm:text-base">
-              A curated, collegiate marketplace for buying, selling, and discovering verified student items.
+              A curated, collegiate marketplace for buying, selling, and discovering verified
+              student items.
             </p>
           </div>
 
@@ -79,7 +80,9 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <p className="font-body-md text-body-md text-on-surface-variant max-w-xl leading-relaxed">
-                Transforming campus classifieds into a transparent, competitive, and refined auction house. Buy pre-owned textbooks, vintage electronics, and dorm furniture directly from fellow students.
+                Transforming campus classifieds into a transparent, competitive, and refined auction
+                house. Buy pre-owned textbooks, vintage electronics, and dorm furniture directly
+                from fellow students.
               </p>
               {/* Thumbnails row */}
               <div className="flex items-center gap-2">
@@ -93,7 +96,11 @@ export default function HomePage() {
                     key={idx}
                     className="w-12 h-12 rounded-lg overflow-hidden border border-outline-variant shrink-0 bg-surface"
                   >
-                    <img src={thumb} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img
+                      src={thumb}
+                      alt={`Preview ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 ))}
               </div>
@@ -198,7 +205,9 @@ export default function HomePage() {
             data-testid="listings-loading"
             className="py-20 flex flex-col items-center justify-center text-secondary gap-3"
           >
-            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <span className="material-symbols-outlined text-4xl animate-spin">
+              progress_activity
+            </span>
             <span className="font-body-sm text-sm">Loading active auctions...</span>
           </div>
         ) : listingsError ? (
@@ -207,7 +216,9 @@ export default function HomePage() {
             className="py-16 text-center border border-error/30 rounded-2xl bg-error-container/10 my-8 p-6"
           >
             <span className="material-symbols-outlined text-[48px] text-error mb-2">error</span>
-            <h3 className="font-headline-md text-xl text-on-surface font-bold">Failed to load auctions</h3>
+            <h3 className="font-headline-md text-xl text-on-surface font-bold">
+              Failed to load auctions
+            </h3>
             <p className="font-body-md text-secondary mt-1">{listingsError}</p>
             <button
               type="button"
@@ -222,7 +233,9 @@ export default function HomePage() {
             data-testid="listings-empty"
             className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright my-8"
           >
-            <span className="material-symbols-outlined text-[48px] text-secondary mb-3">search_off</span>
+            <span className="material-symbols-outlined text-[48px] text-secondary mb-3">
+              search_off
+            </span>
             <h3 className="font-headline-md text-[22px] text-on-surface font-bold">
               No matching auctions found
             </h3>
@@ -253,7 +266,10 @@ export default function HomePage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div data-testid="pagination-controls" className="flex justify-center items-center gap-2 mb-16">
+              <div
+                data-testid="pagination-controls"
+                className="flex justify-center items-center gap-2 mb-16"
+              >
                 <button
                   type="button"
                   data-testid="pagination-prev"
@@ -303,10 +319,14 @@ export default function HomePage() {
                 — ROOTED IN FORM &amp; FUNCTION
               </span>
               <h2 className="font-display-lg text-[36px] md:text-[48px] font-bold leading-tight uppercase tracking-tight mb-6">
-                PERS—<br />PECTIVE
+                PERS—
+                <br />
+                PECTIVE
               </h2>
               <p className="font-body-md text-gray-300 text-sm md:text-base leading-relaxed max-w-md">
-                Every semester, hundreds of quality textbooks, lab kits, and electronics change hands at VESIT. CampusBid provides the formal structure, transparent bidding logs, and seller verification needed to make peer transactions effortless.
+                Every semester, hundreds of quality textbooks, lab kits, and electronics change
+                hands at VESIT. CampusBid provides the formal structure, transparent bidding logs,
+                and seller verification needed to make peer transactions effortless.
               </p>
             </div>
             <div className="pt-8 mt-6 border-t border-gray-800 flex items-center gap-6">
@@ -352,16 +372,29 @@ export default function HomePage() {
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="flex -space-x-2">
-                    <img className="w-8 h-8 rounded-full border border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60" alt="Avatar" />
-                    <img className="w-8 h-8 rounded-full border border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60" alt="Avatar" />
-                    <img className="w-8 h-8 rounded-full border border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60" alt="Avatar" />
+                    <img
+                      className="w-8 h-8 rounded-full border border-white object-cover"
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60"
+                      alt="Avatar"
+                    />
+                    <img
+                      className="w-8 h-8 rounded-full border border-white object-cover"
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60"
+                      alt="Avatar"
+                    />
+                    <img
+                      className="w-8 h-8 rounded-full border border-white object-cover"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60"
+                      alt="Avatar"
+                    />
                   </div>
                   <span className="font-body-sm text-sm font-semibold text-white">
                     1,200+ Registered VESIT Bidders
                   </span>
                 </div>
                 <p className="font-body-sm text-xs text-gray-300">
-                  Join fellow students in D12, D15, D17 and all branches actively listing items weekly.
+                  Join fellow students in D12, D15, D17 and all branches actively listing items
+                  weekly.
                 </p>
               </div>
             </div>

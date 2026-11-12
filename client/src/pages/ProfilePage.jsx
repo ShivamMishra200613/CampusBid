@@ -84,7 +84,10 @@ export default function ProfilePage() {
           <div className="w-full md:w-1/3 p-8 border-b md:border-b-0 md:border-r border-outline-variant bg-surface flex flex-col items-center text-center">
             <div className="w-32 h-32 rounded-full border border-outline-variant overflow-hidden mb-6 bg-surface-variant shadow-sm">
               <img
-                src={user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}
+                src={
+                  user?.avatarUrl ||
+                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'
+                }
                 alt={user?.fullName || 'User Profile'}
                 className="w-full h-full object-cover"
               />
@@ -97,9 +100,7 @@ export default function ProfilePage() {
               {user?.classBranch || 'VESIT Student'}
             </p>
             {user?.rollNo && (
-              <p className="font-body-sm text-xs text-secondary mb-4">
-                Roll No. {user.rollNo}
-              </p>
+              <p className="font-body-sm text-xs text-secondary mb-4">Roll No. {user.rollNo}</p>
             )}
 
             <div className="bg-tertiary-container/30 text-tertiary border border-tertiary/40 px-3.5 py-1 rounded-full font-label-caps text-[11px] flex items-center gap-1 mb-6 font-bold">
@@ -126,9 +127,7 @@ export default function ProfilePage() {
                 <span className="font-label-caps text-[11px] text-secondary uppercase tracking-wider">
                   Campus Verified
                 </span>
-                <span className="font-bold text-tertiary">
-                  Yes
-                </span>
+                <span className="font-bold text-tertiary">Yes</span>
               </div>
             </div>
           </div>
@@ -158,7 +157,10 @@ export default function ProfilePage() {
                       className={`editorial-input ${errors.fullName ? 'border-error' : ''}`}
                     />
                     {errors.fullName && (
-                      <p data-testid="profile-name-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                      <p
+                        data-testid="profile-name-error"
+                        className="mt-1 text-xs text-red-500 font-body-sm"
+                      >
                         {errors.fullName}
                       </p>
                     )}
@@ -289,7 +291,9 @@ export default function ProfilePage() {
                   >
                     {saving ? (
                       <>
-                        <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                        <span className="material-symbols-outlined animate-spin text-sm">
+                          progress_activity
+                        </span>
                         <span>Saving...</span>
                       </>
                     ) : (

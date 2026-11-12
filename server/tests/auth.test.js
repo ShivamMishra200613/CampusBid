@@ -20,27 +20,29 @@ describe('Authentication & Authorization API Tests', () => {
     await connectDB();
 
     // Clean only test accounts used in this suite
-    await User.deleteMany({ email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in', 'outsider@gmail.com'] } });
+    await User.deleteMany({
+      email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in', 'outsider@gmail.com'] }
+    });
     await Product.deleteMany({ title: 'Student Test Listing' });
   });
 
   after(async () => {
-    await User.deleteMany({ email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in'] } });
+    await User.deleteMany({
+      email: { $in: ['test.student@ves.ac.in', 'other.student@ves.ac.in'] }
+    });
     await Product.deleteMany({ title: 'Student Test Listing' });
     await disconnectDB();
   });
 
   it('1. POST /api/v1/auth/register - successfully registers student with @ves.ac.in', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Test Student',
-        email: 'test.student@ves.ac.in',
-        password: 'Password123',
-        classBranch: 'D12C / CMPN',
-        rollNo: '101',
-        role: 'admin' // Attempt privilege escalation, should be ignored
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Test Student',
+      email: 'test.student@ves.ac.in',
+      password: 'Password123',
+      classBranch: 'D12C / CMPN',
+      rollNo: '101',
+      role: 'admin' // Attempt privilege escalation, should be ignored
+    });
 
     assert.equal(res.status, 201);
     assert.equal(res.body.success, true);
@@ -54,13 +56,11 @@ describe('Authentication & Authorization API Tests', () => {
   });
 
   it('2. POST /api/v1/auth/register - rejects duplicate email with 409 USER_ALREADY_EXISTS', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Duplicate Student',
-        email: 'test.student@ves.ac.in',
-        password: 'Password123'
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Duplicate Student',
+      email: 'test.student@ves.ac.in',
+      password: 'Password123'
+    });
 
     assert.equal(res.status, 409);
     assert.equal(res.body.success, false);
@@ -68,12 +68,10 @@ describe('Authentication & Authorization API Tests', () => {
   });
 
   it('3. POST /api/v1/auth/login - succeeds with correct credentials', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/login')
-      .send({
-        email: 'test.student@ves.ac.in',
-        password: 'Password123'
-      });
+    const res = await request(app).post('/api/v1/auth/login').send({
+      email: 'test.student@ves.ac.in',
+      password: 'Password123'
+    });
 
     assert.equal(res.status, 200);
     assert.equal(res.body.success, true);
@@ -82,12 +80,10 @@ describe('Authentication & Authorization API Tests', () => {
   });
 
   it('4. POST /api/v1/auth/login - rejects wrong password with 401 INVALID_CREDENTIALS', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/login')
-      .send({
-        email: 'test.student@ves.ac.in',
-        password: 'WrongPassword999'
-      });
+    const res = await request(app).post('/api/v1/auth/login').send({
+      email: 'test.student@ves.ac.in',
+      password: 'WrongPassword999'
+    });
 
     assert.equal(res.status, 401);
     assert.equal(res.body.success, false);
@@ -114,13 +110,11 @@ describe('Authentication & Authorization API Tests', () => {
 
   it('7. PUT /api/v1/products/:id - student editing another users listing returns 403', async () => {
     // Register another student
-    const regOther = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Other Student',
-        email: 'other.student@ves.ac.in',
-        password: 'Password123'
-      });
+    const regOther = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Other Student',
+      email: 'other.student@ves.ac.in',
+      password: 'Password123'
+    });
 
     otherStudentToken = regOther.body.token;
     otherStudentUser = regOther.body.user;

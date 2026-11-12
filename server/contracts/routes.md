@@ -19,7 +19,9 @@ This document contains the complete REST API contract specifications for the **C
 ## Response Envelope Structure
 
 ### Success Response
+
 All successful responses return top-level keys directly (never wrapped in a `data` envelope):
+
 ```json
 {
   "success": true,
@@ -27,7 +29,9 @@ All successful responses return top-level keys directly (never wrapped in a `dat
   "user": { ... }
 }
 ```
+
 or for list responses:
+
 ```json
 {
   "success": true,
@@ -39,7 +43,9 @@ or for list responses:
 ```
 
 ### Error Response
+
 All error responses consistently return:
+
 ```json
 {
   "success": false,
@@ -50,7 +56,9 @@ All error responses consistently return:
   }
 }
 ```
+
 For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ field, message }` items:
+
 ```json
 {
   "success": false,
@@ -70,10 +78,12 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ## Module 1: User Management & Authentication
 
 ### 1.1 Register New Student
+
 - **Endpoint**: `POST /auth/register`
 - **Auth**: Public
 - **Description**: Registers a student account. Enforces `@ves.ac.in` email and academic metadata. Role is always `student`.
 - **Request Body**:
+
 ```json
 {
   "fullName": "Jane Doe",
@@ -85,7 +95,9 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   "agreeTerms": true
 }
 ```
+
 - **Success (201 Created)**:
+
 ```json
 {
   "success": true,
@@ -101,21 +113,26 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   }
 }
 ```
+
 - **Errors**:
   - `400 VALIDATION_ERROR`: Field validation failure.
   - `409 USER_ALREADY_EXISTS`: "An account with this email already exists."
 
 ### 1.2 User Login
+
 - **Endpoint**: `POST /auth/login`
 - **Auth**: Public
 - **Request Body**:
+
 ```json
 {
   "email": "alex.mercer@ves.ac.in",
   "password": "CollegePass#123"
 }
 ```
+
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -131,20 +148,25 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   }
 }
 ```
+
 - **Errors**:
   - `401 INVALID_CREDENTIALS`: "Invalid email or password."
   - `403 ACCOUNT_SUSPENDED`: "Your account has been suspended by campus administration."
 
 ### 1.3 Forgot Password
+
 - **Endpoint**: `POST /auth/forgot-password`
 - **Auth**: Public
 - **Request Body**:
+
 ```json
 {
   "email": "alex.mercer@ves.ac.in"
 }
 ```
+
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -153,9 +175,11 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 1.4 Reset Password
+
 - **Endpoint**: `POST /auth/reset-password`
 - **Auth**: Public
 - **Request Body**:
+
 ```json
 {
   "token": "jwt_reset_token_here",
@@ -163,7 +187,9 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   "confirmPassword": "NewSecurePassword123!"
 }
 ```
+
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -172,9 +198,11 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 1.5 Get Current Profile
+
 - **Endpoint**: `GET /users/me`
 - **Auth**: Required (Bearer Token)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -204,9 +232,11 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 1.6 Update Current Profile
+
 - **Endpoint**: `PUT /users/me`
 - **Auth**: Required (Bearer Token)
 - **Update Request Body**:
+
 ```json
 {
   "fullName": "Alex Mercer",
@@ -221,6 +251,7 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   }
 }
 ```
+
 - **Success (200 OK)**: Returns updated `{ success: true, user: { ... } }`.
 
 ---
@@ -228,6 +259,7 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ## Module 2 & 3: Product & Auction Management
 
 ### 2.1 Browse & Search Auctions
+
 - **Endpoint**: `GET /products`
 - **Auth**: Public (optional Bearer token)
 - **Query Parameters**:
@@ -239,6 +271,7 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   - `sort` (string: `ending_soon | newly_listed | price_low | price_high | most_bids`)
   - `page` (int, default 1), `limit` (int, default 12)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -271,9 +304,11 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 2.2 Get Product Details
+
 - **Endpoint**: `GET /products/:id`
 - **Auth**: Public
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -311,10 +346,12 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 2.3 Get My Listings
+
 - **Endpoint**: `GET /products/mine`
 - **Auth**: Required (Bearer Token)
 - **Description**: Returns all listings created by the authenticated user across all statuses (draft, pending_approval, live, ended).
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -324,9 +361,11 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
 ```
 
 ### 2.4 Create New Listing
+
 - **Endpoint**: `POST /products`
 - **Auth**: Required (Student)
 - **Request Body**:
+
 ```json
 {
   "title": "Arduino Mega 2560 R3 Kit",
@@ -340,10 +379,12 @@ For validation errors (`VALIDATION_ERROR`), `details` contains an array of `{ fi
   "isDraft": false
 }
 ```
+
 - **Success (201 Created)**:
-Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` (or `'draft'` if `isDraft: true`).
+  Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` (or `'draft'` if `isDraft: true`).
 
 ### 2.5 Update Listing
+
 - **Endpoint**: `PUT /products/:id`
 - **Auth**: Required (Listing Owner only, bids must be 0)
 - **Success (200 OK)**: Returns updated `{ success: true, product: { ... } }`.
@@ -352,10 +393,12 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
   - `400 LISTING_HAS_BIDS`: "Cannot edit a listing once bids have been placed."
 
 ### 2.6 Delete Listing
+
 - **Endpoint**: `DELETE /products/:id`
 - **Auth**: Required (Listing Owner or Admin)
 - **Description**: Soft deletes the product by setting `status: 'removed'`.
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -364,10 +407,12 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 2.7 Publish Draft Listing
+
 - **Endpoint**: `POST /products/:id/publish`
 - **Auth**: Required (Listing Owner only)
 - **Description**: Transitions a draft listing to `pending_approval` for admin moderation.
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -377,15 +422,19 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 2.8 Report Listing
+
 - **Endpoint**: `POST /products/:id/report`
 - **Auth**: Required (Student)
 - **Request Body**:
+
 ```json
 {
   "reason": "Suspected counterfeit or prohibited campus item."
 }
 ```
+
 - **Success (201 Created)**:
+
 ```json
 {
   "success": true,
@@ -399,20 +448,24 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ## Module 4: Bidding System
 
 ### 4.1 Place Bid
+
 - **Endpoint**: `POST /products/:id/bids`
 - **Auth**: Required (Student)
 - **Request Body**:
+
 ```json
 {
   "amount": 2700
 }
 ```
+
 - **Contract Rules Enforced Atomically**:
   1. Product auction must be `status === 'live'`.
   2. Current time must be `< endTime`.
   3. `amount >= currentBid + minIncrement`.
   4. Bidder ID must not equal Seller ID.
 - **Success (201 Created)**:
+
 ```json
 {
   "success": true,
@@ -428,6 +481,7 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
   "updatedCurrentBid": 2700
 }
 ```
+
 - **Errors**:
   - `400 BID_TOO_LOW`: Amount less than required minimum.
   - `400 BID_OUTDATED`: A concurrent bid landed first.
@@ -436,9 +490,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
   - `403 BID_ON_OWN_LISTING`: Sellers cannot bid on their own listings.
 
 ### 4.2 Get Product Bids History
+
 - **Endpoint**: `GET /products/:id/bids?page=1&limit=20`
 - **Auth**: Public
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -450,10 +506,12 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 4.3 My Bids
+
 - **Endpoint**: `GET /bids/my-bids?filter=all|winning|outbid|ended`
 - **Auth**: Required (Student)
 - **Returns**: Array of unique auctions the student has bid on with dynamic status (`Winning`, `Outbid`, `Won`, `Lost`).
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -481,9 +539,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ## Module 5: Notifications
 
 ### 5.1 Get Notifications
+
 - **Endpoint**: `GET /notifications?unreadOnly=true`
 - **Auth**: Required
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -503,9 +563,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 5.2 Mark Notification as Read
+
 - **Endpoint**: `PATCH /notifications/:id/read`
 - **Auth**: Required (Owner of notification only)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -514,9 +576,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 5.3 Mark All Notifications as Read
+
 - **Endpoint**: `PATCH /notifications/read-all`
 - **Auth**: Required
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -529,9 +593,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ## Module 6: Admin Management & Platform Analytics
 
 ### 6.1 Platform Analytics
+
 - **Endpoint**: `GET /admin/stats`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -547,9 +613,11 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 6.2 Get Pending Listings
+
 - **Endpoint**: `GET /admin/listings/pending`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -559,28 +627,35 @@ Returns `{ success: true, product: { ... } }` with `status: 'pending_approval'` 
 ```
 
 ### 6.3 Moderate Listing
+
 - **Endpoint**: `POST /admin/listings/:id/moderate`
 - **Auth**: Required (Role: `admin`)
 - **Request Body**:
+
 ```json
 {
   "action": "approve",
   "reason": ""
 }
 ```
+
 or
+
 ```json
 {
   "action": "reject",
   "reason": "Does not comply with college regulations regarding electronics."
 }
 ```
+
 - **Success (200 OK)**: Returns `{ success: true, product: { ... } }`.
 
 ### 6.4 Get Reports
+
 - **Endpoint**: `GET /admin/reports`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -589,16 +664,20 @@ or
 ```
 
 ### 6.5 Resolve Report
+
 - **Endpoint**: `POST /admin/reports/:id/resolve`
 - **Auth**: Required (Role: `admin`)
 - **Request Body**:
+
 ```json
 {
   "resolutionAction": "remove_listing",
   "notes": "Inappropriate content; listing removed and seller warned."
 }
 ```
+
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -608,9 +687,11 @@ or
 ```
 
 ### 6.6 List Users
+
 - **Endpoint**: `GET /admin/users?search=alex&page=1&limit=20`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -622,9 +703,11 @@ or
 ```
 
 ### 6.7 Suspend User
+
 - **Endpoint**: `PATCH /admin/users/:id/suspend`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,
@@ -632,14 +715,17 @@ or
   "user": { ... }
 }
 ```
+
 - **Errors**:
   - `400 CANNOT_SUSPEND_SELF`: Admin cannot suspend self.
   - `403 CANNOT_SUSPEND_ADMIN`: Admin cannot suspend another admin.
 
 ### 6.8 Unsuspend User
+
 - **Endpoint**: `PATCH /admin/users/:id/unsuspend`
 - **Auth**: Required (Role: `admin`)
 - **Success (200 OK)**:
+
 ```json
 {
   "success": true,

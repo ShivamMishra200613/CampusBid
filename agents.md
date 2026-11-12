@@ -1,12 +1,12 @@
 # agents.md: Rules for the coding agent on CampusBid
 
-You are finishing the CampusBid mini project (VESIT Online Auction System) so it can be demonstrated and explained in a Mini Project Evaluation. The task list is `plan.md`. This file is the rulebook. If the two ever seem to disagree, stop and ask (see "When to stop and ask").
+You are finishing the CampusBid mini project (VESIT Online Auction System) so it can be demonstrated and explained in a Mini Project Evaluation. The task list is `docs/development/plan.md`. This file is the rulebook. If the two ever seem to disagree, stop and ask (see "When to stop and ask").
 
 ## 1. Mission
 
 Complete every item of the evaluation checklist: Frontend with Tailwind, React and State Management, Backend REST API, MongoDB and Mongoose, Data Validation, Authentication and Authorization, Real-Time Features (Socket.IO), Docker, DevOps and Deployment.
 
-The owner has to explain the code in a viva. Write code a second-year student can read and defend: small files, clear names, comments only where the reason is not obvious, no clever abstractions, no extra libraries beyond those named in `plan.md`.
+The owner has to explain the code in a viva. Write code a second-year student can read and defend: small files, clear names, comments only where the reason is not obvious, no clever abstractions, no extra libraries beyond those named in `docs/development/plan.md`.
 
 ## 2. Repository map
 
@@ -15,11 +15,10 @@ Auction/
   client/            React 19, Vite 8, Tailwind 3, React Router 7 (JavaScript, JSX, ESM)
   server/            Express 4, Mongoose 8, ESM ("type": "module")
     contracts/       openapi.yaml, routes.md, postman_collection.json, schemas.js, types.d.ts
-  docs/              Lab 0 spec text and per-page specs (docs/pages/*.md)
+  docs/              Lab 0 spec text, per-page specs (docs/pages/*.md), database & evaluation guides
+    development/     plan.md (the task list), progress.md (your running log)
   e2e/               Playwright tests (created in Phase 11)
-  plan.md            the task list
   agents.md          this file
-  progress.md        your running log (you create and maintain it)
 ```
 
 Sources of truth, in order: the Lab 0 requirements in `docs/lab0_extracted.txt`, then `server/contracts/routes.md` and `openapi.yaml`, then `docs/pages/*.md`, then the existing code. When you change behaviour, update the contract files in the same task.
@@ -45,17 +44,17 @@ Do not re-open these. Follow them.
 
 ## 4. Working loop
 
-Repeat until `plan.md` has no unchecked boxes:
+Repeat until `docs/development/plan.md` has no unchecked boxes:
 
-1. Read `plan.md` and `progress.md`. Pick the first unchecked task whose phase prerequisites are met.
+1. Read `docs/development/plan.md` and `docs/development/progress.md`. Pick the first unchecked task whose phase prerequisites are met.
 2. Read the files that task touches before editing them. Do not rewrite a file you have not read.
 3. Implement only that task. Keep the change small enough to review in one sitting.
 4. Run the verification commands in section 6 that apply. Fix failures before moving on. Do not tick a box on a failing or unrun check.
 5. For any frontend change, check it in a real browser with Playwright (see section 7) and look at the result, not only at the test exit code.
-6. Tick the box in `plan.md` (`- [x]`), append an entry to `progress.md`, and make one git commit with a message like `phase 4.5: atomic bid placement`. Commit locally only.
+6. Tick the box in `docs/development/plan.md` (`- [x]`), append an entry to `docs/development/progress.md`, and make one git commit with a message like `phase 4.5: atomic bid placement`. Commit locally only.
 7. Go back to step 1.
 
-Never skip a task silently. If you cannot finish one, leave it unchecked, write why in `progress.md` under "Blocked", and continue with the next task that does not depend on it. If every remaining task depends on it, stop and report.
+Never skip a task silently. If you cannot finish one, leave it unchecked, write why in `docs/development/progress.md` under "Blocked", and continue with the next task that does not depend on it. If every remaining task depends on it, stop and report.
 
 ## 5. Conventions
 
@@ -78,9 +77,9 @@ Client:
 
 General:
 
-- No new dependency without a line in `progress.md` giving the reason. Prefer what `plan.md` already names.
+- No new dependency without a line in `docs/development/progress.md` giving the reason. Prefer what `docs/development/plan.md` already names.
 - No secrets in the repository. `.env` files are ignored by git; `.env.example` files are committed.
-- Keep file and folder names consistent with the layout in `plan.md`, section 2.
+- Keep file and folder names consistent with the layout in `docs/development/plan.md`, section 2.
 
 ## 6. Verification commands
 
@@ -106,7 +105,7 @@ curl -fsS http://localhost:8080/health
 docker compose down
 ```
 
-If Docker is not available in your environment, use a MongoDB instance reachable through `MONGO_URI_TEST` (for example an Atlas test database) and say so in `progress.md`. Do not skip the tests.
+If Docker is not available in your environment, use a MongoDB instance reachable through `MONGO_URI_TEST` (for example an Atlas test database) and say so in `docs/development/progress.md`. Do not skip the tests.
 
 ## 7. Using Playwright for the frontend
 
@@ -115,7 +114,7 @@ If Docker is not available in your environment, use a MongoDB instance reachable
 3. While building a page, write a short script or spec that opens it, performs the main action, and takes a screenshot into `e2e/screenshots/` (ignored by git). Open the screenshot and check the layout against the Tailwind design. Repeat at a 375 px wide viewport for any page you changed.
 4. Prefer role and label selectors (`getByRole`, `getByLabel`) and the `data-testid` attributes above. Never use fixed `waitForTimeout` sleeps; wait for a visible element or a response.
 5. Real-time behaviour needs two browser contexts in one test (two users, two pages).
-6. A failing test is a finding. Decide whether the app or the test is wrong, fix the right one, and note it in `progress.md`. Never delete or weaken a test just to get a green run.
+6. A failing test is a finding. Decide whether the app or the test is wrong, fix the right one, and note it in `docs/development/progress.md`. Never delete or weaken a test just to get a green run.
 
 ## 8. Environment variables
 
@@ -151,9 +150,9 @@ VITE_API_URL=/api/v1
 
 ## 10. When to stop and ask
 
-Stop, write the question in `progress.md` under "Questions for the owner", and wait for the owner's reply before you continue, when:
+Stop, write the question in `docs/development/progress.md` under "Questions for the owner", and wait for the owner's reply before you continue, when:
 
-- A task needs a choice about architecture, scope, or product behaviour that this file and `plan.md` do not already settle (for example a new user role, a payment flow, or a different database).
+- A task needs a choice about architecture, scope, or product behaviour that this file and `docs/development/plan.md` do not already settle (for example a new user role, a payment flow, or a different database).
 - A task would change the public API contract in a way that breaks the frontend or the Postman collection beyond what the task describes.
 - Two instructions in the repo contradict each other and the order of precedence in section 2 does not resolve it.
 - You reach the HUMAN CHECKPOINT in Phase 10.
@@ -161,7 +160,7 @@ Stop, write the question in `progress.md` under "Questions for the owner", and w
 
 Do not stop for small things you can decide yourself: names of helpers, file splits inside a module, wording of error messages, styling details that follow the existing design.
 
-## 11. progress.md format
+## 11. docs/development/progress.md format
 
 Keep it short and current. Newest entries at the top of "Log".
 
@@ -169,18 +168,23 @@ Keep it short and current. Newest entries at the top of "Log".
 # Progress
 
 ## Status
-Phase: <number and name>   Last finished task: <id>   Next task: <id>
+
+Phase: <number and name> Last finished task: <id> Next task: <id>
 
 ## Log
+
 - <date> <task id>: <one line of what changed> | checks: <what you ran and the result>
 
 ## Blocked
+
 - <task id>: <why, what was tried>
 
 ## Questions for the owner
+
 - <question>
 
 ## Notes for the viva
+
 - <anything non-obvious worth explaining later>
 ```
 
@@ -188,7 +192,7 @@ Phase: <number and name>   Last finished task: <id>   Next task: <id>
 
 The project is done when all of these are true:
 
-- Every box in `plan.md` is ticked, and the table in `plan.md` section 5 is filled in.
+- Every box in `docs/development/plan.md` is ticked, and the table in `docs/development/plan.md` section 5 is filled in.
 - Server tests, client lint and build, and the Playwright suite pass from a clean database, three times in a row for the Playwright suite.
 - `docker compose up --build` serves the full app and the real-time demo works across two windows.
 - CI workflow files exist and `DEPLOY.md` is complete.

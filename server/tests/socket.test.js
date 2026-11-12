@@ -27,7 +27,9 @@ describe('Real-Time Socket.IO Tests', () => {
     await connectDB();
 
     // Clean up any leftovers
-    await User.deleteMany({ email: { $in: ['sock.seller@ves.ac.in', 'sock.buyera@ves.ac.in', 'sock.buyerb@ves.ac.in'] } });
+    await User.deleteMany({
+      email: { $in: ['sock.seller@ves.ac.in', 'sock.buyera@ves.ac.in', 'sock.buyerb@ves.ac.in'] }
+    });
 
     seller = await User.create({
       fullName: 'Socket Seller',

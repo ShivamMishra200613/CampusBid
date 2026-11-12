@@ -120,7 +120,8 @@ export const seedDatabase = async () => {
     title: 'MacBook Air M1 2020 (8GB/256GB Space Grey)',
     category: 'electronics',
     condition: 'like-new',
-    description: 'Battery health 91%. Includes original 30W USB-C charger and box. Perfect for coding and college projects.',
+    description:
+      'Battery health 91%. Includes original 30W USB-C charger and box. Perfect for coding and college projects.',
     seller: rahul._id,
     startingBid: 42000,
     currentBid: 46500,
@@ -130,7 +131,9 @@ export const seedDatabase = async () => {
     duration: '24h',
     endTime: new Date(now + 2 * 60 * 1000), // 2 mins from now
     highestBidder: priya._id,
-    images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P2: Live headphones with active bidding
@@ -138,7 +141,8 @@ export const seedDatabase = async () => {
     title: 'Sony WH-1000XM4 Noise Canceling Headphones',
     category: 'electronics',
     condition: 'good',
-    description: 'Active Noise Canceling working flawlessly. Minor ear-cup wear. Comes with aux cable and carrying case.',
+    description:
+      'Active Noise Canceling working flawlessly. Minor ear-cup wear. Comes with aux cable and carrying case.',
     seller: priya._id,
     startingBid: 12000,
     currentBid: 14500,
@@ -148,7 +152,9 @@ export const seedDatabase = async () => {
     duration: '24h',
     endTime: new Date(now + 24 * 60 * 60 * 1000),
     highestBidder: aditya._id,
-    images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P3: Books bundle
@@ -156,7 +162,8 @@ export const seedDatabase = async () => {
     title: 'Engineering Mathematics & Core CS Textbooks Bundle',
     category: 'books',
     condition: 'good',
-    description: 'Includes Kumbhojkar Math 3 & 4, Cormen Algorithms (CLRS), and Tanenbaum Computer Networks.',
+    description:
+      'Includes Kumbhojkar Math 3 & 4, Cormen Algorithms (CLRS), and Tanenbaum Computer Networks.',
     seller: rahul._id,
     startingBid: 1200,
     currentBid: 1500,
@@ -166,7 +173,9 @@ export const seedDatabase = async () => {
     duration: '3d',
     endTime: new Date(now + 3 * 24 * 60 * 60 * 1000),
     highestBidder: ananya._id,
-    images: ['https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P4: Furniture
@@ -174,7 +183,8 @@ export const seedDatabase = async () => {
     title: 'Ergonomic Mesh Study Chair with Lumbar Support',
     category: 'furniture',
     condition: 'like-new',
-    description: 'Adjustable height, breathable mesh back, comfortable seat cushion. Used for 4 months in hostel.',
+    description:
+      'Adjustable height, breathable mesh back, comfortable seat cushion. Used for 4 months in hostel.',
     seller: aditya._id,
     startingBid: 3500,
     currentBid: 4200,
@@ -184,7 +194,9 @@ export const seedDatabase = async () => {
     duration: '7d',
     endTime: new Date(now + 5 * 24 * 60 * 60 * 1000),
     highestBidder: rahul._id,
-    images: ['https://images.unsplash.com/photo-1580481077195-c3a821a506cb?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1580481077195-c3a821a506cb?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P5: Pending approval (for Admin Approval demo)
@@ -202,7 +214,9 @@ export const seedDatabase = async () => {
     duration: '3d',
     endTime: null,
     highestBidder: null,
-    images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P6: Ended auction won by Rahul Sharma
@@ -221,7 +235,9 @@ export const seedDatabase = async () => {
     endTime: new Date(now - 60 * 60 * 1000), // 1 hour ago
     highestBidder: rahul._id,
     winner: rahul._id,
-    images: ['https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P7: Ended auction won by Priya Patel
@@ -240,7 +256,9 @@ export const seedDatabase = async () => {
     endTime: new Date(now - 2 * 24 * 60 * 60 * 1000), // 2 days ago
     highestBidder: priya._id,
     winner: priya._id,
-    images: ['https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1594980596870-8aa52a78d8cd?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   // P8: Draft product
@@ -248,7 +266,8 @@ export const seedDatabase = async () => {
     title: 'Arduino Uno R3 Starter Kit with Sensors and Jumper Wires',
     category: 'electronics',
     condition: 'new',
-    description: 'Unopened Arduino Uno R3 kit with breadboard, LEDs, resistors, LCD display, and ultrasonic sensor.',
+    description:
+      'Unopened Arduino Uno R3 kit with breadboard, LEDs, resistors, LCD display, and ultrasonic sensor.',
     seller: rahul._id,
     startingBid: 1500,
     currentBid: 1500,
@@ -258,7 +277,9 @@ export const seedDatabase = async () => {
     duration: '7d',
     endTime: null,
     highestBidder: null,
-    images: ['https://images.unsplash.com/photo-1553406830-ef2513450d76?w=800&auto=format&fit=crop&q=60']
+    images: [
+      'https://images.unsplash.com/photo-1553406830-ef2513450d76?w=800&auto=format&fit=crop&q=60'
+    ]
   });
 
   console.log('Created 8 Products across categories and statuses.');
@@ -266,43 +287,123 @@ export const seedDatabase = async () => {
   // 3. Create Bid history
   // P1 Bids
   await Bid.create([
-    { product: p1._id, bidder: aditya._id, amount: 43000, createdAt: new Date(now - 30 * 60 * 1000) },
-    { product: p1._id, bidder: ananya._id, amount: 45000, createdAt: new Date(now - 20 * 60 * 1000) },
+    {
+      product: p1._id,
+      bidder: aditya._id,
+      amount: 43000,
+      createdAt: new Date(now - 30 * 60 * 1000)
+    },
+    {
+      product: p1._id,
+      bidder: ananya._id,
+      amount: 45000,
+      createdAt: new Date(now - 20 * 60 * 1000)
+    },
     { product: p1._id, bidder: priya._id, amount: 46500, createdAt: new Date(now - 5 * 60 * 1000) }
   ]);
 
   // P2 Bids
   await Bid.create([
-    { product: p2._id, bidder: rahul._id, amount: 12500, createdAt: new Date(now - 5 * 60 * 60 * 1000) },
-    { product: p2._id, bidder: ananya._id, amount: 13200, createdAt: new Date(now - 3 * 60 * 60 * 1000) },
-    { product: p2._id, bidder: rahul._id, amount: 14000, createdAt: new Date(now - 2 * 60 * 60 * 1000) },
-    { product: p2._id, bidder: aditya._id, amount: 14500, createdAt: new Date(now - 30 * 60 * 1000) }
+    {
+      product: p2._id,
+      bidder: rahul._id,
+      amount: 12500,
+      createdAt: new Date(now - 5 * 60 * 60 * 1000)
+    },
+    {
+      product: p2._id,
+      bidder: ananya._id,
+      amount: 13200,
+      createdAt: new Date(now - 3 * 60 * 60 * 1000)
+    },
+    {
+      product: p2._id,
+      bidder: rahul._id,
+      amount: 14000,
+      createdAt: new Date(now - 2 * 60 * 60 * 1000)
+    },
+    {
+      product: p2._id,
+      bidder: aditya._id,
+      amount: 14500,
+      createdAt: new Date(now - 30 * 60 * 1000)
+    }
   ]);
 
   // P3 Bids
   await Bid.create([
-    { product: p3._id, bidder: aditya._id, amount: 1350, createdAt: new Date(now - 10 * 60 * 60 * 1000) },
-    { product: p3._id, bidder: ananya._id, amount: 1500, createdAt: new Date(now - 4 * 60 * 60 * 1000) }
+    {
+      product: p3._id,
+      bidder: aditya._id,
+      amount: 1350,
+      createdAt: new Date(now - 10 * 60 * 60 * 1000)
+    },
+    {
+      product: p3._id,
+      bidder: ananya._id,
+      amount: 1500,
+      createdAt: new Date(now - 4 * 60 * 60 * 1000)
+    }
   ]);
 
   // P4 Bids
   await Bid.create([
-    { product: p4._id, bidder: priya._id, amount: 3700, createdAt: new Date(now - 12 * 60 * 60 * 1000) },
-    { product: p4._id, bidder: ananya._id, amount: 4000, createdAt: new Date(now - 8 * 60 * 60 * 1000) },
-    { product: p4._id, bidder: rahul._id, amount: 4200, createdAt: new Date(now - 1 * 60 * 60 * 1000) }
+    {
+      product: p4._id,
+      bidder: priya._id,
+      amount: 3700,
+      createdAt: new Date(now - 12 * 60 * 60 * 1000)
+    },
+    {
+      product: p4._id,
+      bidder: ananya._id,
+      amount: 4000,
+      createdAt: new Date(now - 8 * 60 * 60 * 1000)
+    },
+    {
+      product: p4._id,
+      bidder: rahul._id,
+      amount: 4200,
+      createdAt: new Date(now - 1 * 60 * 60 * 1000)
+    }
   ]);
 
   // P6 Bids (Ended)
   await Bid.create([
-    { product: p6._id, bidder: aditya._id, amount: 950, createdAt: new Date(now - 5 * 60 * 60 * 1000) },
-    { product: p6._id, bidder: rahul._id, amount: 1100, createdAt: new Date(now - 2 * 60 * 60 * 1000) }
+    {
+      product: p6._id,
+      bidder: aditya._id,
+      amount: 950,
+      createdAt: new Date(now - 5 * 60 * 60 * 1000)
+    },
+    {
+      product: p6._id,
+      bidder: rahul._id,
+      amount: 1100,
+      createdAt: new Date(now - 2 * 60 * 60 * 1000)
+    }
   ]);
 
   // P7 Bids (Ended)
   await Bid.create([
-    { product: p7._id, bidder: rahul._id, amount: 1050, createdAt: new Date(now - 3 * 24 * 60 * 60 * 1000) },
-    { product: p7._id, bidder: ananya._id, amount: 1200, createdAt: new Date(now - 2.5 * 24 * 60 * 60 * 1000) },
-    { product: p7._id, bidder: priya._id, amount: 1350, createdAt: new Date(now - 2.1 * 24 * 60 * 60 * 1000) }
+    {
+      product: p7._id,
+      bidder: rahul._id,
+      amount: 1050,
+      createdAt: new Date(now - 3 * 24 * 60 * 60 * 1000)
+    },
+    {
+      product: p7._id,
+      bidder: ananya._id,
+      amount: 1200,
+      createdAt: new Date(now - 2.5 * 24 * 60 * 60 * 1000)
+    },
+    {
+      product: p7._id,
+      bidder: priya._id,
+      amount: 1350,
+      createdAt: new Date(now - 2.1 * 24 * 60 * 60 * 1000)
+    }
   ]);
 
   console.log('Created Bid records.');
@@ -313,7 +414,8 @@ export const seedDatabase = async () => {
       user: rahul._id,
       type: 'auction_won',
       title: 'Auction Won!',
-      message: 'Congratulations! You won "Cosco Tournament Badminton Racket + Shuttles Pack" for ₹1,100.',
+      message:
+        'Congratulations! You won "Cosco Tournament Badminton Racket + Shuttles Pack" for ₹1,100.',
       product: p6._id,
       read: false
     },
@@ -321,7 +423,8 @@ export const seedDatabase = async () => {
       user: rahul._id,
       type: 'outbid',
       title: 'You were outbid!',
-      message: 'Aditya placed a higher bid of ₹14,500 on "Sony WH-1000XM4 Noise Canceling Headphones".',
+      message:
+        'Aditya placed a higher bid of ₹14,500 on "Sony WH-1000XM4 Noise Canceling Headphones".',
       product: p2._id,
       read: true
     },
@@ -329,7 +432,8 @@ export const seedDatabase = async () => {
       user: priya._id,
       type: 'outbid',
       title: 'You were outbid!',
-      message: 'Rahul placed a higher bid of ₹4,200 on "Ergonomic Mesh Study Chair with Lumbar Support".',
+      message:
+        'Rahul placed a higher bid of ₹4,200 on "Ergonomic Mesh Study Chair with Lumbar Support".',
       product: p4._id,
       read: false
     },

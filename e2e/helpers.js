@@ -80,9 +80,12 @@ export const loginAs = async (page, role = 'student', baseURL = 'http://localhos
 
   // Navigate to page origin if not already there, then set token in localStorage
   await page.goto('/');
-  await page.evaluate(({ token }) => {
-    localStorage.setItem('campusbid_token', token);
-  }, { token: body.token });
+  await page.evaluate(
+    ({ token }) => {
+      localStorage.setItem('campusbid_token', token);
+    },
+    { token: body.token }
+  );
 
   await page.reload();
   await page.waitForSelector('[data-testid="nav-profile-link"]');
@@ -92,7 +95,13 @@ export const loginAs = async (page, role = 'student', baseURL = 'http://localhos
 /**
  * Places a bid directly via the REST API using a user token
  */
-export const bidViaApi = async (request, token, productId, amount, baseURL = 'http://localhost:5173') => {
+export const bidViaApi = async (
+  request,
+  token,
+  productId,
+  amount,
+  baseURL = 'http://localhost:5173'
+) => {
   const apiUrl = getApiUrl(baseURL);
   const res = await request.post(`${apiUrl}/products/${productId}/bids`, {
     headers: {

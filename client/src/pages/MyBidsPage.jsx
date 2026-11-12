@@ -12,7 +12,9 @@ export default function MyBidsPage() {
 
   const winningCount = myBids.filter((b) => b.status === 'Winning').length;
   const outbidCount = myBids.filter((b) => b.status === 'Outbid').length;
-  const endedCount = myBids.filter((b) => b.status === 'Ended' || b.status === 'Won' || b.status === 'Lost').length;
+  const endedCount = myBids.filter(
+    (b) => b.status === 'Ended' || b.status === 'Won' || b.status === 'Lost'
+  ).length;
 
   return (
     <div className="w-full">
@@ -59,14 +61,17 @@ export default function MyBidsPage() {
         {/* Loading / Empty / Content states */}
         {loadingMyBids ? (
           <div data-testid="my-bids-loading" className="py-20 text-center text-secondary">
-            <span className="material-symbols-outlined text-4xl animate-spin">progress_activity</span>
+            <span className="material-symbols-outlined text-4xl animate-spin">
+              progress_activity
+            </span>
             <p className="mt-2 font-body-sm text-sm">Loading your bids...</p>
           </div>
         ) : myBids.length === 0 ? (
-          <div data-testid="my-bids-empty" className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright">
-            <span className="material-symbols-outlined text-[48px] text-secondary mb-2">
-              gavel
-            </span>
+          <div
+            data-testid="my-bids-empty"
+            className="py-20 text-center border border-dashed border-outline-variant rounded-2xl bg-surface-bright"
+          >
+            <span className="material-symbols-outlined text-[48px] text-secondary mb-2">gavel</span>
             <h3 className="font-headline-md text-xl font-bold text-on-surface">
               No bids found in this filter
             </h3>
@@ -98,13 +103,20 @@ export default function MyBidsPage() {
                   const isOutbid = bid.status === 'Outbid';
 
                   return (
-                    <tr key={bid.id} data-testid="bid-row" className="hover:bg-surface-container-low transition-colors group">
+                    <tr
+                      key={bid.id}
+                      data-testid="bid-row"
+                      className="hover:bg-surface-container-low transition-colors group"
+                    >
                       {/* Item Thumbnail & Title */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-lg bg-[#F5F5F5] overflow-hidden shrink-0 border border-outline-variant">
                             <img
-                              src={bid.productImage || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120'}
+                              src={
+                                bid.productImage ||
+                                'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120'
+                              }
                               alt={bid.productTitle}
                               className="w-full h-full object-cover"
                             />
@@ -149,8 +161,8 @@ export default function MyBidsPage() {
                             isWinning
                               ? 'bg-tertiary-container/30 text-tertiary border border-tertiary/40 font-bold'
                               : isOutbid
-                              ? 'bg-error-container/40 text-error border border-error/40 font-bold animate-pulse'
-                              : 'bg-surface-container-high text-secondary border border-outline-variant font-bold'
+                                ? 'bg-error-container/40 text-error border border-error/40 font-bold animate-pulse'
+                                : 'bg-surface-container-high text-secondary border border-outline-variant font-bold'
                           }`}
                         >
                           {bid.status}

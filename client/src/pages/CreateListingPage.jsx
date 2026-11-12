@@ -99,7 +99,10 @@ export default function CreateListingPage() {
       }
 
       setImages((prev) => [...prev, ...res.urls]);
-      showToast(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded successfully!`, 'success');
+      showToast(
+        `${files.length} photo${files.length > 1 ? 's' : ''} uploaded successfully!`,
+        'success'
+      );
     } catch (err) {
       showToast(err.message || 'Image upload failed. You can paste a URL instead.', 'error');
     } finally {
@@ -206,7 +209,9 @@ export default function CreateListingPage() {
             {editId ? 'Edit Auction Listing' : 'List a New Item'}
           </h1>
           <p className="font-body-md text-secondary mt-1">
-            {editId ? 'Update details of your collegiate auction.' : 'Create an auction listing for verified VESIT students.'}
+            {editId
+              ? 'Update details of your collegiate auction.'
+              : 'Create an auction listing for verified VESIT students.'}
           </p>
         </div>
 
@@ -280,7 +285,9 @@ export default function CreateListingPage() {
                 data-testid="upload-progress-indicator"
                 className="mt-3 flex items-center gap-2 text-sm text-primary animate-pulse font-body-sm"
               >
-                <span className="material-symbols-outlined text-base animate-spin">progress_activity</span>
+                <span className="material-symbols-outlined text-base animate-spin">
+                  progress_activity
+                </span>
                 <span>{uploadProgressText}</span>
               </div>
             )}
@@ -353,7 +360,10 @@ export default function CreateListingPage() {
                   className={`editorial-input ${errors.title ? 'border-error' : ''}`}
                 />
                 {errors.title && (
-                  <p data-testid="listing-title-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="listing-title-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.title}
                   </p>
                 )}
@@ -416,7 +426,10 @@ export default function CreateListingPage() {
                   className={`w-full appearance-none rounded-2xl border ${errors.description ? 'border-red-500' : 'border-outline-variant'} bg-transparent p-4 font-body-md text-on-surface focus:border-on-surface focus:ring-1 focus:ring-on-surface outline-none resize-none transition-colors`}
                 ></textarea>
                 {errors.description && (
-                  <p data-testid="listing-description-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="listing-description-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.description}
                   </p>
                 )}
@@ -455,7 +468,10 @@ export default function CreateListingPage() {
                   />
                 </div>
                 {errors.startingBid && (
-                  <p data-testid="listing-starting-bid-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="listing-starting-bid-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.startingBid}
                   </p>
                 )}
@@ -483,7 +499,10 @@ export default function CreateListingPage() {
                   />
                 </div>
                 {errors.minIncrement && (
-                  <p data-testid="listing-increment-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="listing-increment-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.minIncrement}
                   </p>
                 )}

@@ -129,7 +129,10 @@ export default function Navbar() {
                   title="View Profile"
                 >
                   <img
-                    src={user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                    src={
+                      user?.avatarUrl ||
+                      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
+                    }
                     alt={user?.fullName || 'User'}
                     className="w-8 h-8 rounded-full object-cover border border-outline-variant"
                   />
@@ -177,7 +180,10 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div data-testid="mobile-menu" className="lg:hidden bg-surface border-b border-outline-variant px-6 py-6 space-y-4 animate-fade-in shadow-lg">
+          <div
+            data-testid="mobile-menu"
+            className="lg:hidden bg-surface border-b border-outline-variant px-6 py-6 space-y-4 animate-fade-in shadow-lg"
+          >
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}

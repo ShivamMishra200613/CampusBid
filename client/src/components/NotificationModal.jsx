@@ -15,8 +15,12 @@ export default function NotificationModal({ isOpen, onClose }) {
       >
         <div className="p-4 border-b border-outline-variant flex items-center justify-between bg-surface-bright">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-[22px]">notifications</span>
-            <h3 className="font-headline-md text-[18px] text-on-surface font-bold">Notifications</h3>
+            <span className="material-symbols-outlined text-primary text-[22px]">
+              notifications
+            </span>
+            <h3 className="font-headline-md text-[18px] text-on-surface font-bold">
+              Notifications
+            </h3>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -56,16 +60,16 @@ export default function NotificationModal({ isOpen, onClose }) {
                         notif.type === 'outbid'
                           ? 'bg-error-container text-error'
                           : notif.type === 'auction_won'
-                          ? 'bg-tertiary-container text-tertiary'
-                          : 'bg-primary-fixed text-on-primary-fixed'
+                            ? 'bg-tertiary-container text-tertiary'
+                            : 'bg-primary-fixed text-on-primary-fixed'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[16px]">
                         {notif.type === 'outbid'
                           ? 'gavel'
                           : notif.type === 'auction_won'
-                          ? 'emoji_events'
-                          : 'notifications'}
+                            ? 'emoji_events'
+                            : 'notifications'}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">

@@ -94,17 +94,23 @@ export const SocketProvider = ({ children }) => {
     };
   }, [user, showToast, addNotification, updateListingBid, handleCatalogAuctionEnded]);
 
-  const joinAuction = useCallback((productId) => {
-    if (socket && productId) {
-      socket.emit('auction:join', productId);
-    }
-  }, [socket]);
+  const joinAuction = useCallback(
+    (productId) => {
+      if (socket && productId) {
+        socket.emit('auction:join', productId);
+      }
+    },
+    [socket]
+  );
 
-  const leaveAuction = useCallback((productId) => {
-    if (socket && productId) {
-      socket.emit('auction:leave', productId);
-    }
-  }, [socket]);
+  const leaveAuction = useCallback(
+    (productId) => {
+      if (socket && productId) {
+        socket.emit('auction:leave', productId);
+      }
+    },
+    [socket]
+  );
 
   return (
     <SocketContext.Provider

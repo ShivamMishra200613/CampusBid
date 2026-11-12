@@ -30,7 +30,9 @@ describe('Auction Lifecycle & Sweeper Tests', () => {
   });
 
   after(async () => {
-    await User.deleteMany({ email: { $in: ['sweeper.seller@ves.ac.in', 'sweeper.bidder@ves.ac.in'] } });
+    await User.deleteMany({
+      email: { $in: ['sweeper.seller@ves.ac.in', 'sweeper.bidder@ves.ac.in'] }
+    });
     await Product.deleteMany({ seller: seller._id });
     await Notification.deleteMany({});
     await disconnectDB();

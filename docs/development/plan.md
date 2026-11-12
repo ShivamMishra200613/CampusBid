@@ -8,17 +8,17 @@ Read `agents.md` first. It defines the rules, the decisions already made, and th
 
 Repo layout today: `client/` (React 19 + Vite 8 + Tailwind 3), `server/` (Express 4, ESM), `docs/` (page specs and Lab 0 text), `server/contracts/` (OpenAPI, Postman, routes.md, schemas.js).
 
-| Checklist item | Status | What exists | What is missing |
-| --- | --- | --- | --- |
-| Frontend with Tailwind | Done | 9 pages, 5 components, custom Tailwind tokens, responsive navbar, footer, toast | No 404 page (the wildcard route renders Home), no loading or error states, no price filter or sort on Home, no live countdown timers |
-| React and State Management | Partial | `AuthContext` and `AuctionContext` (Context API + `useState`), React Router 7 | All data is mock and lives in `localStorage`. The client never calls the API. A default user is always logged in. No route guards. A "toggle role" button fakes admin. |
-| Backend REST API | Partial | Express app, `/api/v1` router, health check, error handler, about 15 endpoints | Everything is backed by an in-memory `mockDb` in one file. `PUT` and `DELETE` for products, notification read, moderation, user management, pagination and sort are missing. `/bids/my-bids` is hardcoded. `/users/me` always returns user 0. No controllers folder although the README describes one. |
-| MongoDB and Mongoose | Not started | `mongoose` is in `package.json` and `config.mongoUri` is defined | Never imported, no connection, no models, no seed data |
-| Data Validation | Minimal | Register page checks password match and length 8. Server checks the `@ves.ac.in` domain on register. HTML `required` attributes. | `contracts/schemas.js` is never used. No validation of products, bids, login, or profile updates on the server. |
-| Authentication and Authorization | Not started | `authenticate` and `requireAdmin` middleware exist. `bcryptjs` and `jsonwebtoken` are installed. | The middleware is not applied to any route. Login accepts any email and password. Tokens are fake strings (`token_mock_<id>`). Passwords are never stored. Admin is detected on the client by the word "admin" in the email. |
-| Real-Time Features (Socket.IO) | Not started | Nothing | `socket.io` is not installed on either side. The server uses `app.listen` instead of an HTTP server. |
-| Docker | Not started | Nothing | No Dockerfiles, no compose file, no `.dockerignore` |
-| DevOps and Deployment | Not started | A stale `client/dist` build | No `.env.example`, no CI, no tests, no deploy config, hardcoded JWT secret fallback, CORS open to `*` |
+| Checklist item                   | Status      | What exists                                                                                                                      | What is missing                                                                                                                                                                                                                                                                                        |
+| -------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Frontend with Tailwind           | Done        | 9 pages, 5 components, custom Tailwind tokens, responsive navbar, footer, toast                                                  | No 404 page (the wildcard route renders Home), no loading or error states, no price filter or sort on Home, no live countdown timers                                                                                                                                                                   |
+| React and State Management       | Partial     | `AuthContext` and `AuctionContext` (Context API + `useState`), React Router 7                                                    | All data is mock and lives in `localStorage`. The client never calls the API. A default user is always logged in. No route guards. A "toggle role" button fakes admin.                                                                                                                                 |
+| Backend REST API                 | Partial     | Express app, `/api/v1` router, health check, error handler, about 15 endpoints                                                   | Everything is backed by an in-memory `mockDb` in one file. `PUT` and `DELETE` for products, notification read, moderation, user management, pagination and sort are missing. `/bids/my-bids` is hardcoded. `/users/me` always returns user 0. No controllers folder although the README describes one. |
+| MongoDB and Mongoose             | Not started | `mongoose` is in `package.json` and `config.mongoUri` is defined                                                                 | Never imported, no connection, no models, no seed data                                                                                                                                                                                                                                                 |
+| Data Validation                  | Minimal     | Register page checks password match and length 8. Server checks the `@ves.ac.in` domain on register. HTML `required` attributes. | `contracts/schemas.js` is never used. No validation of products, bids, login, or profile updates on the server.                                                                                                                                                                                        |
+| Authentication and Authorization | Not started | `authenticate` and `requireAdmin` middleware exist. `bcryptjs` and `jsonwebtoken` are installed.                                 | The middleware is not applied to any route. Login accepts any email and password. Tokens are fake strings (`token_mock_<id>`). Passwords are never stored. Admin is detected on the client by the word "admin" in the email.                                                                           |
+| Real-Time Features (Socket.IO)   | Not started | Nothing                                                                                                                          | `socket.io` is not installed on either side. The server uses `app.listen` instead of an HTTP server.                                                                                                                                                                                                   |
+| Docker                           | Not started | Nothing                                                                                                                          | No Dockerfiles, no compose file, no `.dockerignore`                                                                                                                                                                                                                                                    |
+| DevOps and Deployment            | Not started | A stale `client/dist` build                                                                                                      | No `.env.example`, no CI, no tests, no deploy config, hardcoded JWT secret fallback, CORS open to `*`                                                                                                                                                                                                  |
 
 Other problems found while reading the code:
 
@@ -249,14 +249,14 @@ Done when: a person who has never seen the project can follow `README.md` and `d
 
 Fill the last column in during Phase 12.
 
-| Checklist item | Where it lives | Proof in the demo | Status |
-| --- | --- | --- | --- |
-| Frontend with Tailwind | `client/src`, `tailwind.config.js` | Responsive pages at desktop and 375 px | Complete |
-| React and State Management | `client/src/context`, `api/`, hooks | Login persists, filters, live updates | Complete |
-| Backend REST API | `server/src/routes`, `controllers` | Postman collection run | Complete |
-| MongoDB and Mongoose | `server/src/models`, `docs/database.md` | Compass view of the collections | Complete |
-| Data Validation | `validators/`, `client/src/utils/validators.js` | Bad input rejected on both sides | Complete |
-| Authentication and Authorization | `middleware/auth.js`, route guards | Student blocked from admin routes | Complete |
-| Real-Time Features (Socket.IO) | `sockets/`, `SocketContext` | Two windows, instant bid and notification | Complete |
-| Docker | Dockerfiles, `docker-compose.yml` | `docker compose up --build` | Complete |
-| DevOps and Deployment | `.github/workflows`, `DEPLOY.md`, live URLs | Green CI run and the live site | Complete |
+| Checklist item                   | Where it lives                                  | Proof in the demo                         | Status   |
+| -------------------------------- | ----------------------------------------------- | ----------------------------------------- | -------- |
+| Frontend with Tailwind           | `client/src`, `tailwind.config.js`              | Responsive pages at desktop and 375 px    | Complete |
+| React and State Management       | `client/src/context`, `api/`, hooks             | Login persists, filters, live updates     | Complete |
+| Backend REST API                 | `server/src/routes`, `controllers`              | Postman collection run                    | Complete |
+| MongoDB and Mongoose             | `server/src/models`, `docs/database.md`         | Compass view of the collections           | Complete |
+| Data Validation                  | `validators/`, `client/src/utils/validators.js` | Bad input rejected on both sides          | Complete |
+| Authentication and Authorization | `middleware/auth.js`, route guards              | Student blocked from admin routes         | Complete |
+| Real-Time Features (Socket.IO)   | `sockets/`, `SocketContext`                     | Two windows, instant bid and notification | Complete |
+| Docker                           | Dockerfiles, `docker-compose.yml`               | `docker compose up --build`               | Complete |
+| DevOps and Deployment            | `.github/workflows`, `DEPLOY.md`, live URLs     | Green CI run and the live site            | Complete |

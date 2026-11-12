@@ -106,7 +106,9 @@ describe('Bidding System API Tests & Concurrency Verification', () => {
   });
 
   after(async () => {
-    await User.deleteMany({ email: { $in: ['bid.seller@ves.ac.in', ...bidders.map((b) => b.email)] } });
+    await User.deleteMany({
+      email: { $in: ['bid.seller@ves.ac.in', ...bidders.map((b) => b.email)] }
+    });
     await Product.deleteMany({ seller: seller._id });
     await Bid.deleteMany({ bidder: { $in: bidders.map((b) => b._id) } });
     await Notification.deleteMany({ user: { $in: [seller._id, ...bidders.map((b) => b._id)] } });

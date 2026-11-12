@@ -167,7 +167,8 @@ export const productsApi = {
 };
 
 export const bidsApi = {
-  placeBid: (productId, amount) => api.post(`/products/${productId}/bids`, { amount: Number(amount) }),
+  placeBid: (productId, amount) =>
+    api.post(`/products/${productId}/bids`, { amount: Number(amount) }),
   getProductBids: (productId, params = {}) => {
     const query = new URLSearchParams(params).toString();
     return api.get(`/products/${productId}/bids${query ? `?${query}` : ''}`);
@@ -176,7 +177,8 @@ export const bidsApi = {
 };
 
 export const notificationsApi = {
-  getNotifications: (unreadOnly = false) => api.get(`/notifications${unreadOnly ? '?unreadOnly=true' : ''}`),
+  getNotifications: (unreadOnly = false) =>
+    api.get(`/notifications${unreadOnly ? '?unreadOnly=true' : ''}`),
   markAsRead: (id) => api.patch(`/notifications/${id}/read`),
   markAllAsRead: () => api.patch('/notifications/read-all')
 };
@@ -184,7 +186,8 @@ export const notificationsApi = {
 export const adminApi = {
   getStats: () => api.get('/admin/stats'),
   getPendingListings: () => api.get('/admin/listings/pending'),
-  moderateListing: (id, action, reason = '') => api.post(`/admin/listings/${id}/moderate`, { action, reason }),
+  moderateListing: (id, action, reason = '') =>
+    api.post(`/admin/listings/${id}/moderate`, { action, reason }),
   getReports: () => api.get('/admin/reports'),
   resolveReport: (id, resolutionAction, notes = '') =>
     api.post(`/admin/reports/${id}/resolve`, { resolutionAction, notes }),

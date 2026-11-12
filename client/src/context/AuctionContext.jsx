@@ -6,11 +6,7 @@ import React, {
   useReducer,
   useCallback
 } from 'react';
-import {
-  productsApi,
-  bidsApi,
-  notificationsApi
-} from '../api/client';
+import { productsApi, bidsApi, notificationsApi } from '../api/client';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
@@ -113,9 +109,7 @@ export const AuctionProvider = ({ children }) => {
   const markNotificationAsRead = async (id) => {
     try {
       await notificationsApi.markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      );
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
       showToast(err.message || 'Could not mark notification as read.', 'error');
@@ -159,23 +153,26 @@ export const AuctionProvider = ({ children }) => {
   const [myBids, setMyBids] = useState([]);
   const [loadingMyBids, setLoadingMyBids] = useState(false);
 
-  const fetchMyBids = useCallback(async (filter = 'all') => {
-    if (!isAuthenticated) {
-      setMyBids([]);
-      return;
-    }
-    try {
-      setLoadingMyBids(true);
-      const res = await bidsApi.getMyBids(filter);
-      if (res.success) {
-        setMyBids(res.bids || []);
+  const fetchMyBids = useCallback(
+    async (filter = 'all') => {
+      if (!isAuthenticated) {
+        setMyBids([]);
+        return;
       }
-    } catch (err) {
-      showToast(err.message || 'Failed to fetch your bids.', 'error');
-    } finally {
-      setLoadingMyBids(false);
-    }
-  }, [isAuthenticated, showToast]);
+      try {
+        setLoadingMyBids(true);
+        const res = await bidsApi.getMyBids(filter);
+        if (res.success) {
+          setMyBids(res.bids || []);
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to fetch your bids.', 'error');
+      } finally {
+        setLoadingMyBids(false);
+      }
+    },
+    [isAuthenticated, showToast]
+  );
 
   // 5. Product Actions
   const createListing = async (payload) => {
@@ -258,18 +255,14 @@ export const AuctionProvider = ({ children }) => {
   const updateListingBid = useCallback((productId, currentBid, bidCount) => {
     setListings((prev) =>
       prev.map((item) =>
-        item.id === productId
-          ? { ...item, currentBid, bidCount, bidsCount: bidCount }
-          : item
+        item.id === productId ? { ...item, currentBid, bidCount, bidsCount: bidCount } : item
       )
     );
   }, []);
 
   const handleCatalogAuctionEnded = useCallback((productId) => {
     setListings((prev) =>
-      prev.map((item) =>
-        item.id === productId ? { ...item, status: 'ended' } : item
-      )
+      prev.map((item) => (item.id === productId ? { ...item, status: 'ended' } : item))
     );
   }, []);
 

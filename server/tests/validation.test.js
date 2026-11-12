@@ -45,13 +45,11 @@ describe('Data Validation API Tests', () => {
   });
 
   it('1. Bad email domain - rejects non-@ves.ac.in email with 400 VALIDATION_ERROR', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Outsider User',
-        email: 'outsider@gmail.com',
-        password: 'ValidPassword123'
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Outsider User',
+      email: 'outsider@gmail.com',
+      password: 'ValidPassword123'
+    });
 
     assert.equal(res.status, 400);
     assert.equal(res.body.success, false);
@@ -61,13 +59,11 @@ describe('Data Validation API Tests', () => {
   });
 
   it('2. Weak password - rejects password lacking number or < 8 chars with 400 VALIDATION_ERROR', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Weak Password User',
-        email: 'weakpass@ves.ac.in',
-        password: 'weak'
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Weak Password User',
+      email: 'weakpass@ves.ac.in',
+      password: 'weak'
+    });
 
     assert.equal(res.status, 400);
     assert.equal(res.body.success, false);
@@ -77,12 +73,10 @@ describe('Data Validation API Tests', () => {
   });
 
   it('3. Missing fields - rejects registration missing required fullName with 400 VALIDATION_ERROR', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        email: 'missingname@ves.ac.in',
-        password: 'ValidPassword123'
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      email: 'missingname@ves.ac.in',
+      password: 'ValidPassword123'
+    });
 
     assert.equal(res.status, 400);
     assert.equal(res.body.success, false);
@@ -92,20 +86,21 @@ describe('Data Validation API Tests', () => {
   });
 
   it('4. Extra unknown field - rejects unknown fields (.strict()) with 400 VALIDATION_ERROR', async () => {
-    const res = await request(app)
-      .post('/api/v1/auth/register')
-      .send({
-        fullName: 'Strict Test',
-        email: 'strict.test@ves.ac.in',
-        password: 'ValidPassword123',
-        unknownInjectedField: 'malicious_payload'
-      });
+    const res = await request(app).post('/api/v1/auth/register').send({
+      fullName: 'Strict Test',
+      email: 'strict.test@ves.ac.in',
+      password: 'ValidPassword123',
+      unknownInjectedField: 'malicious_payload'
+    });
 
     assert.equal(res.status, 400);
     assert.equal(res.body.success, false);
     assert.equal(res.body.error.code, 'VALIDATION_ERROR');
-    const unknownIssue = res.body.error.details.find((d) =>
-      d.message.includes('unrecognized_keys') || d.field.includes('unknownInjectedField') || d.message.includes('Unrecognized key')
+    const unknownIssue = res.body.error.details.find(
+      (d) =>
+        d.message.includes('unrecognized_keys') ||
+        d.field.includes('unknownInjectedField') ||
+        d.message.includes('Unrecognized key')
     );
     assert.ok(unknownIssue, 'Expected strict unrecognized key error');
   });

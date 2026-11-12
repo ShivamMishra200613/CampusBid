@@ -140,7 +140,10 @@ export default function RegisterPage() {
                   className={`editorial-input ${errors.fullName ? 'border-error' : ''}`}
                 />
                 {errors.fullName && (
-                  <p data-testid="register-name-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="register-name-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.fullName}
                   </p>
                 )}
@@ -162,7 +165,10 @@ export default function RegisterPage() {
                   className={`editorial-input ${errors.email ? 'border-error' : ''}`}
                 />
                 {errors.email ? (
-                  <p data-testid="register-email-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                  <p
+                    data-testid="register-email-error"
+                    className="mt-1 text-xs text-red-500 font-body-sm"
+                  >
                     {errors.email}
                   </p>
                 ) : (
@@ -190,7 +196,10 @@ export default function RegisterPage() {
                     className={`editorial-input ${errors.classBranch ? 'border-error' : ''}`}
                   />
                   {errors.classBranch && (
-                    <p data-testid="register-class-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    <p
+                      data-testid="register-class-error"
+                      className="mt-1 text-xs text-red-500 font-body-sm"
+                    >
                       {errors.classBranch}
                     </p>
                   )}
@@ -212,7 +221,10 @@ export default function RegisterPage() {
                     className={`editorial-input ${errors.rollNo ? 'border-error' : ''}`}
                   />
                   {errors.rollNo && (
-                    <p data-testid="register-roll-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    <p
+                      data-testid="register-roll-error"
+                      className="mt-1 text-xs text-red-500 font-body-sm"
+                    >
                       {errors.rollNo}
                     </p>
                   )}
@@ -246,7 +258,10 @@ export default function RegisterPage() {
                     </span>
                   </button>
                   {errors.password && (
-                    <p data-testid="register-password-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    <p
+                      data-testid="register-password-error"
+                      className="mt-1 text-xs text-red-500 font-body-sm"
+                    >
                       {errors.password}
                     </p>
                   )}
@@ -268,7 +283,10 @@ export default function RegisterPage() {
                     className={`editorial-input pr-10 ${errors.confirmPassword ? 'border-error' : ''}`}
                   />
                   {errors.confirmPassword && (
-                    <p data-testid="register-confirm-error" className="mt-1 text-xs text-red-500 font-body-sm">
+                    <p
+                      data-testid="register-confirm-error"
+                      className="mt-1 text-xs text-red-500 font-body-sm"
+                    >
                       {errors.confirmPassword}
                     </p>
                   )}
@@ -286,7 +304,10 @@ export default function RegisterPage() {
                   required
                   className="w-4 h-4 mt-0.5 rounded border-outline text-black focus:ring-0 cursor-pointer"
                 />
-                <label htmlFor="agreeTerms" className="ml-2.5 font-body-sm text-xs text-secondary leading-normal">
+                <label
+                  htmlFor="agreeTerms"
+                  className="ml-2.5 font-body-sm text-xs text-secondary leading-normal"
+                >
                   I agree to the VESIT Marketplace Community Guidelines and Terms of Service.
                 </label>
               </div>
@@ -300,7 +321,9 @@ export default function RegisterPage() {
               >
                 {loading ? (
                   <>
-                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span className="material-symbols-outlined animate-spin text-sm">
+                      progress_activity
+                    </span>
                     <span>Creating Account...</span>
                   </>
                 ) : (
@@ -312,7 +335,10 @@ export default function RegisterPage() {
             <div className="mt-6 text-center pt-4 border-t border-outline-variant">
               <p className="font-body-sm text-xs text-secondary">
                 Already registered?{' '}
-                <Link to="/login" className="text-on-surface font-semibold underline hover:text-primary transition-colors">
+                <Link
+                  to="/login"
+                  className="text-on-surface font-semibold underline hover:text-primary transition-colors"
+                >
                   Log in here
                 </Link>
               </p>
@@ -384,7 +410,8 @@ export default function RegisterPage() {
               Safety Guarantee
             </span>
             <p className="font-body-sm text-xs text-secondary">
-              All buyers and sellers must authenticate with their official VESIT college credentials to prevent fraud.
+              All buyers and sellers must authenticate with their official VESIT college credentials
+              to prevent fraud.
             </p>
           </div>
         </div>
