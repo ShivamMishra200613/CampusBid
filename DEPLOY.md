@@ -74,17 +74,17 @@ This guide provides exact, step-by-step instructions to deploy CampusBid to prod
 3. **Configure Environment Variables in Render:**
    In the **Environment Variables** tab, add:
 
-   | Variable           | Value                          | Description                                      |
-   | ------------------ | ------------------------------ | ------------------------------------------------ |
-   | `NODE_ENV`         | `production`                   | Enables production optimizations & logging       |
-   | `PORT`             | `10000`                        | Render internal listener port                    |
-   | `MONGO_URI`        | `mongodb+srv://...`            | Your MongoDB Atlas connection URI from Step 1    |
-   | `JWT_SECRET`       | _(64-char random string)_      | Secret for signing HS256 tokens                  |
-   | `JWT_EXPIRES_IN`   | `7d`                           | Token lifetime                                   |
-   | `CLIENT_ORIGIN`    | `https://campusbid.vercel.app` | _Update with your actual Vercel URL from Step 3_ |
-   | `AUCTION_SWEEP_MS` | `10000`                        | Sweeper interval (10 seconds)                    |
-   | `ADMIN_EMAIL`      | `admin@ves.ac.in`              | Seeded admin email                               |
-   | `ADMIN_PASSWORD`   | `YourSecureAdminPass123!`      | Initial administrator password                   |
+   | Variable           | Value                             | Description                                      |
+   | ------------------ | --------------------------------- | ------------------------------------------------ |
+   | `NODE_ENV`         | `production`                      | Enables production optimizations & logging       |
+   | `PORT`             | `10000`                           | Render internal listener port                    |
+   | `MONGO_URI`        | `mongodb+srv://...`               | Your MongoDB Atlas connection URI from Step 1    |
+   | `JWT_SECRET`       | _(64-char random string)_         | Secret for signing HS256 tokens                  |
+   | `JWT_EXPIRES_IN`   | `7d`                              | Token lifetime                                   |
+   | `CLIENT_ORIGIN`    | `https://campusbid-pi.vercel.app` | _Update with your actual Vercel URL from Step 3_ |
+   | `AUCTION_SWEEP_MS` | `10000`                           | Sweeper interval (10 seconds)                    |
+   | `ADMIN_EMAIL`      | `admin@ves.ac.in`                 | Seeded admin email                               |
+   | `ADMIN_PASSWORD`   | `YourSecureAdminPass123!`         | Initial administrator password                   |
 
 4. **Health Check Path:**
    - Under **Advanced**, set **Health Check Path** to `/health`.
@@ -109,14 +109,16 @@ This guide provides exact, step-by-step instructions to deploy CampusBid to prod
 
 3. **Configure Environment Variables in Vercel:**
    - Under **Environment Variables**, add:
-     - `VITE_API_URL`: Your Render backend URL + `/api/v1` (e.g. `https://campusbid-api.onrender.com/api/v1`)
-   - Click **Deploy**.
+     - `VITE_API_URL`: `https://campusbid.onrender.com/api/v1` (Your Render backend URL with `/api/v1`)
+     - `VITE_SOCKET_URL`: `https://campusbid.onrender.com` (Optional override; client automatically derives this origin from `VITE_API_URL`)
+   - Click **Deploy** (or trigger a Redeploy if already imported).
 
-4. **Sync CORS Origin:**
-   - Copy your live Vercel domain (e.g., `https://campusbid.vercel.app`).
-   - Go back to Render → `campusbid-api` → **Environment**.
-   - Update `CLIENT_ORIGIN` to your exact Vercel URL (e.g., `https://campusbid.vercel.app`) without trailing slash.
-   - Click **Save Changes** (Render will automatically redeploy).
+4. **Sync CORS Origin in Render:**
+   - Copy your live Vercel domain (e.g., `https://campusbid-pi.vercel.app`).
+   - In Render Dashboard → `campusbid` web service → **Environment**.
+   - Ensure `CLIENT_ORIGIN` matches your exact Vercel URL:
+     - `CLIENT_ORIGIN`: `https://campusbid-pi.vercel.app` (no trailing slash)
+   - Click **Save Changes** (Render will automatically restart the service).
 
 ---
 
