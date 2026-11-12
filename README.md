@@ -150,8 +150,11 @@ CampusBid/
 ├── docs/                        # Architectural documentation and evaluation guides
 │   ├── assets/                  # Documentation screenshots and visuals
 │   ├── database.md              # Database schemas, relationships, and indexing strategy
+│   ├── demo-script.md           # 10-minute presentation walkthrough and script
+│   ├── development/             # Development plan (plan.md) and progress log (progress.md)
 │   ├── evaluation.md            # Comprehensive viva preparation and grading checklist
-│   └── demo-script.md           # 10-minute presentation walkthrough and script
+│   ├── lab0_extracted.txt       # Course lab requirements specification
+│   └── pages/                   # Phase 0 screen specifications and wireframes
 ├── scripts/                     # Root development runner scripts
 ├── docker-compose.yml           # Full-stack containerized deployment
 ├── docker-compose.dev.yml       # Local MongoDB container for development
@@ -411,6 +414,7 @@ _Use these accounts for evaluation, local testing, and demonstration:_
 - **Evaluation Guide**: [`docs/evaluation.md`](./docs/evaluation.md) - Line-by-line mapping of all 9 viva evaluation criteria and 27 viva Q&A.
 - **Database Architecture**: [`docs/database.md`](./docs/database.md) - Schemas, relationships, indexing, and data dictionary.
 - **Demo Walkthrough**: [`docs/demo-script.md`](./docs/demo-script.md) - Scripted 10-minute presentation covering dual-window real-time bidding.
+- **Development Plan & Progress**: [`docs/development/plan.md`](./docs/development/plan.md) - Phased implementation checklist and milestones.
 - **API Specification**: [`server/contracts/openapi.yaml`](./server/contracts/openapi.yaml) - Standard OpenAPI 3.0 specification.
 - **Deployment Guide**: [`DEPLOY.md`](./DEPLOY.md) - Production hosting guide for Render, Vercel, and MongoDB Atlas.
 
