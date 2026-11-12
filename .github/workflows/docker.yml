@@ -3,6 +3,8 @@ name: Docker Build Verification
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build-images:
@@ -13,21 +15,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: actions/setup-buildx-action@v3
-
-      - name: Build Server Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./server
-          file: ./server/Dockerfile
-          push: false
-          tags: campusbid-server:test
-
-      - name: Build Client Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./client
-          file: ./client/Dockerfile
-          push: false
-          tags: campusbid-client:test
+      - name: Build Multi-Stage Images with Docker Compose
+        run: docker compose build
