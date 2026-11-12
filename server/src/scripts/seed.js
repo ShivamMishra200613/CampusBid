@@ -195,7 +195,7 @@ export const seedDatabase = async () => {
     endTime: new Date(now + 5 * 24 * 60 * 60 * 1000),
     highestBidder: rahul._id,
     images: [
-      'https://images.unsplash.com/photo-1580481077195-c3a821a506cb?w=800&auto=format&fit=crop&q=60'
+      'https://images.unsplash.com/photo-1776548759644-5da0988a7874?w=800&auto=format&fit=crop&q=60'
     ]
   });
 
