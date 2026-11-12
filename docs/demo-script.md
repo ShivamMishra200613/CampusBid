@@ -18,12 +18,14 @@ This script provides an exact, step-by-step walkthrough for demonstrating Campus
    - **Window 1 (Left / Normal Window)**: Chrome at `http://localhost:5173`.
    - **Window 2 (Right / Incognito Window)**: Chrome Incognito at `http://localhost:5173`.
 3. **Demo Accounts Reference**:
-   | Role               | Name         | Email                    | Password          |
-   | ------------------ | ------------ | ------------------------ | ----------------- |
-   | Admin              | VESIT Admin  | `admin@ves.ac.in`        | `change-me-admin` |
-   | Student A (Seller) | Rahul Sharma | `rahul.sharma@ves.ac.in` | `Password123`     |
-   | Student B (Bidder) | Priya Patel  | `priya.patel@ves.ac.in`  | `Password123`     |
-   | Student C (Bidder) | Aditya Verma | `aditya.verma@ves.ac.in` | `Password123`     |
+   | Role                | Name           | Email                    | Password                                                                     | Persona / Notes                                                                              |
+   | ------------------- | -------------- | ------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+   | Admin               | VESIT Admin    | `admin@ves.ac.in`        | Configured via `ADMIN_PASSWORD` env (default `change-me-admin` in local dev) | Platform moderation, queue review, analytics, user suspension                                |
+   | Student A (Seller)  | Rahul Sharma   | `rahul.sharma@ves.ac.in` | `Password123`                                                                | Primary seller: created live auctions (MacBook Air, Mathematics textbooks, Arduino kit)      |
+   | Student B (Bidder)  | Priya Patel    | `priya.patel@ves.ac.in`  | `Password123`                                                                | Active bidder: leading bid on MacBook Air; active bidder on textbooks                        |
+   | Student C (Bidder)  | Aditya Verma   | `aditya.verma@ves.ac.in` | `Password123`                                                                | Competing bidder: used for dual-window live bidding demonstrations and outbid alerts         |
+   | Student D (Winner)  | Ananya Iyer    | `ananya.iyer@ves.ac.in`  | `Password123`                                                                | Auction winner & reporter: won Calculator auction; reported flagged listing                  |
+   | Student (Suspended) | Sneha Kulkarni | `sneha.k@ves.ac.in`      | `Password123`                                                                | Suspended student: seeded as `isSuspended: true`; login returns HTTP 403 `ACCOUNT_SUSPENDED` |
 
 ---
 
@@ -118,7 +120,7 @@ _Criteria demonstrated: Authentication & Authorization (RBAC), Admin Workflows_
 - **Action (Window 2)**:
   1. Log out Aditya and log in as Admin:
      - Email: `admin@ves.ac.in`
-     - Password: `change-me-admin`
+     - Password: Value set in `ADMIN_PASSWORD` when seeding (default `change-me-admin` in local dev)
   2. Click **"Admin"** in the top navigation (`/admin`).
 - **What to say**:
   > _"The Administrator Dashboard gives VESIT moderation staff oversight over platform KPIs, pending listing submissions, student dispute reports, and user access."_
