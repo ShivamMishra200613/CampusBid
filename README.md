@@ -266,7 +266,7 @@ Follow [`DEPLOY.md`](./DEPLOY.md) for complete step-by-step instructions:
 | `JWT_EXPIRES_IN`   | Duration before JWT token expires                 | `7d`                                       | Optional (default: `7d`)            |
 | `CLIENT_ORIGIN`    | Allowed client URL for CORS and WebSockets        | `http://localhost:5173`                    | Required                            |
 | `ADMIN_EMAIL`      | Seeded administrator email                        | `admin@ves.ac.in`                          | Required                            |
-| `ADMIN_PASSWORD`   | Seeded administrator password                     | `Admin@1234`                               | Required                            |
+| `ADMIN_PASSWORD`   | Seeded administrator password                     | `change-me-admin`                          | Required                            |
 | `AUCTION_SWEEP_MS` | Background auction closing interval (ms)          | `10000`                                    | Optional (default: `10000`)         |
 | `CLOUDINARY_URL`   | Cloudinary credentials for remote images          | `cloudinary://api_key:api_secret@cloud`    | Optional (falls back to local disk) |
 
@@ -397,15 +397,16 @@ For detailed deployment steps, environment mapping, and troubleshooting, refer t
 
 ## Seeded Demo Accounts (Demo Only)
 
-_Use these accounts for evaluation, local testing, and demonstration:_
+_Use these accounts for evaluation, local testing, and demonstration. All student demo accounts share the password `Password123`. The administrator password is set via the `ADMIN_PASSWORD` environment variable when seeding (never hardcoded in documentation or code)._
 
-| Name               | Role    | Email                    | Password      | Demo Persona                                                    |
-| ------------------ | ------- | ------------------------ | ------------- | --------------------------------------------------------------- |
-| **System Admin**   | Admin   | `admin@ves.ac.in`        | `Admin@1234`  | Platform moderation, queue review, analytics, user suspension   |
-| **Rahul Sharma**   | Student | `rahul.sharma@ves.ac.in` | `Student@123` | Active seller (created Arduino Kit, Engineering Drawing Board)  |
-| **Priya Patel**    | Student | `priya.patel@ves.ac.in`  | `Student@123` | Active bidder (highest bidder on Arduino Kit)                   |
-| **Amit Verma**     | Student | `amit.verma@ves.ac.in`   | `Student@123` | Outbid student (outbid on Arduino Kit; winner of Database Book) |
-| **Sneha Kulkarni** | Student | `sneha.k@ves.ac.in`      | `Student@123` | Suspended student (verifies 403 suspension guard)               |
+| Name               | Role    | Email                    | Password                                                                     | Demo Persona                                                                                 |
+| ------------------ | ------- | ------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **VESIT Admin**    | Admin   | `admin@ves.ac.in`        | Configured via `ADMIN_PASSWORD` env (default `change-me-admin` in local dev) | Platform administrator: moderation queue, dispute resolution, platform KPIs, user suspension |
+| **Rahul Sharma**   | Student | `rahul.sharma@ves.ac.in` | `Password123`                                                                | Primary seller: created live auctions (MacBook Air, Mathematics textbooks, Arduino kit)      |
+| **Priya Patel**    | Student | `priya.patel@ves.ac.in`  | `Password123`                                                                | Active bidder: placed leading bid on MacBook Air; active bidder on textbooks                 |
+| **Aditya Verma**   | Student | `aditya.verma@ves.ac.in` | `Password123`                                                                | Competing bidder: used for dual-window live bidding demonstrations and outbid alerts         |
+| **Ananya Iyer**    | Student | `ananya.iyer@ves.ac.in`  | `Password123`                                                                | Auction winner & reporter: won Calculator auction; reported flagged listing                  |
+| **Sneha Kulkarni** | Student | `sneha.k@ves.ac.in`      | `Password123`                                                                | Suspended student: seeded as `isSuspended: true`; login returns HTTP 403 `ACCOUNT_SUSPENDED` |
 
 ---
 

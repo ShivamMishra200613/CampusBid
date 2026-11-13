@@ -195,7 +195,7 @@ export const seedDatabase = async () => {
     endTime: new Date(now + 5 * 24 * 60 * 60 * 1000),
     highestBidder: rahul._id,
     images: [
-      'https://images.unsplash.com/photo-1580481077195-c3a821a506cb?w=800&auto=format&fit=crop&q=60'
+      'https://images.unsplash.com/photo-1776548759644-5da0988a7874?w=800&auto=format&fit=crop&q=60'
     ]
   });
 
@@ -463,6 +463,59 @@ export const seedDatabase = async () => {
 
   console.log('Created Reports.');
   console.log('--- Database Seeding Completed Successfully ---');
+
+  console.log('\nSeeded Demo Accounts:');
+  console.table([
+    {
+      Role: 'Admin',
+      Email: config.adminEmail || 'admin@ves.ac.in',
+      Password: '[CONFIGURED VIA ADMIN_PASSWORD]',
+      Persona: 'Platform Administrator'
+    },
+    {
+      Role: 'Student',
+      Email: 'rahul.sharma@ves.ac.in',
+      Password: 'Password123',
+      Persona: 'Primary Seller (Listings & Drafts)'
+    },
+    {
+      Role: 'Student',
+      Email: 'priya.patel@ves.ac.in',
+      Password: 'Password123',
+      Persona: 'Active Bidder (Leading Bids)'
+    },
+    {
+      Role: 'Student',
+      Email: 'aditya.verma@ves.ac.in',
+      Password: 'Password123',
+      Persona: 'Competing Bidder (Live Bidding)'
+    },
+    {
+      Role: 'Student',
+      Email: 'ananya.iyer@ves.ac.in',
+      Password: 'Password123',
+      Persona: 'Auction Winner & Reporter'
+    },
+    {
+      Role: 'Student',
+      Email: 'sneha.k@ves.ac.in',
+      Password: 'Password123',
+      Persona: 'Suspended Student (returns 403)'
+    }
+  ]);
+  console.log(
+    'Note: All student accounts use password "Password123". Admin password is set via ADMIN_PASSWORD.'
+  );
+  console.log(
+    '      sneha.k@ves.ac.in is seeded as suspended and returns 403 ACCOUNT_SUSPENDED.\n'
+  );
+
+  return {
+    admin,
+    students: [rahul, priya, aditya, ananya, sneha],
+    users: [admin, rahul, priya, aditya, ananya, sneha],
+    products: [p1, p2, p3, p4, p5, p6, p7, p8]
+  };
 };
 
 // If run directly via `npm run seed`
