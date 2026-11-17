@@ -8,6 +8,45 @@ import Bid from '../models/Bid.js';
 import Notification from '../models/Notification.js';
 import Report from '../models/Report.js';
 
+export const SEEDED_ACCOUNTS = [
+  {
+    role: 'admin',
+    email: config.adminEmail || 'admin@ves.ac.in',
+    isSuspended: false,
+    persona: 'Platform Administrator'
+  },
+  {
+    role: 'student',
+    email: 'rahul.sharma@ves.ac.in',
+    isSuspended: false,
+    persona: 'Primary Seller (Listings & Drafts)'
+  },
+  {
+    role: 'student',
+    email: 'priya.patel@ves.ac.in',
+    isSuspended: false,
+    persona: 'Active Bidder (Leading Bids)'
+  },
+  {
+    role: 'student',
+    email: 'aditya.verma@ves.ac.in',
+    isSuspended: false,
+    persona: 'Competing Bidder (Live Bidding)'
+  },
+  {
+    role: 'student',
+    email: 'ananya.iyer@ves.ac.in',
+    isSuspended: false,
+    persona: 'Auction Winner & Reporter'
+  },
+  {
+    role: 'student',
+    email: 'sneha.k@ves.ac.in',
+    isSuspended: true,
+    persona: 'Suspended Student (returns 403)'
+  }
+];
+
 export const seedDatabase = async () => {
   if (process.env.NODE_ENV === 'production') {
     throw new Error('FATAL: Seed script refused to run in production environment.');
@@ -465,44 +504,17 @@ export const seedDatabase = async () => {
   console.log('--- Database Seeding Completed Successfully ---');
 
   console.log('\nSeeded Demo Accounts:');
-  console.table([
-    {
-      Role: 'Admin',
-      Email: config.adminEmail || 'admin@ves.ac.in',
-      Password: '[CONFIGURED VIA ADMIN_PASSWORD]',
-      Persona: 'Platform Administrator'
-    },
-    {
-      Role: 'Student',
-      Email: 'rahul.sharma@ves.ac.in',
-      Password: 'Password123',
-      Persona: 'Primary Seller (Listings & Drafts)'
-    },
-    {
-      Role: 'Student',
-      Email: 'priya.patel@ves.ac.in',
-      Password: 'Password123',
-      Persona: 'Active Bidder (Leading Bids)'
-    },
-    {
-      Role: 'Student',
-      Email: 'aditya.verma@ves.ac.in',
-      Password: 'Password123',
-      Persona: 'Competing Bidder (Live Bidding)'
-    },
-    {
-      Role: 'Student',
-      Email: 'ananya.iyer@ves.ac.in',
-      Password: 'Password123',
-      Persona: 'Auction Winner & Reporter'
-    },
-    {
-      Role: 'Student',
-      Email: 'sneha.k@ves.ac.in',
-      Password: 'Password123',
-      Persona: 'Suspended Student (returns 403)'
-    }
-  ]);
+  console.table(
+    SEEDED_ACCOUNTS.map((acc) => ({
+      Role: acc.role === 'admin' ? 'Admin' : 'Student',
+      Email: acc.email,
+      Password:
+        acc.role === 'admin'
+          ? '[CONFIGURED VIA ADMIN_PASSWORD]'
+          : 'Password123',
+      Persona: acc.persona
+    }))
+  );
   console.log(
     'Note: All student accounts use password "Password123". Admin password is set via ADMIN_PASSWORD.'
   );
